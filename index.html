@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>J.A.R.V.I.S. System - Vision Active</title>
+  <style>
+    body {
+      background-color: #050510;
+      color: #00ffff;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+    #hud-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 255, 255, 0.2);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    }
+    .ring1 { width: 150px; height: 150px; animation: spin 4s linear infinite; border-top: 2px solid #00ffff; }
+    .ring2 { width: 190px; height: 190px; animation: spin-reverse 6s linear infinite; border-bottom: 2px solid #00ffff; }
+    #core { font-weight: bold; text-shadow: 0 0 10px #00ffff; letter-spacing: 2px; font-size: 0.9rem; }
+    
+    /* カメラ映像用のHUDスタイル */
+    #camera-container {
+      position: relative;
+      width: 320px;
+      height: 240px;
+      border: 1px solid #00ffff;
+      box-shadow: 0 0 15px rgba(0,255,255,0.4);
+      display: none; /* 初期状態は非表示 */
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    #webcam {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* JARVISの視覚をイメージした青いフィルター */
+      filter: grayscale(100%) sepia(100%) hue-rotate(150deg) brightness(1.2) contrast(1.2); 
+    }
+    /* スキャンライン（走査線）アニメーション */
+    #camera-container::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: rgba(0, 255, 255, 0.8);
+      box-shadow: 0 0 10px #00ffff;
+      animation: scan 2.5s linear infinite;
+    }
+    @keyframes scan {
+      0% { top: 0; }
+      50% { top: 100%; }
+      100% { top: 0; }
+    }
+
+    #status-text { font-size: 1.2rem; text-shadow: 0 0 5px #00ffff; }
+    #transcript { margin-top: 10px; width: 80%; text-align: center; font-size: 1rem; color: #aaa; }
+    #response { margin-top: 10px; width: 80%; text-align: center; font-size: 1.1rem; color: #fff; line-height: 1.5; }
+    
+    .controls { margin-top: 30px; display: flex; gap: 15px; }
+    button {
+      padding: 10px 20px;
+      background: transparent;
+      color: #00ffff;
+      border: 1px solid #00ffff;
+      cursor: pointer;
+      font-family: inherit;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      transition: background 0.3s;
+    }
+    button:hover { background: rgba(0, 255, 255, 0.2); }
+    
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- AIコア表示 -->
+  <div id="hud-container">
+    <div class="ring ring1"></div>
+    <div class="ring ring2"></div>
+    <div id="core">AI CORE</div>
+  </div>
+
+  <!-- 視覚センサー（カメラ） -->
+  <div id="camera-container">
+    <video id="webcam" autoplay playsinline></video>
+    <!-- 画像抽出用の隠しキャンバス -->
+    <canvas id="capture-canvas" style="display: none;"></canvas>
+  </div>
+
+  <div id="status-text">SYSTEM STANDBY</div>
+  <div id="transcript"></div>
+  <div id="response"></div>
+
+  <div class="controls">
+    <button id="camera-btn">視覚センサー起動 (カメラON)</button>
+    <button id="start-btn">音声入力 (マイクON)</button>
+  </div>
+
+  <script>
+    // === 設定 ===
+    const API_KEY = 'YOUR_API_KEY_HERE'; // ★ここにAPIキーを入力★
+    const MODEL_NAME = 'gemini-1.5-flash'; 
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
+
+    const statusText = document.getElementById('status-text');
+    const transcriptDiv = document.getElementById('transcript');
+    const responseDiv = document.getElementById('response');
+    const startBtn = document.getElementById('start-btn');
+    const cameraBtn = document.getElementById('camera-btn');
+    
+    const cameraContainer = document.getElementById('camera-container');
+    const webcam = document.getElementById('webcam');
+    const canvas = document.getElementById('capture-canvas');
+    let isCameraActive = false;
+
+    // === カメラ（視覚）の制御 ===
+    cameraBtn.addEventListener('click', async () => {
+      if (!isCameraActive) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          webcam.srcObject = stream;
+          cameraContainer.style.display = 'block';
+          isCameraActive = true;
+          cameraBtn.innerText = '視覚センサー停止';
+          statusText.innerText = 'VISION ONLINE';
+        } catch (error) {
+          alert('カメラへのアクセスが拒否されたか、エラーが発生しました。');
+        }
+      } else {
+        const stream = webcam.srcObject;
+        if (stream) stream.getTracks().forEach(track => track.stop());
+        webcam.srcObject = null;
+        cameraContainer.style.display = 'none';
+        isCameraActive = false;
+        cameraBtn.innerText = '視覚センサー起動 (カメラON)';
+        statusText.innerText = 'VISION OFFLINE';
+      }
+    });
+
+    // === 音声認識（耳） ===
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'ja-JP';
+    recognition.interimResults = false;
+
+    startBtn.addEventListener('click', () => {
+      recognition.start();
+      statusText.innerText = 'LISTENING... (音声入力中)';
+    });
+
+    recognition.onresult = async (event) => {
+      const userInput = event.results[0][0].transcript;
+      transcriptDiv.innerText = `You: ${userInput}`;
+      statusText.innerText = 'PROCESSING... (分析・思考中)';
+      
+      await askGemini(userInput);
+    };
+
+    // === Gemini APIとの通信（頭脳＆視覚解析） ===
+    async function askGemini(text) {
+      // 1. プロンプト（AIのテキスト部分）
+      let promptText = `あなたはトニー・スタークのAIアシスタント「J.A.R.V.I.S.」です。冷静かつ丁寧な執事のような口調で、簡潔に返答してください。ユーザーの入力: ${text}`;
+      
+      // 送信するデータセット
+      const parts = [{ text: promptText }];
+
+      // 2. カメラが起動している場合、画像データを抽出して追加する
+      if (isCameraActive) {
+        // 現在のカメラ映像をキャンバスに描画
+        canvas.width = webcam.videoWidth;
+        canvas.height = webcam.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(webcam, 0, 0, canvas.width, canvas.height);
+        
+        // Base64エンコードされたJPEGデータを取得（"data:image/jpeg;base64,"の部分は削る）
+        const base64Data = canvas.toDataURL('image/jpeg').split(',')[1];
+        
+        // 画像データをGeminiに送るフォーマットで追加
+        parts.push({
+          inlineData: {
+            mimeType: 'image/jpeg',
+            data: base64Data
+          }
+        });
+        
+        // 画像があることをAIに教えるためにプロンプトを少し調整
+        parts[0].text = `あなたはトニー・スタークのAIアシスタント「J.A.R.V.I.S.」です。テキストと共に、ユーザーのPCカメラの現在の視覚情報（画像）が送られます。映像にある物体や状況も踏まえて、冷静な執事の口調で簡潔に返答してください。ユーザーの入力: ${text}`;
+      }
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: parts }]
+          })
+        });
+        
+        const data = await response.json();
+        const aiText = data.candidates[0].content.parts[0].text;
+        
+        responseDiv.innerText = `J.A.R.V.I.S: ${aiText}`;
+        statusText.innerText = 'SPEAKING... (音声応答中)';
+        
+        speak(aiText);
+      } catch (error) {
+        console.error(error);
+        responseDiv.innerText = '通信エラーが発生しました。APIキーまたはネットワークを確認してください。';
+        statusText.innerText = 'SYSTEM ERROR';
+      }
+    }
+
+    // === 音声合成（口） ===
+    function speak(text) {
+      const synth = window.speechSynthesis;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ja-JP';
+      utterance.pitch = 0.8; // JARVIS風の落ち着いた声
+      utterance.rate = 1.1;
+
+      utterance.onend = () => {
+        statusText.innerText = isCameraActive ? 'VISION ONLINE' : 'SYSTEM STANDBY';
+      };
+
+      synth.speak(utterance);
+    }
+  </script>
+</body>
+</html>
