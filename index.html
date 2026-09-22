@@ -3,252 +3,823 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S. System</title>
+    <title>J.A.R.V.I.S. - Advanced AI System Control HUD</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Sci-Fi Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        hud: {
+                            bg: '#020611',
+                            panel: '#071122',
+                            border: '#00f0ff',
+                            cyan: '#00f0ff',
+                            blue: '#0066ff',
+                            darkblue: '#001a33',
+                            amber: '#f59e0b',
+                            red: '#ef4444',
+                            emerald: '#10b981'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif'],
+                        mono: ['Share Tech Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
         body {
-            background-color: #080c14;
-            color: #00d2ff;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
+            background-color: #020611;
+            color: #7dd3fc;
+            font-family: 'Rajdhani', sans-serif;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
         }
-        .container {
-            width: 100%;
-            max-width: 650px;
-            background: #0f172a;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 0 30px rgba(0, 210, 255, 0.2);
-            border: 1px solid #1e293b;
-            text-align: center;
+
+        /* Scanline HUD Overlay */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 240, 255, 0.025) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 50;
         }
-        h1 {
-            font-size: 2.2rem;
-            margin-bottom: 20px;
-            letter-spacing: 4px;
-            text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+
+        /* Glass Panel HUD Glow Borders */
+        .hud-panel {
+            background: rgba(7, 17, 34, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.08), inset 0 0 15px rgba(0, 240, 255, 0.03);
+            position: relative;
         }
-        .input-group {
-            margin-bottom: 20px;
+
+        .hud-panel::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: 10px; width: 20px; height: 3px;
+            background: #00f0ff;
+            box-shadow: 0 0 8px #00f0ff;
         }
-        input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            background: #080c14;
-            border: 1px solid #334155;
-            color: #00d2ff;
-            border-radius: 8px;
-            font-size: 14px;
-            text-align: center;
-            outline: none;
+
+        .hud-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; right: 10px; width: 20px; height: 3px;
+            background: #00f0ff;
+            box-shadow: 0 0 8px #00f0ff;
         }
-        input[type="password"]:focus {
-            border-color: #00d2ff;
-            box-shadow: 0 0 8px rgba(0, 210, 255, 0.4);
+
+        .hud-text-glow {
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
         }
-        button {
-            background: #0284c7;
-            color: #fff;
-            border: none;
-            padding: 14px 28px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 0 15px rgba(2, 132, 199, 0.4);
+
+        /* HUD Core Animations */
+        @keyframes spinClockwise {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        button:hover {
-            background: #0369a1;
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
-            transform: scale(1.03);
+
+        @keyframes spinCounterClockwise {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
         }
-        .status {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #94a3b8;
-            height: 24px;
+
+        @keyframes hudPulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.04); }
         }
-        .chat-box {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .log {
-            padding: 14px;
-            background: #080c14;
-            border-radius: 8px;
-            border-left: 4px solid #334155;
-            text-align: left;
-            font-size: 15px;
-            line-height: 1.5;
-            word-break: break-word;
-        }
-        .user-log {
-            border-color: #38bdf8;
-            color: #e2e8f0;
-        }
-        .jarvis-log {
-            border-color: #00d2ff;
-            color: #38bdf8;
-            background: #0c192e;
-        }
-        .error-log {
-            border-color: #ef4444;
-            color: #f87171;
-            background: #1f1315;
-        }
+
+        .spin-slow { animation: spinClockwise 20s linear infinite; }
+        .spin-reverse { animation: spinCounterClockwise 15s linear infinite; }
+        .hud-pulse { animation: hudPulse 3s ease-in-out infinite; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: rgba(2, 6, 17, 0.8); }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.4); border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00f0ff; }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between p-2 md:p-4 select-none">
+    <div class="scanlines"></div>
 
-<div class="container">
-    <h1>J.A.R.V.I.S.</h1>
-    
-    <div class="input-group">
-        <input type="password" id="apiKey" placeholder="Google Gemini API Keyを入力してください">
+    <!-- HUD TOP NAVIGATION / STATUS BAR -->
+    <header class="hud-panel rounded-xl p-3 mb-3 flex flex-col lg:flex-row items-center justify-between gap-3 border-cyan-500/40">
+        <!-- System Title & ID -->
+        <div class="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-start">
+            <div class="flex items-center gap-3">
+                <div class="w-3 h-3 rounded-full bg-cyan-400 animate-ping"></div>
+                <div>
+                    <h1 class="font-orbitron text-xl md:text-2xl font-black tracking-widest text-cyan-400 hud-text-glow flex items-center gap-2">
+                        J.A.R.V.I.S.
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950/80 border border-cyan-500/50 text-cyan-300">SYSTEM v3.6</span>
+                    </h1>
+                    <p class="font-mono text-xs text-cyan-300/60 uppercase tracking-wider">高度統括人工知能制御 HUD</p>
+                </div>
+            </div>
+            
+            <!-- System Status Badge -->
+            <div id="systemStatusBadge" class="px-3 py-1 rounded border border-cyan-500/50 bg-cyan-950/50 font-mono text-xs text-cyan-300 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                <span id="statusText">ONLINE / READY</span>
+            </div>
+        </div>
+
+        <!-- API Key Storage Control -->
+        <div class="flex items-center gap-2 w-full lg:w-auto bg-slate-950/80 px-3 py-1.5 rounded-lg border border-cyan-900/60">
+            <span class="font-mono text-xs text-cyan-400 font-bold shrink-0">API KEY:</span>
+            <input type="password" id="apiKeyInput" placeholder="Gemini API Keyを入力" 
+                class="bg-transparent border-none text-xs font-mono text-cyan-200 placeholder-cyan-800 outline-none w-full lg:w-64">
+            <button onclick="toggleKeyVisibility()" class="text-cyan-500 hover:text-cyan-300 px-1 text-xs font-mono" title="表示切り替え">👁</button>
+            <button onclick="saveApiKey()" class="px-3 py-1 text-xs font-mono font-bold bg-cyan-600 hover:bg-cyan-500 text-slate-950 rounded transition-all shrink-0">
+                保存
+            </button>
+        </div>
+
+        <!-- HUD Realtime Clock & Date -->
+        <div class="text-right font-mono text-xs text-cyan-300/80 flex items-center justify-between lg:justify-end w-full lg:w-auto gap-4">
+            <div>
+                <div id="hudDate" class="tracking-widest text-[11px] text-cyan-400/70">2026.09.22 TUE</div>
+                <div id="hudClock" class="font-orbitron text-lg font-bold text-cyan-300 tracking-wider">19:58:24 JST</div>
+            </div>
+            <button onclick="toggleVoiceOutput()" id="voiceToggleBtn" class="px-2.5 py-1.5 rounded border border-cyan-500/40 bg-cyan-950/60 hover:bg-cyan-900 text-cyan-300 text-xs font-mono flex items-center gap-1.5 transition-all">
+                <span id="voiceStatusIcon">🔊</span>
+                <span id="voiceStatusText">VOICE: ON</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN HUD CONTENT GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 flex-1">
+        
+        <!-- ================= LEFT PANEL: DIAGNOSTICS & GAUGES ================= -->
+        <section class="lg:col-span-3 flex flex-col gap-3">
+            
+            <!-- Circular Gauges Panel -->
+            <div class="hud-panel rounded-xl p-4 flex-1 flex flex-col justify-between">
+                <h2 class="font-orbitron text-xs font-bold text-cyan-400 tracking-wider border-b border-cyan-900/60 pb-2 mb-3 flex items-center justify-between">
+                    <span>SYSTEM DIAGNOSTICS</span>
+                    <span class="text-[10px] text-cyan-600 font-mono">NODE #01</span>
+                </h2>
+
+                <div class="space-y-4 my-auto">
+                    <!-- Gauge 1: Neural Core Load -->
+                    <div class="flex items-center gap-3">
+                        <div class="relative w-16 h-16 shrink-0 flex items-center justify-center">
+                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path id="coreLoadRing" class="text-cyan-400 transition-all duration-700" stroke-width="3.5" stroke-dasharray="32, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            </svg>
+                            <span id="coreLoadValue" class="absolute font-mono text-xs text-cyan-300 font-bold">32%</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-mono text-xs text-cyan-200 font-bold">NEURAL CORE LOAD</div>
+                            <div class="w-full bg-slate-900 rounded-full h-1.5 mt-1 border border-cyan-950 overflow-hidden">
+                                <div id="coreBar" class="bg-cyan-400 h-1.5 rounded-full transition-all duration-500" style="width: 32%"></div>
+                            </div>
+                            <span class="font-mono text-[10px] text-cyan-500">THREADS: 64 ACTIVE</span>
+                        </div>
+                    </div>
+
+                    <!-- Gauge 2: Memory Buffer -->
+                    <div class="flex items-center gap-3">
+                        <div class="relative w-16 h-16 shrink-0 flex items-center justify-center">
+                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path id="memBufferRing" class="text-blue-500 transition-all duration-700" stroke-width="3.5" stroke-dasharray="58, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            </svg>
+                            <span id="memBufferValue" class="absolute font-mono text-xs text-blue-300 font-bold">58%</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-mono text-xs text-blue-200 font-bold">MEMORY BUFFER</div>
+                            <div class="w-full bg-slate-900 rounded-full h-1.5 mt-1 border border-blue-950 overflow-hidden">
+                                <div id="memBar" class="bg-blue-500 h-1.5 rounded-full transition-all duration-500" style="width: 58%"></div>
+                            </div>
+                            <span class="font-mono text-[10px] text-blue-400">ALLOCATED: 18.6 GB</span>
+                        </div>
+                    </div>
+
+                    <!-- Gauge 3: Latency & Link Quality -->
+                    <div class="p-2.5 rounded bg-cyan-950/20 border border-cyan-900/40 font-mono text-xs space-y-1">
+                        <div class="flex justify-between text-cyan-300">
+                            <span>LATENCY:</span>
+                            <span id="latencyVal" class="text-cyan-400 font-bold">14 ms</span>
+                        </div>
+                        <div class="flex justify-between text-cyan-300">
+                            <span>QUANTUM LINK:</span>
+                            <span class="text-emerald-400 font-bold">99.8% STABLE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HUD Quick Commands -->
+                <div class="mt-4 pt-3 border-t border-cyan-900/60 space-y-2">
+                    <div class="font-mono text-[10px] text-cyan-500 uppercase">クイックマクロ</div>
+                    <div class="grid grid-cols-2 gap-1.5 font-mono text-xs">
+                        <button onclick="triggerMacro('自己診断')" class="p-1.5 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 rounded text-cyan-300 text-left transition-all">
+                            &gt; 自己診断
+                        </button>
+                        <button onclick="triggerMacro('ステータス')" class="p-1.5 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 rounded text-cyan-300 text-left transition-all">
+                            &gt; 現在状態
+                        </button>
+                        <button onclick="clearChatHistory()" class="p-1.5 bg-amber-950/40 hover:bg-amber-900/60 border border-amber-800/60 rounded text-amber-300 text-left transition-all">
+                            &gt; メモリリセット
+                        </button>
+                        <button onclick="triggerMacro('時刻確認')" class="p-1.5 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 rounded text-cyan-300 text-left transition-all">
+                            &gt; 時刻照会
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= CENTER PANEL: MAIN HUD REACTOR & CHAT CONSOLE ================= -->
+        <section class="lg:col-span-6 flex flex-col gap-3">
+            
+            <div class="hud-panel rounded-xl p-4 flex-1 flex flex-col justify-between relative overflow-hidden">
+                
+                <!-- Rotating HUD Central Reactor Ring Visualizer -->
+                <div class="relative w-full h-36 flex items-center justify-center my-1">
+                    <!-- Layer 1: Outer Rotating Ring -->
+                    <div id="reactorRingOuter" class="absolute w-32 h-32 rounded-full border-2 border-dashed border-cyan-400/50 spin-slow"></div>
+                    <!-- Layer 2: Middle Counter Ring -->
+                    <div id="reactorRingMid" class="absolute w-24 h-24 rounded-full border border-cyan-300/70 spin-reverse border-t-transparent border-b-transparent"></div>
+                    <!-- Layer 3: Inner Core Ring -->
+                    <div id="reactorCore" class="w-14 h-14 rounded-full bg-cyan-500/20 border-2 border-cyan-300 flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.5)] hud-pulse">
+                        <div id="reactorDot" class="w-4 h-4 rounded-full bg-cyan-400 shadow-[0_0_10px_#00f0ff]"></div>
+                    </div>
+                    <!-- Overlay HUD Labels -->
+                    <div class="absolute top-1 left-2 font-mono text-[10px] text-cyan-500">AI CORE: GEMINI-3.6-FLASH</div>
+                    <div class="absolute bottom-1 right-2 font-mono text-[10px] text-cyan-500">ENCRYPTION: 1024-BIT</div>
+                </div>
+
+                <!-- Chat Log Display Area -->
+                <div id="chatLog" class="flex-1 overflow-y-auto space-y-3 p-3 bg-slate-950/70 rounded-lg border border-cyan-900/40 max-h-[380px] min-h-[220px] font-mono text-xs">
+                    
+                    <!-- System Welcome Message -->
+                    <div class="flex items-start gap-2.5">
+                        <div class="w-6 h-6 rounded bg-cyan-950 border border-cyan-400 flex items-center justify-center text-cyan-300 font-bold shrink-0">
+                            J
+                        </div>
+                        <div class="flex-1 p-2.5 rounded-lg bg-cyan-950/30 border border-cyan-800/40 text-cyan-100 leading-relaxed">
+                            <div class="text-[10px] text-cyan-400 font-bold mb-1">J.A.R.V.I.S. SYSTEM</div>
+                            高度統括人工知能 J.A.R.V.I.S. オンライン。すべてのモジュールが正常に稼働しています。指示を入力または音声でお伝えください。
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Notification Message Banner -->
+                <div id="notificationBox" class="hidden my-2 p-2 rounded text-xs font-mono bg-rose-950/80 border border-rose-500 text-rose-200 flex items-center justify-between">
+                    <span id="notificationMessage"></span>
+                    <button onclick="hideNotification()" class="text-rose-400 hover:text-rose-100 font-bold">✕</button>
+                </div>
+
+                <!-- Console Input Controls -->
+                <div class="mt-3 pt-2 border-t border-cyan-900/60 flex items-center gap-2">
+                    
+                    <!-- Voice Input Microphone Button -->
+                    <button id="micBtn" onclick="toggleVoiceInput()" class="p-3 rounded-lg bg-cyan-950 border border-cyan-600 hover:bg-cyan-900 text-cyan-300 transition-all shrink-0 flex items-center justify-center relative group" title="音声認識（話しかける）">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                    </button>
+
+                    <!-- Text Command Input -->
+                    <input type="text" id="userInput" onkeydown="handleInputKey(event)" placeholder="JARVISへのコマンド・質問を入力..." 
+                        class="w-full bg-slate-950/90 border border-cyan-900/80 rounded-lg px-3 py-2 text-sm text-cyan-100 placeholder-cyan-800 outline-none focus:border-cyan-400 font-mono transition-all">
+
+                    <!-- Send Button -->
+                    <button id="sendBtn" onclick="sendUserMessage()" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-lg font-mono text-xs tracking-wider transition-all shadow-[0_0_12px_rgba(0,240,255,0.4)] shrink-0">
+                        EXEC
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= RIGHT PANEL: AUDIO VISUALIZER & SPEECH CONTROLS ================= -->
+        <section class="lg:col-span-3 flex flex-col gap-3">
+            
+            <div class="hud-panel rounded-xl p-4 flex-1 flex flex-col justify-between">
+                <div>
+                    <h2 class="font-orbitron text-xs font-bold text-cyan-400 tracking-wider border-b border-cyan-900/60 pb-2 mb-3 flex items-center justify-between">
+                        <span>AUDIO SPECTRUM</span>
+                        <span class="text-[10px] text-cyan-600 font-mono">DSP ENGINE</span>
+                    </h2>
+
+                    <!-- Audio Waveform Visualizer Canvas -->
+                    <div class="bg-slate-950 rounded-lg p-2 border border-cyan-900/60 mb-4">
+                        <canvas id="audioVisualizer" class="w-full h-24 block"></canvas>
+                    </div>
+
+                    <!-- Speech Synthesis Controls -->
+                    <div class="space-y-3 font-mono text-xs">
+                        <div class="text-cyan-400 font-bold border-b border-cyan-950 pb-1">音声合成パラメータ (TTS)</div>
+
+                        <!-- Speed Slider -->
+                        <div>
+                            <div class="flex justify-between text-cyan-300 mb-1">
+                                <span>SPEED (話速):</span>
+                                <span id="speedVal" class="text-cyan-400">1.0x</span>
+                            </div>
+                            <input type="range" id="speechSpeed" min="0.5" max="1.8" step="0.1" value="1.0" oninput="updateTTSParams()" class="w-full accent-cyan-400 bg-slate-900">
+                        </div>
+
+                        <!-- Pitch Slider -->
+                        <div>
+                            <div class="flex justify-between text-cyan-300 mb-1">
+                                <span>PITCH (音高):</span>
+                                <span id="pitchVal" class="text-cyan-400">1.0</span>
+                            </div>
+                            <input type="range" id="speechPitch" min="0.5" max="1.5" step="0.1" value="1.0" oninput="updateTTSParams()" class="w-full accent-cyan-400 bg-slate-900">
+                        </div>
+
+                        <!-- Voice Select -->
+                        <div>
+                            <div class="text-cyan-300 mb-1">VOICE MODEL:</div>
+                            <select id="voiceSelect" onchange="updateTTSParams()" class="w-full bg-slate-950 border border-cyan-900 rounded p-1 text-cyan-200 outline-none text-xs">
+                                <option value="">標準音声（日本語）</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Environmental Telemetry -->
+                <div class="mt-4 pt-3 border-t border-cyan-900/60 space-y-2 font-mono text-xs">
+                    <div class="text-[10px] text-cyan-500">ENVIRONMENT METRICS</div>
+                    <div class="grid grid-cols-2 gap-2 text-[11px]">
+                        <div class="p-2 rounded bg-slate-950 border border-cyan-950">
+                            <div class="text-slate-500">CORE TEMP</div>
+                            <div id="tempVal" class="text-cyan-300 font-bold">41.2 °C</div>
+                        </div>
+                        <div class="p-2 rounded bg-slate-950 border border-cyan-950">
+                            <div class="text-slate-500">BANDWIDTH</div>
+                            <div class="text-cyan-300 font-bold">10 Gbps</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
     </div>
 
-    <button id="micBtn" onclick="startListening()">話しかける</button>
+    <script>
+        let conversationHistory = [];
+        let isVoiceInputActive = false;
+        let isVoiceOutputEnabled = true;
+        let speechRecognition = null;
+        let ttsRate = 1.0;
+        let ttsPitch = 1.0;
+        let availableVoices = [];
 
-    <div class="status" id="status">システム待機中...</div>
+        const TARGET_MODEL = 'gemini-3.6-flash';
 
-    <div class="chat-box">
-        <div class="log user-log" id="userLog"><strong>あなた:</strong> 準備完了</div>
-        <div class="log jarvis-log" id="jarvisLog"><strong>JARVIS:</strong> お呼びでしょうか、サー。指示をお待ちしております。</div>
-    </div>
-</div>
+        // Initialize HUD Application on Window Load
+        window.addEventListener('DOMContentLoaded', () => {
+            initClock();
+            loadApiKey();
+            setupSpeechRecognition();
+            setupSpeechSynthesis();
+            startGaugeSimulator();
+            initVisualizer();
+        });
 
-<script>
-    // ブラウザの音声認識機能のセットアップ
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    let recognition;
+        function initClock() {
+            function updateClock() {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                document.getElementById('hudClock').innerText = `${hours}:${minutes}:${seconds} JST`;
 
-    if (SpeechRecognition) {
-        recognition = new SpeechRecognition();
-        recognition.lang = 'ja-JP';
-        recognition.interimResults = false;
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const date = String(now.getDate()).padStart(2, '0');
+                const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+                const dayName = days[now.getDay()];
+                document.getElementById('hudDate').innerText = `${year}.${month}.${date} ${dayName}`;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
 
-        recognition.onstart = () => {
-            updateStatus('音声を聞き取っています...');
-        };
+        function loadApiKey() {
+            const savedKey = localStorage.getItem('jarvis_hud_api_key');
+            if (savedKey) {
+                document.getElementById('apiKeyInput').value = savedKey;
+            }
+        }
 
-        recognition.onresult = async (event) => {
-            const userText = event.results[0][0].transcript;
-            document.getElementById('userLog').innerHTML = `<strong>あなた:</strong> ${userText}`;
-            updateStatus('JARVIS思考中...');
+        function saveApiKey() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            if (key) {
+                localStorage.setItem('jarvis_hud_api_key', key);
+                showNotification('API Keyが保存されました', false);
+            } else {
+                localStorage.removeItem('jarvis_hud_api_key');
+                showNotification('API Keyが消去されました', true);
+            }
+        }
 
-            const apiKey = document.getElementById('apiKey').value.trim();
-            if (!apiKey) {
-                showError('API Keyを入力してください。');
+        function getApiKey() {
+            return document.getElementById('apiKeyInput').value.trim() || localStorage.getItem('jarvis_hud_api_key') || '';
+        }
+
+        function toggleKeyVisibility() {
+            const input = document.getElementById('apiKeyInput');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function setupSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                console.warn('Speech Recognition not supported in this browser.');
                 return;
             }
 
-            // Gemini API呼び出し
-            await callGeminiAPI(userText, apiKey);
-        };
+            speechRecognition = new SpeechRecognition();
+            speechRecognition.lang = 'ja-JP';
+            speechRecognition.interimResults = false;
 
-        recognition.onerror = (e) => {
-            showError('音声認識エラー: ' + e.error);
-        };
-    } else {
-        alert('お使いのブラウザは音声認識に対応していません。Google Chrome等でお試しください。');
-    }
+            speechRecognition.onstart = () => {
+                isVoiceInputActive = true;
+                setSystemStatus('VOICE LISTENING...', 'amber');
+                setReactorState('listening');
+                document.getElementById('micBtn').classList.add('bg-cyan-500', 'text-slate-950', 'animate-pulse');
+            };
 
-    function startListening() {
-        const apiKey = document.getElementById('apiKey').value.trim();
-        if (!apiKey) {
-            alert('Gemini API Keyを入力してください。');
-            return;
+            speechRecognition.onresult = (event) => {
+                const text = event.results[0][0].transcript;
+                document.getElementById('userInput').value = text;
+                sendUserMessage();
+            };
+
+            speechRecognition.onerror = (e) => {
+                showNotification('音声認識エラー: ' + e.error, true);
+                stopVoiceInputState();
+            };
+
+            speechRecognition.onend = () => {
+                stopVoiceInputState();
+            };
         }
-        try {
-            recognition.start();
-        } catch(e) {
-            console.log('すでに認識中の可能性があります:', e);
-        }
-    }
 
-    // 無料版Gemini API（REST API呼び出し）
-    async function callGeminiAPI(promptText, apiKey) {
-        // 無料プランで動作する「gemini-2.5-flash」モデルのURL
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+        function toggleVoiceInput() {
+            if (!speechRecognition) {
+                showNotification('お使いのブラウザは音声入力に対応していません (Chrome推奨)', true);
+                return;
+            }
 
-        const systemInstruction = "あなたはトニー・スタークに仕える高度なAIアシスタント「JARVIS（ジャービス）」です。丁寧で知的、少しユーモアのある紳士的な執事の口調（「〜でございます、サー」「承知いたしました」など）で返答してください。音声合成で読み上げるため、特殊文字や記号、絵文字は一切使わず、短く1〜2文程度で簡潔に回答してください。";
-
-        const requestBody = {
-            system_instruction: {
-                parts: [{ text: systemInstruction }]
-            },
-            contents: [
-                {
-                    parts: [{ text: promptText }]
+            if (isVoiceInputActive) {
+                speechRecognition.stop();
+            } else {
+                if (!getApiKey()) {
+                    showNotification('Gemini API Keyを設定してください。', true);
+                    return;
                 }
-            ]
-        };
+                speechRecognition.start();
+            }
+        }
 
-        try {
+        function stopVoiceInputState() {
+            isVoiceInputActive = false;
+            setSystemStatus('ONLINE / READY', 'cyan');
+            setReactorState('normal');
+            document.getElementById('micBtn').classList.remove('bg-cyan-500', 'text-slate-950', 'animate-pulse');
+        }
+
+        function setupSpeechSynthesis() {
+            if (!('speechSynthesis' in window)) return;
+
+            function populateVoices() {
+                availableVoices = window.speechSynthesis.getVoices().filter(v => v.lang.includes('ja'));
+                const select = document.getElementById('voiceSelect');
+                select.innerHTML = '';
+                availableVoices.forEach((voice, i) => {
+                    const opt = document.createElement('option');
+                    opt.value = i;
+                    opt.innerText = `${voice.name} (${voice.lang})`;
+                    select.appendChild(opt);
+                });
+            }
+
+            populateVoices();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = populateVoices;
+            }
+        }
+
+        function updateTTSParams() {
+            ttsRate = parseFloat(document.getElementById('speechSpeed').value);
+            ttsPitch = parseFloat(document.getElementById('speechPitch').value);
+            document.getElementById('speedVal').innerText = `${ttsRate.toFixed(1)}x`;
+            document.getElementById('pitchVal').innerText = ttsPitch.toFixed(1);
+        }
+
+        function speakText(text) {
+            if (!isVoiceOutputEnabled || !('speechSynthesis' in window)) return;
+
+            window.speechSynthesis.cancel();
+            const uttr = new SpeechSynthesisUtterance(text);
+            uttr.lang = 'ja-JP';
+            uttr.rate = ttsRate;
+            uttr.pitch = ttsPitch;
+
+            const voiceIdx = document.getElementById('voiceSelect').value;
+            if (voiceIdx && availableVoices[voiceIdx]) {
+                uttr.voice = availableVoices[voiceIdx];
+            }
+
+            uttr.onstart = () => {
+                setReactorState('speaking');
+                setSystemStatus('VOCALIZING RESPONSE...', 'emerald');
+            };
+
+            uttr.onend = () => {
+                setReactorState('normal');
+                setSystemStatus('ONLINE / READY', 'cyan');
+            };
+
+            uttr.onerror = () => {
+                setReactorState('normal');
+                setSystemStatus('ONLINE / READY', 'cyan');
+            };
+
+            window.speechSynthesis.speak(uttr);
+        }
+
+        function toggleVoiceOutput() {
+            isVoiceOutputEnabled = !isVoiceOutputEnabled;
+            const btnText = document.getElementById('voiceStatusText');
+            const btnIcon = document.getElementById('voiceStatusIcon');
+            if (isVoiceOutputEnabled) {
+                btnText.innerText = 'VOICE: ON';
+                btnIcon.innerText = '🔊';
+            } else {
+                btnText.innerText = 'VOICE: OFF';
+                btnIcon.innerText = '🔇';
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        function handleInputKey(event) {
+            if (event.key === 'Enter') {
+                sendUserMessage();
+            }
+        }
+
+        function triggerMacro(command) {
+            if (command === '自己診断') {
+                document.getElementById('userInput').value = "システム自己診断を開始し、動作状態を報告してください。";
+            } else if (command === 'ステータス') {
+                document.getElementById('userInput').value = "現在のJARVISシステムの動作状況を教えてください。";
+            } else if (command === '時刻照会') {
+                document.getElementById('userInput').value = "現在時刻と日付を提示してください。";
+            }
+            sendUserMessage();
+        }
+
+        async function sendUserMessage() {
+            const inputEl = document.getElementById('userInput');
+            const text = inputEl.value.trim();
+            const apiKey = getApiKey();
+
+            if (!text) return;
+            if (!apiKey) {
+                showNotification('Gemini API Keyが未登録です。画面上部に入力して保存してください。', true);
+                return;
+            }
+
+            inputEl.value = '';
+            hideNotification();
+
+            // Append User Message to UI
+            appendChatMessage('USER', text);
+
+            setSystemStatus('PROCESSING INTENT...', 'amber');
+            setReactorState('thinking');
+
+            try {
+                const reply = await callGeminiAPI(text, apiKey);
+                appendChatMessage('JARVIS', reply);
+
+                if (isVoiceOutputEnabled) {
+                    speakText(reply);
+                } else {
+                    setReactorState('normal');
+                    setSystemStatus('ONLINE / READY', 'cyan');
+                }
+
+            } catch (err) {
+                console.error(err);
+                showNotification('API通信エラー: ' + err.message, true);
+                setReactorState('normal');
+                setSystemStatus('ERROR ENCOUNTERED', 'red');
+            }
+        }
+
+        async function callGeminiAPI(promptText, apiKey) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${TARGET_MODEL}:generateContent?key=${apiKey}`;
+
+            const systemInstruction = 
+                "あなたは高度統括人工知能システム『J.A.R.V.I.S.』です。" +
+                "論理的、知的、かつ礼儀正しいAIアシスタントとして、迅速かつ正確にユーザーの問いに回答してください。" +
+                "返答は正確で分かりやすく、音声読み上げに適した簡潔な文章で構成してください。" +
+                "フィクション作品やキャラクターの言及は避け、実用的なAIシステムとして振る舞ってください。";
+
+            conversationHistory.push({
+                role: "user",
+                parts: [{ text: promptText }]
+            });
+
+            const requestBody = {
+                system_instruction: {
+                    parts: [{ text: systemInstruction }]
+                },
+                contents: conversationHistory
+            };
+
             const response = await fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody)
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                // エラー応答時の処理
-                const errorMsg = data.error ? data.error.message : 'APIリクエストに失敗しました';
-                showError('APIエラー: ' + errorMsg);
-                return;
+                conversationHistory.pop();
+                const msg = data.error ? data.error.message : 'API通信に失敗しました。';
+                throw new Error(msg);
             }
 
-            // 正常応答の抽出
-            const replyText = data.candidates[0].content.parts[0].text;
-            document.getElementById('jarvisLog').className = 'log jarvis-log';
-            document.getElementById('jarvisLog').innerHTML = `<strong>JARVIS:</strong> ${replyText}`;
-            updateStatus('応答完了');
+            const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "申し訳ございません。応答を解析できませんでした。";
 
-            // 音声で喋らせる
-            speak(replyText);
+            conversationHistory.push({
+                role: "model",
+                parts: [{ text: replyText }]
+            });
 
-        } catch (err) {
-            showError('通信エラーが発生しました: ' + err.message);
+            return replyText;
         }
-    }
 
-    // 音声読み上げ機能
-    function speak(text) {
-        window.speechSynthesis.cancel(); // 前の発声をクリア
-        const uttr = new SpeechSynthesisUtterance(text);
-        uttr.lang = 'ja-JP';
-        uttr.pitch = 0.9; // 低めの落ち着いた声
-        uttr.rate = 1.0;
-        window.speechSynthesis.speak(uttr);
-    }
+        function appendChatMessage(sender, message) {
+            const chatLog = document.getElementById('chatLog');
+            const wrapper = document.createElement('div');
+            wrapper.className = "flex items-start gap-2.5";
 
-    function updateStatus(text) {
-        document.getElementById('status').innerText = text;
-    }
+            const isUser = sender === 'USER';
+            const iconBg = isUser ? 'bg-slate-800 border-slate-600 text-slate-300' : 'bg-cyan-950 border-cyan-400 text-cyan-300';
+            const msgBg = isUser ? 'bg-slate-900/80 border-slate-700/80 text-slate-100' : 'bg-cyan-950/30 border-cyan-800/40 text-cyan-100';
 
-    function showError(msg) {
-        updateStatus('エラーが発生しました');
-        const jarvisLog = document.getElementById('jarvisLog');
-        jarvisLog.className = 'log error-log';
-        jarvisLog.innerHTML = `<strong>エラー:</strong> ${msg}`;
-    }
-</script>
+            wrapper.innerHTML = `
+                <div class="w-6 h-6 rounded ${iconBg} border flex items-center justify-center font-bold text-[10px] shrink-0">
+                    ${isUser ? 'U' : 'J'}
+                </div>
+                <div class="flex-1 p-2.5 rounded-lg ${msgBg} border leading-relaxed">
+                    <div class="text-[10px] ${isUser ? 'text-slate-400' : 'text-cyan-400'} font-bold mb-1">${sender}</div>
+                    ${escapeHtml(message)}
+                </div>
+            `;
 
+            chatLog.appendChild(wrapper);
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+
+        function clearChatHistory() {
+            conversationHistory = [];
+            const chatLog = document.getElementById('chatLog');
+            chatLog.innerHTML = `
+                <div class="flex items-start gap-2.5">
+                    <div class="w-6 h-6 rounded bg-cyan-950 border border-cyan-400 flex items-center justify-center text-cyan-300 font-bold shrink-0">
+                        J
+                    </div>
+                    <div class="flex-1 p-2.5 rounded-lg bg-cyan-950/30 border border-cyan-800/40 text-cyan-100 leading-relaxed">
+                        <div class="text-[10px] text-cyan-400 font-bold mb-1">J.A.R.V.I.S. SYSTEM</div>
+                        会話メモリの初期化を完了しました。新規セッションを開始します。
+                    </div>
+                </div>
+            `;
+            showNotification('メモリバッファを初期化しました', false);
+        }
+
+        function setReactorState(state) {
+            const outer = document.getElementById('reactorRingOuter');
+            const core = document.getElementById('reactorCore');
+
+            if (state === 'listening') {
+                outer.style.borderColor = '#f59e0b';
+                core.style.borderColor = '#f59e0b';
+            } else if (state === 'thinking') {
+                outer.style.borderColor = '#3b82f6';
+                core.style.borderColor = '#3b82f6';
+            } else if (state === 'speaking') {
+                outer.style.borderColor = '#10b981';
+                core.style.borderColor = '#10b981';
+            } else {
+                outer.style.borderColor = 'rgba(0, 240, 255, 0.5)';
+                core.style.borderColor = '#00f0ff';
+            }
+        }
+
+        function setSystemStatus(text, color) {
+            const label = document.getElementById('statusText');
+            label.innerText = text;
+        }
+
+        function startGaugeSimulator() {
+            setInterval(() => {
+                // Random fluctuation for real-time feel
+                const load = Math.floor(25 + Math.random() * 20);
+                const mem = Math.floor(55 + Math.random() * 10);
+                const lat = Math.floor(12 + Math.random() * 8);
+                const temp = (40.5 + Math.random() * 1.5).toFixed(1);
+
+                document.getElementById('coreLoadValue').innerText = `${load}%`;
+                document.getElementById('coreBar').style.width = `${load}%`;
+                document.getElementById('coreLoadRing').setAttribute('stroke-dasharray', `${load}, 100`);
+
+                document.getElementById('memBufferValue').innerText = `${mem}%`;
+                document.getElementById('memBar').style.width = `${mem}%`;
+                document.getElementById('memBufferRing').setAttribute('stroke-dasharray', `${mem}, 100`);
+
+                document.getElementById('latencyVal').innerText = `${lat} ms`;
+                document.getElementById('tempVal').innerText = `${temp} °C`;
+            }, 2500);
+        }
+
+        function initVisualizer() {
+            const canvas = document.getElementById('audioVisualizer');
+            const ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = canvas.parentElement.clientHeight || 96;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            let phase = 0;
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const bars = 28;
+                const barWidth = canvas.width / bars - 2;
+
+                for (let i = 0; i < bars; i++) {
+                    let height = Math.sin(phase + i * 0.3) * 20 + 25;
+                    ctx.fillStyle = '#00f0ff';
+                    ctx.fillRect(i * (barWidth + 2), canvas.height - height, barWidth, height);
+                }
+
+                phase += 0.08;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function showNotification(msg, isError) {
+            const box = document.getElementById('notificationBox');
+            const msgEl = document.getElementById('notificationMessage');
+            box.classList.remove('hidden');
+            if (isError) {
+                box.className = "my-2 p-2 rounded text-xs font-mono bg-rose-950/80 border border-rose-500 text-rose-200 flex items-center justify-between";
+            } else {
+                box.className = "my-2 p-2 rounded text-xs font-mono bg-cyan-950/80 border border-cyan-500 text-cyan-200 flex items-center justify-between";
+            }
+            msgEl.innerText = msg;
+        }
+
+        function hideNotification() {
+            document.getElementById('notificationBox').classList.add('hidden');
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
 </body>
 </html>
