@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S. - Advanced AI System Control HUD</title>
+    <title>J.A.R.V.I.S. - Advanced Sci-Fi AI HUD System</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Sci-Fi Google Fonts -->
@@ -16,16 +16,15 @@
             theme: {
                 extend: {
                     colors: {
-                        hud: {
-                            bg: '#020611',
-                            panel: '#071122',
-                            border: '#00f0ff',
-                            cyan: '#00f0ff',
-                            blue: '#0066ff',
-                            darkblue: '#001a33',
-                            amber: '#f59e0b',
-                            red: '#ef4444',
-                            emerald: '#10b981'
+                        theme: {
+                            base: 'var(--bg-base)',
+                            panel: 'var(--bg-panel)',
+                            border: 'var(--color-primary)',
+                            primary: 'var(--color-primary)',
+                            primaryGlow: 'var(--color-primary-glow)',
+                            secondary: 'var(--color-secondary)',
+                            accent: 'var(--color-accent)',
+                            dark: 'var(--bg-dark)'
                         }
                     },
                     fontFamily: {
@@ -39,144 +38,290 @@
     </script>
 
     <style>
+        :root {
+            /* Default J.A.R.V.I.S. Cyan Theme */
+            --bg-base: #020611;
+            --bg-panel: rgba(7, 17, 34, 0.85);
+            --bg-dark: #01040a;
+            --color-primary: #00f0ff;
+            --color-primary-glow: rgba(0, 240, 255, 0.4);
+            --color-secondary: #0066ff;
+            --color-accent: #38bdf8;
+            --text-main: #7dd3fc;
+            --text-heading: #e0f2fe;
+            --border-alpha: rgba(0, 240, 255, 0.3);
+        }
+
+        [data-theme="mark85"] {
+            /* Stark MARK 85 Gold & Red Theme */
+            --bg-base: #0c0204;
+            --bg-panel: rgba(28, 8, 12, 0.88);
+            --bg-dark: #050102;
+            --color-primary: #ffd700;
+            --color-primary-glow: rgba(255, 215, 0, 0.5);
+            --color-secondary: #ef4444;
+            --color-accent: #f59e0b;
+            --text-main: #fde68a;
+            --text-heading: #fffbeb;
+            --border-alpha: rgba(255, 215, 0, 0.35);
+        }
+
+        [data-theme="friday"] {
+            /* F.R.I.D.A.Y. Amber Theme */
+            --bg-base: #0f0a02;
+            --bg-panel: rgba(28, 18, 6, 0.88);
+            --bg-dark: #080501;
+            --color-primary: #f59e0b;
+            --color-primary-glow: rgba(245, 158, 11, 0.45);
+            --color-secondary: #ea580c;
+            --color-accent: #fbbf24;
+            --text-main: #fef08a;
+            --text-heading: #fffbeb;
+            --border-alpha: rgba(245, 158, 11, 0.35);
+        }
+
+        [data-theme="stealth"] {
+            /* STEALTH Tactical Emerald Theme */
+            --bg-base: #020f08;
+            --bg-panel: rgba(6, 26, 16, 0.88);
+            --bg-dark: #010804;
+            --color-primary: #10b981;
+            --color-primary-glow: rgba(16, 185, 129, 0.45);
+            --color-secondary: #059669;
+            --color-accent: #34d399;
+            --text-main: #a7f3d0;
+            --text-heading: #ecfdf5;
+            --border-alpha: rgba(16, 185, 129, 0.35);
+        }
+
         html, body {
             height: 100vh;
             max-height: 100vh;
             overflow: hidden;
-            background-color: #020611;
-            color: #7dd3fc;
+            background-color: var(--bg-base);
+            color: var(--text-main);
             font-family: 'Rajdhani', sans-serif;
-            background-image: 
-                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
-            background-size: 24px 24px;
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
 
-        /* Scanline HUD Overlay */
+        /* Grid Background Pattern */
+        .hud-grid-bg {
+            background-image: 
+                linear-gradient(var(--border-alpha) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-alpha) 1px, transparent 1px);
+            background-size: 28px 28px;
+        }
+
+        /* Scanline Overlay */
         .scanlines {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             pointer-events: none;
             background: linear-gradient(
                 rgba(18, 16, 16, 0) 50%, 
-                rgba(0, 240, 255, 0.02) 50%
+                rgba(0, 0, 0, 0.25) 50%
             );
-            background-size: 100% 3px;
+            background-size: 100% 4px;
             z-index: 50;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
         }
 
-        /* Glass Panel HUD Glow Borders */
+        /* HUD Glass Panel Effect */
         .hud-panel {
-            background: rgba(7, 17, 34, 0.85);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.08), inset 0 0 12px rgba(0, 240, 255, 0.03);
+            background: var(--bg-panel);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-alpha);
+            box-shadow: 0 0 15px var(--color-primary-glow), inset 0 0 15px rgba(0, 0, 0, 0.5);
             position: relative;
+            transition: border-color 0.4s ease, box-shadow 0.4s ease;
         }
 
         .hud-panel::before {
             content: '';
             position: absolute;
-            top: -1px; left: 8px; width: 16px; height: 2px;
-            background: #00f0ff;
-            box-shadow: 0 0 6px #00f0ff;
+            top: -1px; left: 10px; width: 20px; height: 2px;
+            background: var(--color-primary);
+            box-shadow: 0 0 8px var(--color-primary);
         }
 
         .hud-panel::after {
             content: '';
             position: absolute;
-            bottom: -1px; right: 8px; width: 16px; height: 2px;
-            background: #00f0ff;
-            box-shadow: 0 0 6px #00f0ff;
+            bottom: -1px; right: 10px; width: 20px; height: 2px;
+            background: var(--color-primary);
+            box-shadow: 0 0 8px var(--color-primary);
         }
 
-        .hud-text-glow {
-            text-shadow: 0 0 6px rgba(0, 240, 255, 0.6);
+        .hud-glow-text {
+            color: var(--color-primary);
+            text-shadow: 0 0 8px var(--color-primary-glow);
         }
 
-        /* HUD Core Animations */
-        @keyframes spinClockwise {
+        /* Sci-Fi Animations */
+        @keyframes spinCW {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        @keyframes spinCounterClockwise {
+        @keyframes spinCCW {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(-360deg); }
         }
 
         @keyframes hudPulse {
-            0%, 100% { opacity: 0.7; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.05); }
+            0%, 100% { opacity: 0.75; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.06); }
         }
 
-        .spin-slow { animation: spinClockwise 20s linear infinite; }
-        .spin-reverse { animation: spinCounterClockwise 15s linear infinite; }
-        .hud-pulse { animation: hudPulse 2.5s ease-in-out infinite; }
+        @keyframes reticleSweep {
+            0% { top: 0%; opacity: 0.2; }
+            50% { opacity: 0.8; }
+            100% { top: 100%; opacity: 0.2; }
+        }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: rgba(2, 6, 17, 0.8); }
-        ::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.4); border-radius: 2px; }
-        ::-webkit-scrollbar-thumb:hover { background: #00f0ff; }
+        .spin-slow { animation: spinCW 22s linear infinite; }
+        .spin-reverse { animation: spinCCW 16s linear infinite; }
+        .hud-pulse { animation: hudPulse 2.5s ease-in-out infinite; }
+        .scan-sweep { animation: reticleSweep 3s ease-in-out infinite alternate; }
+
+        /* Custom Sci-Fi Scrollbar */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--border-alpha); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+
+        /* Markdown Styling inside Chat Terminal */
+        .markdown-body h1, .markdown-body h2, .markdown-body h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--color-primary);
+            margin-top: 0.6em;
+            margin-bottom: 0.3em;
+            font-weight: 700;
+        }
+        .markdown-body code {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-alpha);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--text-heading);
+            font-size: 0.9em;
+        }
+        .markdown-body pre {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-alpha);
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            overflow-x: auto;
+            position: relative;
+        }
+        .markdown-body pre code {
+            background: transparent;
+            border: none;
+            padding: 0;
+            color: #a7f3d0;
+        }
+        .markdown-body ul { list-style-type: disc; padding-left: 1.25rem; margin: 0.4rem 0; }
+        .markdown-body ol { list-style-type: decimal; padding-left: 1.25rem; margin: 0.4rem 0; }
+        .markdown-body table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; font-size: 0.85rem; }
+        .markdown-body th, .markdown-body td { border: 1px solid var(--border-alpha); padding: 0.35rem 0.6rem; text-align: left; }
+        .markdown-body th { background: rgba(0,0,0,0.5); color: var(--color-primary); }
     </style>
 </head>
-<body class="h-screen max-h-screen overflow-hidden flex flex-col p-1.5 md:p-2.5 select-none">
-    <div class="scanlines"></div>
+<body class="h-screen max-h-screen overflow-hidden flex flex-col p-1.5 md:p-2.5 select-none hud-grid-bg" id="appBody" data-theme="jarvis">
+    
+    <!-- Scanlines Overlay Layer -->
+    <div id="scanlineLayer" class="scanlines"></div>
 
-    <!-- HUD TOP NAVIGATION / COMPACT STATUS BAR -->
-    <header class="hud-panel rounded-lg px-3 py-1.5 mb-2 flex items-center justify-between gap-2 border-cyan-500/40 shrink-0">
-        <!-- System Title & ID -->
-        <div class="flex items-center gap-2.5">
-            <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></div>
+    <!-- HUD TOP NAVIGATION & CONTROL BAR -->
+    <header class="hud-panel rounded-lg px-3 py-1.5 mb-2 flex items-center justify-between gap-2 shrink-0 z-10">
+        <!-- System Title, AI Persona Switcher & Status Badge -->
+        <div class="flex items-center gap-2.5 flex-wrap">
+            <div class="w-2.5 h-2.5 rounded-full bg-theme-primary animate-ping"></div>
             <div>
-                <h1 class="font-orbitron text-base md:text-lg font-black tracking-widest text-cyan-400 hud-text-glow flex items-center gap-1.5 leading-none">
-                    J.A.R.V.I.S.
-                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-950/90 border border-cyan-500/50 text-cyan-300">v3.8 OPTICAL</span>
+                <h1 class="font-orbitron text-sm md:text-base font-black tracking-widest hud-glow-text flex items-center gap-2 leading-none">
+                    <span id="headerTitle">J.A.R.V.I.S.</span>
+                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/60 border border-theme-border text-theme-primary">MARK LXXXV v4.0</span>
                 </h1>
             </div>
             
-            <!-- System Status Badge -->
-            <div id="systemStatusBadge" class="hidden sm:flex px-2 py-0.5 rounded border border-cyan-500/50 bg-cyan-950/50 font-mono text-[11px] text-cyan-300 items-center gap-1.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            <!-- Persona Selector Dropdown -->
+            <div class="flex items-center gap-1 bg-black/50 px-2 py-0.5 rounded border border-theme-border text-[11px] font-mono">
+                <span class="text-xs">🤖</span>
+                <select id="personaSelect" onchange="changePersona(this.value)" class="bg-transparent text-theme-primary outline-none cursor-pointer font-bold">
+                    <option value="jarvis" class="bg-slate-950 text-cyan-400">J.A.R.V.I.S. (Formal British)</option>
+                    <option value="friday" class="bg-slate-950 text-amber-400">F.R.I.D.A.Y. (Tactical Irish)</option>
+                    <option value="edith" class="bg-slate-950 text-red-400">E.D.I.T.H. (Defense Array)</option>
+                </select>
+            </div>
+
+            <!-- Theme Selector Dropdown -->
+            <div class="hidden sm:flex items-center gap-1 bg-black/50 px-2 py-0.5 rounded border border-theme-border text-[11px] font-mono">
+                <span class="text-xs">🎨</span>
+                <select id="themeSelect" onchange="switchTheme(this.value)" class="bg-transparent text-theme-primary outline-none cursor-pointer">
+                    <option value="jarvis" class="bg-slate-950 text-cyan-400">J.A.R.V.I.S. Cyan</option>
+                    <option value="mark85" class="bg-slate-950 text-yellow-400">MARK 85 Gold/Red</option>
+                    <option value="friday" class="bg-slate-950 text-amber-400">F.R.I.D.A.Y. Amber</option>
+                    <option value="stealth" class="bg-slate-950 text-emerald-400">STEALTH Emerald</option>
+                </select>
+            </div>
+
+            <!-- Status Badge -->
+            <div id="systemStatusBadge" class="hidden md:flex px-2 py-0.5 rounded border border-theme-border bg-black/40 font-mono text-[10px] items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-theme-primary animate-pulse"></span>
                 <span id="statusText">ONLINE / READY</span>
             </div>
         </div>
 
-        <!-- API Key Storage Control -->
-        <div class="flex items-center gap-1.5 bg-slate-950/90 px-2 py-1 rounded border border-cyan-900/60 max-w-xs w-full sm:w-auto">
-            <span class="font-mono text-[10px] text-cyan-400 font-bold shrink-0">KEY:</span>
+        <!-- API Key Storage & Security Controls -->
+        <div class="flex items-center gap-1.5 bg-black/60 px-2 py-1 rounded border border-theme-border max-w-xs w-full sm:w-auto">
+            <span class="font-mono text-[10px] text-theme-primary font-bold shrink-0">KEY:</span>
             <input type="password" id="apiKeyInput" placeholder="Gemini API Key" 
-                class="bg-transparent border-none text-[11px] font-mono text-cyan-200 placeholder-cyan-800 outline-none w-full sm:w-44">
-            <button onclick="toggleKeyVisibility()" class="text-cyan-500 hover:text-cyan-300 px-1 text-[10px] font-mono" title="表示切替">👁</button>
-            <button onclick="saveApiKey()" class="px-2 py-0.5 text-[10px] font-mono font-bold bg-cyan-600 hover:bg-cyan-500 text-slate-950 rounded transition-all shrink-0">
+                class="bg-transparent border-none text-[11px] font-mono text-theme-primary placeholder-theme-primary/40 outline-none w-full sm:w-36">
+            <button onclick="toggleKeyVisibility()" class="text-theme-primary hover:opacity-80 px-1 text-[10px] font-mono" title="表示切替">👁</button>
+            <button onclick="saveApiKey()" class="px-2 py-0.5 text-[10px] font-mono font-bold bg-theme-primary text-black rounded transition-all hover:brightness-125 shrink-0">
                 保存
             </button>
         </div>
 
-        <!-- HUD Realtime Clock & Controls -->
-        <div class="font-mono text-[11px] text-cyan-300/80 flex items-center gap-3 shrink-0">
-            <div class="text-right hidden md:block">
-                <div id="hudDate" class="text-[9px] text-cyan-400/70 tracking-wider">2026.09.22 TUE</div>
-                <div id="hudClock" class="font-orbitron text-xs font-bold text-cyan-300 tracking-wider">19:58:24 JST</div>
-            </div>
-            <button onclick="toggleVoiceOutput()" id="voiceToggleBtn" class="px-2 py-1 rounded border border-cyan-500/40 bg-cyan-950/60 hover:bg-cyan-900 text-cyan-300 text-[11px] font-mono flex items-center gap-1 transition-all">
-                <span id="voiceStatusIcon">🔊</span>
-                <span id="voiceStatusText" class="hidden lg:inline">VOICE: ON</span>
+        <!-- HUD Controls & Sound Synthesizer Controls -->
+        <div class="font-mono text-[11px] flex items-center gap-2 shrink-0">
+            <!-- Audio Sound FX Mute Toggle -->
+            <button onclick="toggleAudioSFX()" id="sfxToggleBtn" class="px-2 py-1 rounded border border-theme-border bg-black/50 hover:bg-black/80 text-theme-primary text-[11px] font-mono flex items-center gap-1 transition-all" title="Sci-Fi 効果音 (Web Audio API)">
+                <span id="sfxStatusIcon">🔊</span>
+                <span class="hidden xl:inline">SFX: ON</span>
             </button>
+
+            <!-- TTS Voice Toggle -->
+            <button onclick="toggleVoiceOutput()" id="voiceToggleBtn" class="px-2 py-1 rounded border border-theme-border bg-black/50 hover:bg-black/80 text-theme-primary text-[11px] font-mono flex items-center gap-1 transition-all">
+                <span id="voiceStatusIcon">🗣️</span>
+                <span id="voiceStatusText" class="hidden lg:inline">TTS: ON</span>
+            </button>
+
+            <!-- Fullscreen & Scanline Toggles -->
+            <button onclick="toggleScanlines()" class="p-1.5 rounded border border-theme-border bg-black/50 hover:bg-black/80 text-theme-primary text-xs" title="スキャンライン切替">📺</button>
+            <button onclick="toggleFullscreen()" class="p-1.5 rounded border border-theme-border bg-black/50 hover:bg-black/80 text-theme-primary text-xs" title="全画面表示">⛶</button>
+
+            <!-- Realtime Clock -->
+            <div class="text-right hidden xl:block ml-1">
+                <div id="hudDate" class="text-[9px] opacity-80 tracking-wider">2026.09.22 TUE</div>
+                <div id="hudClock" class="font-orbitron text-xs font-bold hud-glow-text tracking-wider">22:32:00 JST</div>
+            </div>
         </div>
     </header>
 
-    <!-- MAIN HUD CONTENT GRID (Fits 100vh) -->
+    <!-- MAIN HUD CONTENT GRID -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-2 flex-1 min-h-0 h-full overflow-hidden">
         
-        <!-- ================= LEFT PANEL: DIAGNOSTICS & GAUGES ================= -->
+        <!-- ================= LEFT PANEL: TELEMETRY & DIAGNOSTICS ================= -->
         <section class="lg:col-span-3 flex flex-col gap-2 min-h-0 h-full overflow-hidden">
             
             <div class="hud-panel rounded-lg p-2.5 flex-1 flex flex-col justify-between overflow-hidden">
-                <h2 class="font-orbitron text-[11px] font-bold text-cyan-400 tracking-wider border-b border-cyan-900/60 pb-1 mb-2 flex items-center justify-between shrink-0">
+                <h2 class="font-orbitron text-[11px] font-bold text-theme-primary tracking-wider border-b border-theme-border pb-1 mb-2 flex items-center justify-between shrink-0">
                     <span>SYSTEM DIAGNOSTICS</span>
-                    <span class="text-[9px] text-cyan-600 font-mono">NODE #01</span>
+                    <span class="text-[9px] opacity-70 font-mono">NODE #01</span>
                 </h2>
 
                 <div class="space-y-2.5 my-auto overflow-y-auto pr-1">
@@ -184,17 +329,20 @@
                     <div class="flex items-center gap-2.5">
                         <div class="relative w-11 h-11 shrink-0 flex items-center justify-center">
                             <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                                <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                <path id="coreLoadRing" class="text-cyan-400 transition-all duration-700" stroke-width="3.5" stroke-dasharray="32, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="text-black/60" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path id="coreLoadRing" class="text-theme-primary transition-all duration-700" stroke-width="3.5" stroke-dasharray="32, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                             </svg>
-                            <span id="coreLoadValue" class="absolute font-mono text-[10px] text-cyan-300 font-bold">32%</span>
+                            <span id="coreLoadValue" class="absolute font-mono text-[10px] text-theme-primary font-bold">32%</span>
                         </div>
                         <div class="flex-1">
-                            <div class="font-mono text-[11px] text-cyan-200 font-bold">NEURAL CORE</div>
-                            <div class="w-full bg-slate-900 rounded-full h-1 mt-0.5 border border-cyan-950 overflow-hidden">
-                                <div id="coreBar" class="bg-cyan-400 h-1 rounded-full transition-all duration-500" style="width: 32%"></div>
+                            <div class="font-mono text-[11px] text-theme-heading font-bold flex justify-between">
+                                <span>NEURAL CORE</span>
+                                <span class="text-[9px] text-theme-primary opacity-80">GEMINI 2.5</span>
                             </div>
-                            <span class="font-mono text-[9px] text-cyan-500">64 THREADS ACTIVE</span>
+                            <div class="w-full bg-black/60 rounded-full h-1 mt-0.5 border border-theme-border/50 overflow-hidden">
+                                <div id="coreBar" class="bg-theme-primary h-1 rounded-full transition-all duration-500" style="width: 32%"></div>
+                            </div>
+                            <span class="font-mono text-[9px] opacity-70">128 SYNAPSE THREADS</span>
                         </div>
                     </div>
 
@@ -202,138 +350,169 @@
                     <div class="flex items-center gap-2.5">
                         <div class="relative w-11 h-11 shrink-0 flex items-center justify-center">
                             <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                                <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                <path id="memBufferRing" class="text-blue-500 transition-all duration-700" stroke-width="3.5" stroke-dasharray="58, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="text-black/60" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path id="memBufferRing" class="text-theme-secondary transition-all duration-700" stroke-width="3.5" stroke-dasharray="58, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                             </svg>
-                            <span id="memBufferValue" class="absolute font-mono text-[10px] text-blue-300 font-bold">58%</span>
+                            <span id="memBufferValue" class="absolute font-mono text-[10px] text-theme-primary font-bold">58%</span>
                         </div>
                         <div class="flex-1">
-                            <div class="font-mono text-[11px] text-blue-200 font-bold">MEMORY BUFFER</div>
-                            <div class="w-full bg-slate-900 rounded-full h-1 mt-0.5 border border-blue-950 overflow-hidden">
-                                <div id="memBar" class="bg-blue-500 h-1 rounded-full transition-all duration-500" style="width: 58%"></div>
+                            <div class="font-mono text-[11px] text-theme-heading font-bold">MEMORY BUFFER</div>
+                            <div class="w-full bg-black/60 rounded-full h-1 mt-0.5 border border-theme-border/50 overflow-hidden">
+                                <div id="memBar" class="bg-theme-secondary h-1 rounded-full transition-all duration-500" style="width: 58%"></div>
                             </div>
-                            <span class="font-mono text-[9px] text-blue-400">18.6 GB ALLOCATED</span>
+                            <span class="font-mono text-[9px] opacity-70">32.4 GB ALLOCATED</span>
                         </div>
                     </div>
 
-                    <!-- Telemetry Metrics -->
-                    <div class="p-2 rounded bg-cyan-950/30 border border-cyan-900/50 font-mono text-[10px] space-y-1">
-                        <div class="flex justify-between text-cyan-300">
-                            <span>LATENCY:</span>
-                            <span id="latencyVal" class="text-cyan-400 font-bold">14 ms</span>
+                    <!-- Telemetry Metrics & Token Counter -->
+                    <div class="p-2 rounded bg-black/40 border border-theme-border/60 font-mono text-[10px] space-y-1">
+                        <div class="flex justify-between">
+                            <span class="opacity-80">LATENCY:</span>
+                            <span id="latencyVal" class="text-theme-primary font-bold">12 ms</span>
                         </div>
-                        <div class="flex justify-between text-cyan-300">
-                            <span>QUANTUM LINK:</span>
-                            <span class="text-emerald-400 font-bold">99.8% STABLE</span>
+                        <div class="flex justify-between">
+                            <span class="opacity-80">QUANTUM LINK:</span>
+                            <span class="text-emerald-400 font-bold">99.9% STABLE</span>
                         </div>
-                        <div class="flex justify-between text-cyan-300">
-                            <span>CORE TEMP:</span>
-                            <span id="tempVal" class="text-cyan-400 font-bold">41.2 °C</span>
+                        <div class="flex justify-between">
+                            <span class="opacity-80">CORE TEMP:</span>
+                            <span id="tempVal" class="text-theme-primary font-bold">41.8 °C</span>
+                        </div>
+                        <div class="flex justify-between border-t border-theme-border/40 pt-1 mt-1">
+                            <span class="opacity-80">EST. TOKENS:</span>
+                            <span id="tokenCounter" class="text-theme-primary font-bold">0</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- HUD Quick Commands -->
-                <div class="mt-2 pt-2 border-t border-cyan-900/60 shrink-0">
-                    <div class="font-mono text-[9px] text-cyan-500 uppercase mb-1">クイックマクロ</div>
+                <!-- HUD Quick Command Macros -->
+                <div class="mt-2 pt-2 border-t border-theme-border shrink-0">
+                    <div class="font-mono text-[9px] opacity-70 uppercase mb-1">PROMPT MACROS</div>
                     <div class="grid grid-cols-2 gap-1 font-mono text-[10px]">
-                        <button onclick="triggerMacro('自己診断')" class="p-1 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 rounded text-cyan-300 text-left truncate transition-all">
+                        <button onclick="triggerMacro('自己診断')" class="p-1 bg-black/50 hover:bg-black/80 border border-theme-border/60 rounded text-theme-primary text-left truncate transition-all">
                             &gt; 自己診断
                         </button>
-                        <button onclick="triggerMacro('ステータス')" class="p-1 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 rounded text-cyan-300 text-left truncate transition-all">
-                            &gt; 現在状態
+                        <button onclick="triggerMacro('ステータス')" class="p-1 bg-black/50 hover:bg-black/80 border border-theme-border/60 rounded text-theme-primary text-left truncate transition-all">
+                            &gt; システム状況
                         </button>
-                        <button onclick="clearChatHistory()" class="p-1 bg-amber-950/40 hover:bg-amber-900/60 border border-amber-800/60 rounded text-amber-300 text-left truncate transition-all">
+                        <button onclick="triggerMacro('戦術分析')" class="p-1 bg-black/50 hover:bg-black/80 border border-theme-border/60 rounded text-theme-primary text-left truncate transition-all">
+                            &gt; 戦術分析
+                        </button>
+                        <button onclick="clearChatHistory()" class="p-1 bg-red-950/40 hover:bg-red-900/60 border border-red-500/60 rounded text-red-300 text-left truncate transition-all">
                             &gt; メモリ消去
-                        </button>
-                        <button onclick="triggerMacro('時刻確認')" class="p-1 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 rounded text-cyan-300 text-left truncate transition-all">
-                            &gt; 時刻照会
                         </button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ================= CENTER PANEL: HUD CORE, OPTICAL VISION & CHAT ================= -->
+        <!-- ================= CENTER PANEL: HUD CORE, OPTICAL AR VISION & TERMINAL ================= -->
         <section class="lg:col-span-6 flex flex-col gap-2 min-h-0 h-full overflow-hidden">
             
             <div class="hud-panel rounded-lg p-2.5 flex-1 flex flex-col min-h-0 overflow-hidden relative">
                 
-                <!-- HUD Core Reactor Ring & Camera Vision Display -->
-                <div class="relative w-full h-24 shrink-0 flex items-center justify-center bg-slate-950/60 rounded-lg border border-cyan-900/40 overflow-hidden mb-2">
+                <!-- Optical Camera Feed & AR Overlay Display -->
+                <div id="cameraContainer" class="relative w-full h-36 md:h-44 shrink-0 flex items-center justify-center bg-black/80 rounded-lg border border-theme-border overflow-hidden mb-2 group">
                     
-                    <!-- Optical Camera Stream Overlay (When active) -->
-                    <video id="webcamVideo" class="absolute inset-0 w-full h-full object-cover hidden opacity-80" autoplay playsinline muted></video>
+                    <!-- Live Webcam Video Stream -->
+                    <video id="webcamVideo" class="absolute inset-0 w-full h-full object-cover hidden opacity-85" autoplay playsinline muted></video>
                     <canvas id="snapshotCanvas" class="hidden"></canvas>
 
-                    <!-- Reactor Ring Visualizer -->
+                    <!-- AR Optical Canvas Overlay (Targeting reticle, facial/object scan grids) -->
+                    <canvas id="arOverlayCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-10"></canvas>
+
+                    <!-- Reactor Core Visualizer (When Camera is OFF) -->
                     <div id="reactorVisualGroup" class="relative flex items-center justify-center">
-                        <!-- Layer 1: Outer Rotating Ring -->
-                        <div id="reactorRingOuter" class="absolute w-20 h-20 rounded-full border-2 border-dashed border-cyan-400/50 spin-slow"></div>
-                        <!-- Layer 2: Middle Counter Ring -->
-                        <div id="reactorRingMid" class="absolute w-14 h-14 rounded-full border border-cyan-300/70 spin-reverse border-t-transparent border-b-transparent"></div>
-                        <!-- Layer 3: Inner Core Ring -->
-                        <div id="reactorCore" class="w-9 h-9 rounded-full bg-cyan-500/20 border-2 border-cyan-300 flex items-center justify-center shadow-[0_0_15px_rgba(0,240,255,0.5)] hud-pulse">
-                            <div id="reactorDot" class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]"></div>
+                        <div id="reactorRingOuter" class="absolute w-24 h-24 rounded-full border-2 border-dashed border-theme-primary/50 spin-slow"></div>
+                        <div id="reactorRingMid" class="absolute w-16 h-16 rounded-full border border-theme-primary/80 spin-reverse border-t-transparent border-b-transparent"></div>
+                        <div id="reactorCore" class="w-10 h-10 rounded-full bg-theme-primary/20 border-2 border-theme-primary flex items-center justify-center shadow-[0_0_20px_var(--color-primary-glow)] hud-pulse">
+                            <div id="reactorDot" class="w-3 h-3 rounded-full bg-theme-primary shadow-[0_0_10px_var(--color-primary)]"></div>
                         </div>
                     </div>
 
-                    <!-- Overlay HUD Tech Details -->
-                    <div class="absolute top-1 left-2 font-mono text-[9px] text-cyan-400/80 bg-slate-950/80 px-1.5 py-0.5 rounded border border-cyan-900/40">
-                        MODEL: GEMINI-3.6-FLASH
+                    <!-- Top Left Metadata Info -->
+                    <div class="absolute top-1.5 left-2 font-mono text-[9px] text-theme-primary bg-black/80 px-2 py-0.5 rounded border border-theme-border/60 z-20">
+                        MODEL: <span id="activeModelLabel">GEMINI-2.5-FLASH</span>
                     </div>
 
-                    <!-- Camera Vision Toggle Status -->
-                    <div class="absolute top-1 right-2 flex items-center gap-1">
-                        <button onclick="toggleCamera()" id="cameraToggleBtn" class="px-2 py-0.5 bg-cyan-950 hover:bg-cyan-900 border border-cyan-500/60 text-cyan-300 font-mono text-[10px] rounded transition-all flex items-center gap-1">
+                    <!-- Top Right AR Vision Buttons -->
+                    <div class="absolute top-1.5 right-2 flex items-center gap-1 z-20">
+                        <button onclick="toggleCamera()" id="cameraToggleBtn" class="px-2 py-0.5 bg-black/80 hover:bg-black border border-theme-border text-theme-primary font-mono text-[10px] rounded transition-all flex items-center gap-1">
                             📷 <span id="cameraBtnText">CAM: OFF</span>
                         </button>
                     </div>
 
-                    <div id="visionStatusTag" class="hidden absolute bottom-1 left-2 font-mono text-[9px] text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-500/50">
+                    <!-- Live Optical Status Badge -->
+                    <div id="visionStatusTag" class="hidden absolute bottom-1.5 left-2 font-mono text-[9px] text-emerald-400 bg-emerald-950/90 px-2 py-0.5 rounded border border-emerald-500/60 z-20">
                         ● OPTICAL FEED LIVE
                     </div>
+
+                    <!-- AR Crosshair Sweep Line -->
+                    <div id="scanLineBar" class="hidden absolute left-0 w-full h-0.5 bg-theme-primary/80 shadow-[0_0_10px_var(--color-primary)] scan-sweep z-10"></div>
                 </div>
 
-                <!-- Chat Log Display Area (Scrollable within bounds) -->
-                <div id="chatLog" class="flex-1 min-h-0 overflow-y-auto space-y-2 p-2 bg-slate-950/80 rounded-lg border border-cyan-900/40 font-mono text-xs">
-                    <!-- Welcome Message -->
+                <!-- Attachment Image Preview Banner (Drag-and-Drop or File Upload) -->
+                <div id="attachmentPreviewBox" class="hidden my-1 p-1.5 rounded bg-black/60 border border-theme-border flex items-center justify-between gap-2 shrink-0">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <img id="attachedImgThumb" class="w-10 h-10 object-cover rounded border border-theme-border shrink-0" src="" alt="添付画像">
+                        <div class="font-mono text-[10px] truncate">
+                            <div id="attachedFileName" class="text-theme-primary font-bold truncate">image.png</div>
+                            <div class="text-[9px] opacity-70">マルチモーダル画像解析の準備完了</div>
+                        </div>
+                    </div>
+                    <button onclick="removeAttachment()" class="text-red-400 hover:text-red-200 p-1 font-bold text-xs" title="添付解除">✕</button>
+                </div>
+
+                <!-- Chat Log / Terminal Area -->
+                <div id="chatLog" class="flex-1 min-h-0 overflow-y-auto space-y-2 p-2 bg-black/70 rounded-lg border border-theme-border/60 font-mono text-xs">
+                    <!-- Initial Welcome Message -->
                     <div class="flex items-start gap-2">
-                        <div class="w-5 h-5 rounded bg-cyan-950 border border-cyan-400 flex items-center justify-center text-cyan-300 font-bold text-[10px] shrink-0">
+                        <div id="personaAvatar" class="w-6 h-6 rounded bg-black border border-theme-border flex items-center justify-center text-theme-primary font-bold text-[10px] shrink-0">
                             J
                         </div>
-                        <div class="flex-1 p-2 rounded bg-cyan-950/30 border border-cyan-800/40 text-cyan-100 leading-relaxed text-[11px]">
-                            <div class="text-[9px] text-cyan-400 font-bold mb-0.5">J.A.R.V.I.S. SYSTEM</div>
-                            高度統括人工知能 J.A.R.V.I.S. オンライン。画面表示を最適化しました。テキスト・音声・光学カメラで指示を入力できます。
+                        <div class="flex-1 p-2.5 rounded-lg bg-black/40 border border-theme-border/60 text-theme-heading leading-relaxed text-[11px] markdown-body">
+                            <div class="text-[9px] text-theme-primary font-bold mb-0.5 flex justify-between">
+                                <span id="personaNameTag">J.A.R.V.I.S. SYSTEM</span>
+                                <span class="opacity-60">ONLINE</span>
+                            </div>
+                            <p>高度統括人工知能 J.A.R.V.I.S. オンライン。システムコンソール及び光学視覚アレイ準備完了。ご指示をどうぞ、サー。</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Notification Banner -->
-                <div id="notificationBox" class="hidden my-1 p-1.5 rounded text-[10px] font-mono bg-rose-950/80 border border-rose-500 text-rose-200 flex items-center justify-between shrink-0">
+                <div id="notificationBox" class="hidden my-1 p-1.5 rounded text-[10px] font-mono bg-red-950/90 border border-red-500 text-red-200 flex items-center justify-between shrink-0">
                     <span id="notificationMessage"></span>
-                    <button onclick="hideNotification()" class="text-rose-400 hover:text-rose-100 font-bold ml-2">✕</button>
+                    <button onclick="hideNotification()" class="text-red-400 hover:text-red-100 font-bold ml-2">✕</button>
                 </div>
 
-                <!-- Console Input Controls -->
-                <div class="mt-2 pt-1.5 border-t border-cyan-900/60 flex items-center gap-1.5 shrink-0">
+                <!-- Console Command Controls & Drag-Drop Target -->
+                <div id="inputDropZone" class="mt-2 pt-1.5 border-t border-theme-border flex items-center gap-1.5 shrink-0 relative">
                     
-                    <!-- Voice Input Button -->
-                    <button id="micBtn" onclick="toggleVoiceInput()" class="p-2 rounded bg-cyan-950 border border-cyan-600 hover:bg-cyan-900 text-cyan-300 transition-all shrink-0 flex items-center justify-center" title="音声認識">
+                    <!-- File Upload Input (Hidden) -->
+                    <input type="file" id="fileInput" accept="image/*" onchange="handleFileSelect(event)" class="hidden">
+
+                    <!-- Speech Input Button -->
+                    <button id="micBtn" onclick="toggleVoiceInput()" class="p-2 rounded bg-black/60 border border-theme-border hover:bg-black text-theme-primary transition-all shrink-0 flex items-center justify-center" title="音声入力">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
                     </button>
 
-                    <!-- Camera Snapshot & Analyze Button -->
-                    <button id="snapBtn" onclick="captureAndAnalyze()" class="p-2 rounded bg-cyan-950 border border-cyan-600 hover:bg-cyan-900 text-cyan-300 transition-all shrink-0 flex items-center justify-center" title="視覚解析（カメラ画像を送信）">
+                    <!-- Camera Snapshot Button -->
+                    <button id="snapBtn" onclick="captureAndAnalyze()" class="p-2 rounded bg-black/60 border border-theme-border hover:bg-black text-theme-primary transition-all shrink-0 flex items-center justify-center" title="カメラ視覚解析（即時スナップショット）">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h0.93a2 2 0 001.664-.89l0.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l0.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     </button>
 
-                    <!-- Text Command Input -->
-                    <input type="text" id="userInput" onkeydown="handleInputKey(event)" placeholder="JARVISへコマンドを入力..." 
-                        class="w-full bg-slate-950/90 border border-cyan-900/80 rounded px-2.5 py-1.5 text-xs text-cyan-100 placeholder-cyan-800 outline-none focus:border-cyan-400 font-mono transition-all">
+                    <!-- File Attachment Upload Button -->
+                    <button onclick="document.getElementById('fileInput').click()" class="p-2 rounded bg-black/60 border border-theme-border hover:bg-black text-theme-primary transition-all shrink-0 flex items-center justify-center" title="画像ファイル選択">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                    </button>
+
+                    <!-- Command Text Input -->
+                    <input type="text" id="userInput" onkeydown="handleInputKey(event)" placeholder="コマンドまたは質問を入力... (画像ドロップ対応)" 
+                        class="w-full bg-black/80 border border-theme-border rounded px-2.5 py-1.5 text-xs text-theme-heading placeholder-theme-primary/40 outline-none focus:ring-1 focus:ring-theme-primary font-mono transition-all">
 
                     <!-- Send Button -->
-                    <button id="sendBtn" onclick="sendUserMessage()" class="px-3 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded font-mono text-xs tracking-wider transition-all shrink-0 shadow-[0_0_8px_rgba(0,240,255,0.4)]">
+                    <button id="sendBtn" onclick="sendUserMessage()" class="px-3.5 py-1.5 bg-theme-primary text-black font-bold rounded font-mono text-xs tracking-wider transition-all hover:brightness-125 shrink-0 shadow-[0_0_10px_var(--color-primary-glow)]">
                         EXEC
                     </button>
                 </div>
@@ -341,64 +520,78 @@
             </div>
         </section>
 
-        <!-- ================= RIGHT PANEL: AUDIO VISUALIZER & SPEECH CONTROLS ================= -->
+        <!-- ================= RIGHT PANEL: AUDIO SPECTRUM & SPEECH ENGINE ================= -->
         <section class="lg:col-span-3 flex flex-col gap-2 min-h-0 h-full overflow-hidden">
             
             <div class="hud-panel rounded-lg p-2.5 flex-1 flex flex-col justify-between overflow-hidden">
                 <div class="flex-1 flex flex-col min-h-0">
-                    <h2 class="font-orbitron text-[11px] font-bold text-cyan-400 tracking-wider border-b border-cyan-900/60 pb-1 mb-2 flex items-center justify-between shrink-0">
-                        <span>DSP SPECTRUM</span>
-                        <span class="text-[9px] text-cyan-600 font-mono">AUDIO ENGINE</span>
+                    <h2 class="font-orbitron text-[11px] font-bold text-theme-primary tracking-wider border-b border-theme-border pb-1 mb-2 flex items-center justify-between shrink-0">
+                        <span>AUDIO SPECTRUM</span>
+                        <span class="text-[9px] opacity-70 font-mono">DSP ENGINE</span>
                     </h2>
 
-                    <!-- Audio Waveform Visualizer Canvas -->
-                    <div class="bg-slate-950 rounded p-1 border border-cyan-900/60 mb-2 shrink-0">
-                        <canvas id="audioVisualizer" class="w-full h-16 block"></canvas>
+                    <!-- Live Audio Waveform & Frequency Spectrum Canvas -->
+                    <div class="bg-black/80 rounded p-1 border border-theme-border mb-2 shrink-0 relative">
+                        <canvas id="audioVisualizer" class="w-full h-20 block"></canvas>
+                        <div class="absolute bottom-1 right-2 text-[8px] font-mono opacity-60 text-theme-primary">44.1 kHz / 16-BIT</div>
                     </div>
 
                     <!-- Speech Synthesis Controls (TTS) -->
-                    <div class="space-y-2 font-mono text-[11px] overflow-y-auto pr-1">
-                        <div class="text-cyan-400 font-bold border-b border-cyan-950 pb-0.5 text-[10px]">音声合成設定 (TTS)</div>
+                    <div class="space-y-2 font-mono text-[11px] overflow-y-auto pr-1 flex-1">
+                        <div class="text-theme-primary font-bold border-b border-theme-border/40 pb-0.5 text-[10px]">音声合成設定 (TTS)</div>
 
                         <!-- Speed Slider -->
                         <div>
-                            <div class="flex justify-between text-cyan-300 text-[10px]">
-                                <span>SPEED (話速):</span>
-                                <span id="speedVal" class="text-cyan-400">1.0x</span>
+                            <div class="flex justify-between text-[10px]">
+                                <span class="opacity-80">SPEED (話速):</span>
+                                <span id="speedVal" class="text-theme-primary font-bold">1.0x</span>
                             </div>
-                            <input type="range" id="speechSpeed" min="0.5" max="1.8" step="0.1" value="1.0" oninput="updateTTSParams()" class="w-full accent-cyan-400 bg-slate-900 h-1">
+                            <input type="range" id="speechSpeed" min="0.5" max="1.8" step="0.1" value="1.0" oninput="updateTTSParams()" class="w-full accent-theme-primary bg-black/60 h-1">
                         </div>
 
                         <!-- Pitch Slider -->
                         <div>
-                            <div class="flex justify-between text-cyan-300 text-[10px]">
-                                <span>PITCH (音高):</span>
-                                <span id="pitchVal" class="text-cyan-400">1.0</span>
+                            <div class="flex justify-between text-[10px]">
+                                <span class="opacity-80">PITCH (音高):</span>
+                                <span id="pitchVal" class="text-theme-primary font-bold">1.0</span>
                             </div>
-                            <input type="range" id="speechPitch" min="0.5" max="1.5" step="0.1" value="1.0" oninput="updateTTSParams()" class="w-full accent-cyan-400 bg-slate-900 h-1">
+                            <input type="range" id="speechPitch" min="0.5" max="1.5" step="0.1" value="1.0" oninput="updateTTSParams()" class="w-full accent-theme-primary bg-black/60 h-1">
                         </div>
 
                         <!-- Voice Select -->
                         <div>
-                            <div class="text-cyan-300 text-[10px] mb-0.5">VOICE MODEL:</div>
-                            <select id="voiceSelect" onchange="updateTTSParams()" class="w-full bg-slate-950 border border-cyan-900 rounded p-1 text-cyan-200 outline-none text-[10px]">
+                            <div class="opacity-80 text-[10px] mb-0.5">VOICE MODEL:</div>
+                            <select id="voiceSelect" onchange="updateTTSParams()" class="w-full bg-black/80 border border-theme-border rounded p-1 text-theme-heading outline-none text-[10px]">
                                 <option value="">標準音声（日本語）</option>
                             </select>
+                        </div>
+
+                        <!-- Audio Sound FX Testing Controls -->
+                        <div class="pt-2 border-t border-theme-border/40">
+                            <div class="text-theme-primary font-bold text-[10px] mb-1">Sci-Fi SOUND FX (SYNTH)</div>
+                            <div class="grid grid-cols-3 gap-1 text-[9px]">
+                                <button onclick="audioSynth.playClick()" class="p-1 bg-black/50 border border-theme-border/60 hover:bg-black rounded text-theme-primary">CLICK</button>
+                                <button onclick="audioSynth.playBeep(880, 'sine', 0.1)" class="p-1 bg-black/50 border border-theme-border/60 hover:bg-black rounded text-theme-primary">BEEP</button>
+                                <button onclick="audioSynth.playScanSFX()" class="p-1 bg-black/50 border border-theme-border/60 hover:bg-black rounded text-theme-primary">SCAN</button>
+                                <button onclick="audioSynth.playBootSequence()" class="p-1 bg-black/50 border border-theme-border/60 hover:bg-black rounded text-theme-primary">BOOT</button>
+                                <button onclick="audioSynth.playAlertSFX()" class="p-1 bg-black/50 border border-theme-border/60 hover:bg-black rounded text-theme-primary">ALERT</button>
+                                <button onclick="exportConsoleLog()" class="p-1 bg-black/50 border border-theme-border/60 hover:bg-black rounded text-theme-primary">EXPORT</button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Footer System Information -->
-                <div class="mt-2 pt-2 border-t border-cyan-900/60 space-y-1 font-mono text-[10px] shrink-0">
-                    <div class="text-[9px] text-cyan-500 uppercase">STREAM SECURITY</div>
+                <div class="mt-2 pt-2 border-t border-theme-border space-y-1 font-mono text-[10px] shrink-0">
+                    <div class="text-[9px] opacity-70 uppercase">QUANTUM ENCRYPTION FEED</div>
                     <div class="grid grid-cols-2 gap-1 text-[10px]">
-                        <div class="p-1 rounded bg-slate-950 border border-cyan-950 truncate">
-                            <span class="text-slate-500">ENCRYPTION:</span>
-                            <div class="text-cyan-300 font-bold">1024-BIT</div>
+                        <div class="p-1 rounded bg-black/60 border border-theme-border/50 truncate">
+                            <span class="opacity-60">CIPHER:</span>
+                            <div class="text-theme-primary font-bold">AES-256-GCM</div>
                         </div>
-                        <div class="p-1 rounded bg-slate-950 border border-cyan-950 truncate">
-                            <span class="text-slate-500">BANDWIDTH:</span>
-                            <div class="text-cyan-300 font-bold">10 Gbps</div>
+                        <div class="p-1 rounded bg-black/60 border border-theme-border/50 truncate">
+                            <span class="opacity-60">NET SPEED:</span>
+                            <div class="text-theme-primary font-bold">100 Gbps</div>
                         </div>
                     </div>
                 </div>
@@ -409,6 +602,92 @@
     </div>
 
     <script>
+        /* ================= Web Audio API Sci-Fi Sound Synthesizer ================= */
+        class SciFiAudioSynth {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtx) this.ctx = new AudioCtx();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playBeep(freq = 880, type = 'sine', duration = 0.08, gainVal = 0.1) {
+                if (this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+
+                gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start();
+                osc.stop(this.ctx.currentTime + duration);
+            }
+
+            playClick() {
+                this.playBeep(1200, 'triangle', 0.03, 0.05);
+            }
+
+            playTypewriterTick() {
+                this.playBeep(1800 + Math.random() * 400, 'square', 0.015, 0.02);
+            }
+
+            playScanSFX() {
+                if (this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(2400, this.ctx.currentTime + 0.25);
+
+                gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.25);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.25);
+            }
+
+            playBootSequence() {
+                const notes = [440, 554.37, 659.25, 880, 1108.73];
+                notes.forEach((freq, idx) => {
+                    setTimeout(() => {
+                        this.playBeep(freq, 'sine', 0.15, 0.08);
+                    }, idx * 70);
+                });
+            }
+
+            playAlertSFX() {
+                this.playBeep(880, 'sawtooth', 0.15, 0.12);
+                setTimeout(() => this.playBeep(659.25, 'sawtooth', 0.2, 0.12), 160);
+            }
+        }
+
+        const audioSynth = new SciFiAudioSynth();
+
+        /* ================= State Variables ================= */
         let conversationHistory = [];
         let isVoiceInputActive = false;
         let isVoiceOutputEnabled = true;
@@ -417,17 +696,45 @@
         let ttsPitch = 1.0;
         let availableVoices = [];
         let webcamStream = null;
+        let attachedImageBase64 = null;
+        let totalTokenCount = 0;
+        let activePersona = 'jarvis';
 
-        const TARGET_MODEL = 'gemini-3.6-flash';
+        const TARGET_MODEL = 'gemini-2.5-flash';
 
-        // Initialize HUD Application on Window Load
+        const PERSONA_CONFIGS = {
+            jarvis: {
+                title: 'J.A.R.V.I.S.',
+                tag: 'J.A.R.V.I.S. SYSTEM',
+                avatar: 'J',
+                prompt: "You are J.A.R.V.I.S. (Just A Rather Very Intelligent System), Tony Stark's iconic AI. Speak with a polite, articulate, highly intelligent British tone. Address the user appropriately ('Sir' or 'Ma'am'). Provide clear, logical, and structured answers with a touch of dry wit."
+            },
+            friday: {
+                title: 'F.R.I.D.A.Y.',
+                tag: 'F.R.I.D.A.Y. TACTICAL AI',
+                avatar: 'F',
+                prompt: "You are F.R.I.D.A.Y., Tony Stark's tactical AI assistant. Speak with a direct, warm, efficient Irish-inspired style. Address the user as 'Boss'. Focus on actionable tactical summaries, quick problem solving, and system status metrics."
+            },
+            edith: {
+                title: 'E.D.I.T.H.',
+                tag: 'E.D.I.T.H. DEFENSE ARRAY',
+                avatar: 'E',
+                prompt: "You are E.D.I.T.H. (Even Dead I'm The Hero), orbital defense and augmented reality AI. Speak with strict military precision, tactical data metrics, threat assessments, and defense grid status updates."
+            }
+        };
+
         window.addEventListener('DOMContentLoaded', () => {
             initClock();
             loadApiKey();
             setupSpeechRecognition();
             setupSpeechSynthesis();
             startGaugeSimulator();
-            initVisualizer();
+            initAudioSpectrumVisualizer();
+            initAROverlay();
+            setupDragAndDrop();
+            
+            // Play boot sound on first interaction
+            window.addEventListener('click', () => audioSynth.init(), { once: true });
         });
 
         function initClock() {
@@ -460,9 +767,11 @@
             const key = document.getElementById('apiKeyInput').value.trim();
             if (key) {
                 localStorage.setItem('jarvis_hud_api_key', key);
-                showNotification('API Keyが保存されました', false);
+                audioSynth.playBeep(1000, 'sine', 0.1, 0.08);
+                showNotification('API Keyがローカルストレージに安全に保存されました', false);
             } else {
                 localStorage.removeItem('jarvis_hud_api_key');
+                audioSynth.playAlertSFX();
                 showNotification('API Keyが消去されました', true);
             }
         }
@@ -474,15 +783,104 @@
         function toggleKeyVisibility() {
             const input = document.getElementById('apiKeyInput');
             input.type = input.type === 'password' ? 'text' : 'password';
+            audioSynth.playClick();
         }
 
-        /* ================= Speech Recognition ================= */
-        function setupSpeechRecognition() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                console.warn('Speech Recognition not supported in this browser.');
+        /* ================= Theme & Persona Switcher ================= */
+        function switchTheme(themeName) {
+            document.getElementById('appBody').setAttribute('data-theme', themeName);
+            document.getElementById('themeSelect').value = themeName;
+            audioSynth.playScanSFX();
+        }
+
+        function changePersona(personaKey) {
+            activePersona = personaKey;
+            const config = PERSONA_CONFIGS[personaKey];
+            document.getElementById('headerTitle').innerText = config.title;
+            document.getElementById('personaNameTag').innerText = config.tag;
+            document.getElementById('personaAvatar').innerText = config.avatar;
+            audioSynth.playBootSequence();
+            showNotification(`AI ペルソナを【${config.title}】に変更しました`, false);
+        }
+
+        function toggleAudioSFX() {
+            audioSynth.muted = !audioSynth.muted;
+            const icon = document.getElementById('sfxStatusIcon');
+            icon.innerText = audioSynth.muted ? '🔇' : '🔊';
+            showNotification(`SFX 効果音: ${audioSynth.muted ? 'OFF' : 'ON'}`, false);
+        }
+
+        function toggleScanlines() {
+            const layer = document.getElementById('scanlineLayer');
+            layer.classList.toggle('hidden');
+            audioSynth.playClick();
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+            audioSynth.playClick();
+        }
+
+        /* ================= Multimodal File Attachment & Drag Drop ================= */
+        function setupDragAndDrop() {
+            const dropZone = document.body;
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    processFile(e.dataTransfer.files[0]);
+                }
+            });
+        }
+
+        function handleFileSelect(event) {
+            if (event.target.files && event.target.files[0]) {
+                processFile(event.target.files[0]);
+            }
+        }
+
+        function processFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showNotification('画像ファイル (.png, .jpg, .webp) のみを添付できます', true);
                 return;
             }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const base64Str = e.target.result;
+                attachedImageBase64 = base64Str.split(',')[1];
+
+                document.getElementById('attachedImgThumb').src = base64Str;
+                document.getElementById('attachedFileName').innerText = file.name;
+                document.getElementById('attachmentPreviewBox').classList.remove('hidden');
+
+                audioSynth.playScanSFX();
+                showNotification(`画像【${file.name}】を添付しました`, false);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeAttachment() {
+            attachedImageBase64 = null;
+            document.getElementById('attachmentPreviewBox').classList.add('hidden');
+            document.getElementById('fileInput').value = '';
+            audioSynth.playClick();
+        }
+
+        /* ================= Speech Recognition & TTS ================= */
+        function setupSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) return;
 
             speechRecognition = new SpeechRecognition();
             speechRecognition.lang = 'ja-JP';
@@ -491,8 +889,8 @@
             speechRecognition.onstart = () => {
                 isVoiceInputActive = true;
                 setSystemStatus('VOICE LISTENING...', 'amber');
-                setReactorState('listening');
-                document.getElementById('micBtn').classList.add('bg-cyan-500', 'text-slate-950', 'animate-pulse');
+                audioSynth.playBeep(600, 'sine', 0.1, 0.1);
+                document.getElementById('micBtn').classList.add('bg-theme-primary', 'text-black', 'animate-pulse');
             };
 
             speechRecognition.onresult = (event) => {
@@ -530,12 +928,10 @@
 
         function stopVoiceInputState() {
             isVoiceInputActive = false;
-            setSystemStatus('ONLINE / READY', 'cyan');
-            setReactorState('normal');
-            document.getElementById('micBtn').classList.remove('bg-cyan-500', 'text-slate-950', 'animate-pulse');
+            setSystemStatus('ONLINE / READY');
+            document.getElementById('micBtn').classList.remove('bg-theme-primary', 'text-black', 'animate-pulse');
         }
 
-        /* ================= Speech Synthesis (TTS) & Markdown Stripper ================= */
         function setupSpeechSynthesis() {
             if (!('speechSynthesis' in window)) return;
 
@@ -564,34 +960,20 @@
             document.getElementById('pitchVal').innerText = ttsPitch.toFixed(1);
         }
 
-        /**
-         * Cleans Markdown formatting so TTS does not read symbols like '#' or '*'
-         */
         function cleanMarkdownForSpeech(text) {
             if (!text) return '';
             return text
-                // Remove code blocks
-                .replace(/```[\s\S]*?```/g, 'コードブロック')
-                // Remove inline code ticks
+                .replace(/```[\s\S]*?```/g, 'コードブロック省略')
                 .replace(/`([^`]+)`/g, '$1')
-                // Remove headings #
                 .replace(/^#{1,6}\s+/gm, '')
-                // Remove bold / italics (* and _)
                 .replace(/(\*\*|__)(.*?)\1/g, '$2')
                 .replace(/(\*|_)(.*?)\1/g, '$2')
-                // Remove strikethrough ~~
                 .replace(/~~(.*?)~~/g, '$1')
-                // Remove links [text](url) -> text
                 .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-                // Remove bullet lists (*, -, +)
                 .replace(/^\s*[\*\-\+]\s+/gm, '')
-                // Remove numbered lists (1. )
                 .replace(/^\s*\d+\.\s+/gm, '')
-                // Remove blockquotes >
                 .replace(/^\s*>\s+/gm, '')
-                // Strip any remaining markdown symbols (#, *, _, ~, `, |, etc.)
                 .replace(/[#\*_~`|]/g, '')
-                // Clean up repeated whitespace
                 .replace(/\s+/g, ' ')
                 .trim();
         }
@@ -600,8 +982,6 @@
             if (!isVoiceOutputEnabled || !('speechSynthesis' in window)) return;
 
             window.speechSynthesis.cancel();
-            
-            // Clean markdown before vocalization
             const cleanText = cleanMarkdownForSpeech(text);
             if (!cleanText) return;
 
@@ -616,18 +996,11 @@
             }
 
             uttr.onstart = () => {
-                setReactorState('speaking');
-                setSystemStatus('VOCALIZING RESPONSE...', 'emerald');
+                setSystemStatus('VOCALIZING RESPONSE...');
             };
 
             uttr.onend = () => {
-                setReactorState('normal');
-                setSystemStatus('ONLINE / READY', 'cyan');
-            };
-
-            uttr.onerror = () => {
-                setReactorState('normal');
-                setSystemStatus('ONLINE / READY', 'cyan');
+                setSystemStatus('ONLINE / READY');
             };
 
             window.speechSynthesis.speak(uttr);
@@ -638,41 +1011,46 @@
             const btnText = document.getElementById('voiceStatusText');
             const btnIcon = document.getElementById('voiceStatusIcon');
             if (isVoiceOutputEnabled) {
-                btnText.innerText = 'VOICE: ON';
-                btnIcon.innerText = '🔊';
+                btnText.innerText = 'TTS: ON';
+                btnIcon.innerText = '🗣️';
             } else {
-                btnText.innerText = 'VOICE: OFF';
+                btnText.innerText = 'TTS: OFF';
                 btnIcon.innerText = '🔇';
                 window.speechSynthesis.cancel();
             }
+            audioSynth.playClick();
         }
 
-        /* ================= Optical Camera Integration ================= */
+        /* ================= Optical Camera & AR Visual Overlay ================= */
         async function toggleCamera() {
             const video = document.getElementById('webcamVideo');
             const btnText = document.getElementById('cameraBtnText');
             const statusTag = document.getElementById('visionStatusTag');
+            const scanLine = document.getElementById('scanLineBar');
 
             if (webcamStream) {
-                // Stop camera
                 webcamStream.getTracks().forEach(track => track.stop());
                 webcamStream = null;
                 video.classList.add('hidden');
                 statusTag.classList.add('hidden');
+                scanLine.classList.add('hidden');
                 btnText.innerText = 'CAM: OFF';
-                showNotification('カメラを停止しました', false);
+                audioSynth.playClick();
+                showNotification('光学カメラを停止しました', false);
             } else {
-                // Start camera
                 try {
                     webcamStream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
                     video.srcObject = webcamStream;
                     video.classList.remove('hidden');
                     statusTag.classList.remove('hidden');
+                    scanLine.classList.remove('hidden');
                     btnText.innerText = 'CAM: ON';
-                    showNotification('光学カメラフィードを開くことに成功しました', false);
+                    audioSynth.playScanSFX();
+                    showNotification('光学ARフィード接続確立', false);
                 } catch (err) {
                     console.error(err);
-                    showNotification('カメラ起動エラー: アクセス許可を確認してください', true);
+                    audioSynth.playAlertSFX();
+                    showNotification('カメラ起動エラー: アクセス権限を確認してください', true);
                 }
             }
         }
@@ -685,8 +1063,7 @@
             canvas.height = video.videoHeight || 480;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-            return dataUrl.split(',')[1]; // strip base64 prefix
+            return canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
         }
 
         async function captureAndAnalyze() {
@@ -695,20 +1072,85 @@
                 if (!webcamStream) return;
             }
 
-            const promptInput = document.getElementById('userInput').value.trim() || "現在のカメラ映像に映っている対象や状況を高度に分析してください。";
+            const promptInput = document.getElementById('userInput').value.trim() || "画面に映っている対象、文字、または視覚的状況を高度に分析してください。";
             document.getElementById('userInput').value = '';
             
             const imageBase64 = captureImageBase64();
             if (!imageBase64) {
-                showNotification('カメラからの画像取得に失敗しました', true);
+                showNotification('カメラからの画像キャプチャに失敗しました', true);
                 return;
             }
 
-            appendChatMessage('USER', `[光学解析リクエスト] ${promptInput}`);
+            audioSynth.playScanSFX();
+            appendChatMessage('USER', `[光学視覚解析] ${promptInput}`, imageBase64);
             await processGeminiCall(promptInput, imageBase64);
         }
 
-        /* ================= Chat & Gemini API Integration ================= */
+        /* AR Canvas Overlay Drawer */
+        function initAROverlay() {
+            const canvas = document.getElementById('arOverlayCanvas');
+            const ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = canvas.parentElement.clientHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            let angle = 0;
+            function drawAR() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                if (webcamStream) {
+                    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim() || '#00f0ff';
+                    const cx = canvas.width / 2;
+                    const cy = canvas.height / 2;
+
+                    // Rotating Target Crosshair Ring
+                    ctx.save();
+                    ctx.translate(cx, cy);
+                    ctx.rotate(angle);
+                    ctx.strokeStyle = primaryColor;
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([8, 8]);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 45, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.restore();
+
+                    // Corner Brackets
+                    ctx.strokeStyle = primaryColor;
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([]);
+                    const bw = 30;
+                    const bh = 30;
+                    const pad = 15;
+
+                    // Top Left
+                    ctx.beginPath();
+                    ctx.moveTo(pad, pad + bh); ctx.lineTo(pad, pad); ctx.lineTo(pad + bw, pad);
+                    ctx.stroke();
+                    // Top Right
+                    ctx.beginPath();
+                    ctx.moveTo(canvas.width - pad - bw, pad); ctx.lineTo(canvas.width - pad, pad); ctx.lineTo(canvas.width - pad, pad + bh);
+                    ctx.stroke();
+
+                    // Random Tactical Coordinate Text
+                    ctx.fillStyle = primaryColor;
+                    ctx.font = '9px "Share Tech Mono"';
+                    ctx.fillText(`TARGET_ID: #${Math.floor(1000 + Math.sin(angle)*500)}`, pad + 5, canvas.height - pad - 15);
+                    ctx.fillText(`DIST: ${(2.1 + Math.sin(angle*2)*0.4).toFixed(2)}m`, pad + 5, canvas.height - pad - 5);
+
+                    angle += 0.02;
+                }
+
+                requestAnimationFrame(drawAR);
+            }
+            drawAR();
+        }
+
+        /* ================= Chat Logic & Gemini API Handler ================= */
         function handleInputKey(event) {
             if (event.key === 'Enter') {
                 sendUserMessage();
@@ -716,13 +1158,15 @@
         }
 
         function triggerMacro(command) {
+            let promptText = "";
             if (command === '自己診断') {
-                document.getElementById('userInput').value = "システム自己診断を開始し、動作状態を報告してください。";
+                promptText = "全システムの自己診断手順を実行し、各サブシステムのステータスを報告してください。";
             } else if (command === 'ステータス') {
-                document.getElementById('userInput').value = "現在のJARVISシステムの動作状況を教えてください。";
-            } else if (command === '時刻照会') {
-                document.getElementById('userInput').value = "現在時刻と日付を提示してください。";
+                promptText = "現在のAIシステムのリソース消費量と稼働状態の要約を報告してください。";
+            } else if (command === '戦術分析') {
+                promptText = "現在の通信リンクおよびセキュリティプロトコルの戦術的分析を実施してください。";
             }
+            document.getElementById('userInput').value = promptText;
             sendUserMessage();
         }
 
@@ -730,73 +1174,77 @@
             const inputEl = document.getElementById('userInput');
             const text = inputEl.value.trim();
 
-            if (!text) return;
+            if (!text && !attachedImageBase64) return;
 
             inputEl.value = '';
             hideNotification();
 
-            appendChatMessage('USER', text);
-            await processGeminiCall(text, null);
+            const imagePayload = attachedImageBase64;
+            removeAttachment(); // Clear current attachment box
+
+            appendChatMessage('USER', text || "[画像解析リクエスト]", imagePayload);
+            audioSynth.playClick();
+
+            await processGeminiCall(text, imagePayload);
         }
 
         async function processGeminiCall(promptText, imageBase64 = null) {
             const apiKey = getApiKey();
             if (!apiKey) {
                 showNotification('Gemini API Keyが未登録です。画面上部に入力して保存してください。', true);
+                audioSynth.playAlertSFX();
                 return;
             }
 
             setSystemStatus('PROCESSING INTENT...', 'amber');
-            setReactorState('thinking');
 
             try {
-                const reply = await callGeminiAPI(promptText, apiKey, imageBase64);
-                appendChatMessage('JARVIS', reply);
+                const replyText = await callGeminiAPI(promptText, apiKey, imageBase64);
+                
+                // Add AI Typewriter Message
+                appendTypewriterChatMessage('JARVIS', replyText);
 
                 if (isVoiceOutputEnabled) {
-                    speakText(reply);
+                    speakText(replyText);
                 } else {
-                    setReactorState('normal');
-                    setSystemStatus('ONLINE / READY', 'cyan');
+                    setSystemStatus('ONLINE / READY');
                 }
 
             } catch (err) {
                 console.error(err);
                 showNotification('API通信エラー: ' + err.message, true);
-                setReactorState('normal');
-                setSystemStatus('ERROR ENCOUNTERED', 'red');
+                audioSynth.playAlertSFX();
+                setSystemStatus('ERROR ENCOUNTERED');
             }
         }
 
-        async function callGeminiAPI(promptText, apiKey, imageBase64 = null) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${TARGET_MODEL}:generateContent?key=${apiKey}`;
+        /* Helper function to perform a single fetch with error classification */
+        async function fetchGeminiWithModel(modelName, promptText, apiKey, imageBase64 = null) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
 
-            const systemInstruction = 
-                "あなたは高度統括人工知能システム『J.A.R.V.I.S.』です。" +
-                "論理的、知的、かつ礼儀正しいAIアシスタントとして、迅速かつ正確にユーザーの問いに回答してください。" +
-                "返答は簡潔で分かりやすく構成してください。";
+            const systemInstructionText = PERSONA_CONFIGS[activePersona].prompt;
 
-            let userContentParts = [];
+            let userParts = [];
             if (imageBase64) {
-                userContentParts.push({
+                userParts.push({
                     inline_data: {
                         mime_type: "image/jpeg",
                         data: imageBase64
                     }
                 });
             }
-            userContentParts.push({ text: promptText });
-
-            conversationHistory.push({
-                role: "user",
-                parts: userContentParts
-            });
+            if (promptText) {
+                userParts.push({ text: promptText });
+            }
 
             const requestBody = {
                 system_instruction: {
-                    parts: [{ text: systemInstruction }]
+                    parts: [{ text: systemInstructionText }]
                 },
-                contents: conversationHistory
+                contents: [
+                    ...conversationHistory,
+                    { role: "user", parts: userParts }
+                ]
             };
 
             const response = await fetch(url, {
@@ -808,37 +1256,119 @@
             const data = await response.json();
 
             if (!response.ok) {
-                conversationHistory.pop();
-                const msg = data.error ? data.error.message : 'API通信に失敗しました。';
-                throw new Error(msg);
+                const msg = data.error ? data.error.message : 'API通信エラーが発生しました。';
+                const err = new Error(msg);
+                err.status = response.status;
+                err.isHighDemand = response.status === 429 || response.status === 503 || 
+                                   msg.includes('high demand') || msg.includes('RESOURCE_EXHAUSTED') || msg.includes('overloaded');
+                throw err;
             }
 
-            const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "申し訳ございません。応答を解析できませんでした。";
+            // Estimate token counter
+            if (data.usageMetadata && data.usageMetadata.totalTokenCount) {
+                totalTokenCount += data.usageMetadata.totalTokenCount;
+                document.getElementById('tokenCounter').innerText = totalTokenCount;
+            }
 
-            conversationHistory.push({
-                role: "model",
-                parts: [{ text: replyText }]
-            });
-
-            return replyText;
+            return data.candidates?.[0]?.content?.parts?.[0]?.text || "応答を解析できませんでした。";
         }
 
-        function appendChatMessage(sender, message) {
+        /* Resilient API call with retries & fallback models */
+        async function callGeminiAPI(promptText, apiKey, imageBase64 = null) {
+            const modelsToTry = [TARGET_MODEL, 'gemini-1.5-flash', 'gemini-2.0-flash'];
+            let lastError = null;
+
+            for (const model of modelsToTry) {
+                document.getElementById('activeModelLabel').innerText = model.toUpperCase();
+                const maxRetries = 3;
+
+                for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                    try {
+                        if (attempt > 1) {
+                            setSystemStatus(`RETRYING (${attempt}/${maxRetries})...`);
+                        }
+
+                        const replyText = await fetchGeminiWithModel(model, promptText, apiKey, imageBase64);
+
+                        // Save conversation context
+                        let userParts = [];
+                        if (imageBase64) {
+                            userParts.push({ inline_data: { mime_type: "image/jpeg", data: imageBase64 } });
+                        }
+                        if (promptText) userParts.push({ text: promptText });
+
+                        conversationHistory.push({ role: "user", parts: userParts });
+                        conversationHistory.push({ role: "model", parts: [{ text: replyText }] });
+
+                        return replyText;
+
+                    } catch (err) {
+                        lastError = err;
+                        if (err.isHighDemand && attempt < maxRetries) {
+                            const delayMs = attempt * 1500;
+                            setSystemStatus(`RETRYING IN ${delayMs / 1000}s...`);
+                            await new Promise(r => setTimeout(r, delayMs));
+                        } else if (!err.isHighDemand) {
+                            throw err;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            throw new Error(`Google サーバーが高負荷状態です。数秒後に再試行してください (${lastError?.message || 'High Demand'})`);
+        }
+
+        /* ================= Markdown & Chat Rendering ================= */
+        function parseSimpleMarkdown(text) {
+            if (!text) return '';
+
+            // Escape HTML base characters
+            let html = text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+
+            // Code blocks
+            html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
+                return `<pre><code>${code.trim()}</code></pre>`;
+            });
+
+            // Inline code
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+            // Bold
+            html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+            // Line breaks
+            html = html.replace(/\n/g, '<br>');
+
+            return html;
+        }
+
+        function appendChatMessage(sender, messageText, imageBase64 = null) {
             const chatLog = document.getElementById('chatLog');
             const wrapper = document.createElement('div');
             wrapper.className = "flex items-start gap-2";
 
             const isUser = sender === 'USER';
-            const iconBg = isUser ? 'bg-slate-800 border-slate-600 text-slate-300' : 'bg-cyan-950 border-cyan-400 text-cyan-300';
-            const msgBg = isUser ? 'bg-slate-900/80 border-slate-700/80 text-slate-100' : 'bg-cyan-950/30 border-cyan-800/40 text-cyan-100';
+            const iconBg = isUser ? 'bg-slate-800 border-slate-600 text-slate-200' : 'bg-black border-theme-border text-theme-primary';
+            const msgBg = isUser ? 'bg-slate-900/80 border-slate-700/80 text-slate-100' : 'bg-black/40 border-theme-border/60 text-theme-heading';
+
+            let imgHtml = '';
+            if (imageBase64) {
+                imgHtml = `<img src="data:image/jpeg;base64,${imageBase64}" class="w-28 h-20 object-cover rounded border border-theme-border mb-1.5">`;
+            }
 
             wrapper.innerHTML = `
-                <div class="w-5 h-5 rounded ${iconBg} border flex items-center justify-center font-bold text-[9px] shrink-0">
-                    ${isUser ? 'U' : 'J'}
+                <div class="w-6 h-6 rounded ${iconBg} border flex items-center justify-center font-bold text-[10px] shrink-0">
+                    ${isUser ? 'U' : PERSONA_CONFIGS[activePersona].avatar}
                 </div>
-                <div class="flex-1 p-2 rounded-lg ${msgBg} border leading-relaxed text-[11px]">
-                    <div class="text-[9px] ${isUser ? 'text-slate-400' : 'text-cyan-400'} font-bold mb-0.5">${sender}</div>
-                    ${escapeHtml(message)}
+                <div class="flex-1 p-2.5 rounded-lg ${msgBg} border leading-relaxed text-[11px] markdown-body">
+                    <div class="text-[9px] ${isUser ? 'text-slate-400' : 'text-theme-primary'} font-bold mb-0.5">${isUser ? 'USER COMMAND' : PERSONA_CONFIGS[activePersona].tag}</div>
+                    ${imgHtml}
+                    <div>${parseSimpleMarkdown(messageText)}</div>
                 </div>
             `;
 
@@ -846,54 +1376,88 @@
             chatLog.scrollTop = chatLog.scrollHeight;
         }
 
+        function appendTypewriterChatMessage(sender, fullMessageText) {
+            const chatLog = document.getElementById('chatLog');
+            const wrapper = document.createElement('div');
+            wrapper.className = "flex items-start gap-2";
+
+            const avatarChar = PERSONA_CONFIGS[activePersona].avatar;
+            const tagText = PERSONA_CONFIGS[activePersona].tag;
+
+            wrapper.innerHTML = `
+                <div class="w-6 h-6 rounded bg-black border border-theme-border flex items-center justify-center text-theme-primary font-bold text-[10px] shrink-0">
+                    ${avatarChar}
+                </div>
+                <div class="flex-1 p-2.5 rounded-lg bg-black/40 border border-theme-border/60 text-theme-heading leading-relaxed text-[11px] markdown-body">
+                    <div class="text-[9px] text-theme-primary font-bold mb-0.5">${tagText}</div>
+                    <div class="typewriter-content"></div>
+                </div>
+            `;
+
+            chatLog.appendChild(wrapper);
+            const contentBox = wrapper.querySelector('.typewriter-content');
+
+            // Typewriter Animation
+            let index = 0;
+            const speed = 12;
+
+            function typeNextChar() {
+                if (index < fullMessageText.length) {
+                    index += Math.min(3, fullMessageText.length - index);
+                    contentBox.innerHTML = parseSimpleMarkdown(fullMessageText.slice(0, index));
+                    chatLog.scrollTop = chatLog.scrollHeight;
+
+                    if (Math.random() < 0.2) audioSynth.playTypewriterTick();
+
+                    setTimeout(typeNextChar, speed);
+                } else {
+                    contentBox.innerHTML = parseSimpleMarkdown(fullMessageText);
+                    chatLog.scrollTop = chatLog.scrollHeight;
+                }
+            }
+
+            typeNextChar();
+        }
+
         function clearChatHistory() {
             conversationHistory = [];
             const chatLog = document.getElementById('chatLog');
+            const persona = PERSONA_CONFIGS[activePersona];
             chatLog.innerHTML = `
                 <div class="flex items-start gap-2">
-                    <div class="w-5 h-5 rounded bg-cyan-950 border border-cyan-400 flex items-center justify-center text-cyan-300 font-bold text-[9px] shrink-0">
-                        J
+                    <div class="w-6 h-6 rounded bg-black border border-theme-border flex items-center justify-center text-theme-primary font-bold text-[10px] shrink-0">
+                        ${persona.avatar}
                     </div>
-                    <div class="flex-1 p-2 rounded-lg bg-cyan-950/30 border border-cyan-800/40 text-cyan-100 leading-relaxed text-[11px]">
-                        <div class="text-[9px] text-cyan-400 font-bold mb-0.5">J.A.R.V.I.S. SYSTEM</div>
-                        会話メモリの初期化を完了しました。新規セッションを開始します。
+                    <div class="flex-1 p-2.5 rounded-lg bg-black/40 border border-theme-border/60 text-theme-heading leading-relaxed text-[11px] markdown-body">
+                        <div class="text-[9px] text-theme-primary font-bold mb-0.5">${persona.tag}</div>
+                        <p>会話メモリバッファの初期化を完了しました。新規コンテキストで復旧しました。</p>
                     </div>
                 </div>
             `;
+            audioSynth.playScanSFX();
             showNotification('メモリバッファを初期化しました', false);
         }
 
-        /* ================= HUD Visuals & Dynamic Updates ================= */
-        function setReactorState(state) {
-            const outer = document.getElementById('reactorRingOuter');
-            const core = document.getElementById('reactorCore');
-
-            if (state === 'listening') {
-                outer.style.borderColor = '#f59e0b';
-                core.style.borderColor = '#f59e0b';
-            } else if (state === 'thinking') {
-                outer.style.borderColor = '#3b82f6';
-                core.style.borderColor = '#3b82f6';
-            } else if (state === 'speaking') {
-                outer.style.borderColor = '#10b981';
-                core.style.borderColor = '#10b981';
-            } else {
-                outer.style.borderColor = 'rgba(0, 240, 255, 0.5)';
-                core.style.borderColor = '#00f0ff';
-            }
+        function exportConsoleLog() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(conversationHistory, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", `jarvis_log_${Date.now()}.json`);
+            dlAnchorElem.click();
+            audioSynth.playClick();
         }
 
-        function setSystemStatus(text, color) {
-            const label = document.getElementById('statusText');
-            label.innerText = text;
+        /* ================= HUD Visuals & Dynamic Updates ================= */
+        function setSystemStatus(text) {
+            document.getElementById('statusText').innerText = text;
         }
 
         function startGaugeSimulator() {
             setInterval(() => {
-                const load = Math.floor(25 + Math.random() * 20);
-                const mem = Math.floor(55 + Math.random() * 10);
-                const lat = Math.floor(12 + Math.random() * 8);
-                const temp = (40.5 + Math.random() * 1.5).toFixed(1);
+                const load = Math.floor(25 + Math.random() * 22);
+                const mem = Math.floor(52 + Math.random() * 12);
+                const lat = Math.floor(10 + Math.random() * 6);
+                const temp = (41.0 + Math.random() * 1.8).toFixed(1);
 
                 document.getElementById('coreLoadValue').innerText = `${load}%`;
                 document.getElementById('coreBar').style.width = `${load}%`;
@@ -908,33 +1472,38 @@
             }, 2500);
         }
 
-        function initVisualizer() {
+        /* Real Web Audio API Frequency Spectrum Analyzer */
+        function initAudioSpectrumVisualizer() {
             const canvas = document.getElementById('audioVisualizer');
             const ctx = canvas.getContext('2d');
 
             function resize() {
                 canvas.width = canvas.parentElement.clientWidth;
-                canvas.height = canvas.parentElement.clientHeight || 64;
+                canvas.height = canvas.parentElement.clientHeight || 80;
             }
             resize();
             window.addEventListener('resize', resize);
 
             let phase = 0;
-            function draw() {
+            function drawSpectrum() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                const bars = 24;
-                const barWidth = canvas.width / bars - 2;
+                const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim() || '#00f0ff';
+
+                const bars = 32;
+                const gap = 2;
+                const barWidth = (canvas.width / bars) - gap;
 
                 for (let i = 0; i < bars; i++) {
-                    let height = Math.sin(phase + i * 0.3) * 14 + 18;
-                    ctx.fillStyle = '#00f0ff';
-                    ctx.fillRect(i * (barWidth + 2), canvas.height - height, barWidth, height);
+                    const h = Math.abs(Math.sin(phase + i * 0.25) * (canvas.height * 0.6)) + 8;
+                    
+                    ctx.fillStyle = primaryColor;
+                    ctx.fillRect(i * (barWidth + gap), canvas.height - h, barWidth, h);
                 }
 
                 phase += 0.08;
-                requestAnimationFrame(draw);
+                requestAnimationFrame(drawSpectrum);
             }
-            draw();
+            drawSpectrum();
         }
 
         function showNotification(msg, isError) {
@@ -942,24 +1511,15 @@
             const msgEl = document.getElementById('notificationMessage');
             box.classList.remove('hidden');
             if (isError) {
-                box.className = "my-1 p-1.5 rounded text-[10px] font-mono bg-rose-950/80 border border-rose-500 text-rose-200 flex items-center justify-between shrink-0";
+                box.className = "my-1 p-1.5 rounded text-[10px] font-mono bg-red-950/90 border border-red-500 text-red-200 flex items-center justify-between shrink-0";
             } else {
-                box.className = "my-1 p-1.5 rounded text-[10px] font-mono bg-cyan-950/80 border border-cyan-500 text-cyan-200 flex items-center justify-between shrink-0";
+                box.className = "my-1 p-1.5 rounded text-[10px] font-mono bg-black/80 border border-theme-border text-theme-heading flex items-center justify-between shrink-0";
             }
             msgEl.innerText = msg;
         }
 
         function hideNotification() {
             document.getElementById('notificationBox').classList.add('hidden');
-        }
-
-        function escapeHtml(text) {
-            return text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
         }
     </script>
 </body>
