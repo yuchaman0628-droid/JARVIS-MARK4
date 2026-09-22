@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,15 +39,17 @@
     </script>
 
     <style>
-        body {
+        html, body {
+            height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
             background-color: #020611;
             color: #7dd3fc;
             font-family: 'Rajdhani', sans-serif;
             background-image: 
                 linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
-            background-size: 30px 30px;
-            overflow-x: hidden;
+            background-size: 24px 24px;
         }
 
         /* Scanline HUD Overlay */
@@ -57,39 +59,39 @@
             pointer-events: none;
             background: linear-gradient(
                 rgba(18, 16, 16, 0) 50%, 
-                rgba(0, 240, 255, 0.025) 50%
+                rgba(0, 240, 255, 0.02) 50%
             );
-            background-size: 100% 4px;
+            background-size: 100% 3px;
             z-index: 50;
         }
 
         /* Glass Panel HUD Glow Borders */
         .hud-panel {
-            background: rgba(7, 17, 34, 0.75);
-            backdrop-filter: blur(12px);
+            background: rgba(7, 17, 34, 0.85);
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(0, 240, 255, 0.3);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.08), inset 0 0 15px rgba(0, 240, 255, 0.03);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.08), inset 0 0 12px rgba(0, 240, 255, 0.03);
             position: relative;
         }
 
         .hud-panel::before {
             content: '';
             position: absolute;
-            top: -1px; left: 10px; width: 20px; height: 3px;
+            top: -1px; left: 8px; width: 16px; height: 2px;
             background: #00f0ff;
-            box-shadow: 0 0 8px #00f0ff;
+            box-shadow: 0 0 6px #00f0ff;
         }
 
         .hud-panel::after {
             content: '';
             position: absolute;
-            bottom: -1px; right: 10px; width: 20px; height: 3px;
+            bottom: -1px; right: 8px; width: 16px; height: 2px;
             background: #00f0ff;
-            box-shadow: 0 0 8px #00f0ff;
+            box-shadow: 0 0 6px #00f0ff;
         }
 
         .hud-text-glow {
-            text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+            text-shadow: 0 0 6px rgba(0, 240, 255, 0.6);
         }
 
         /* HUD Core Animations */
@@ -104,122 +106,118 @@
         }
 
         @keyframes hudPulse {
-            0%, 100% { opacity: 0.6; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.04); }
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
         }
 
         .spin-slow { animation: spinClockwise 20s linear infinite; }
         .spin-reverse { animation: spinCounterClockwise 15s linear infinite; }
-        .hud-pulse { animation: hudPulse 3s ease-in-out infinite; }
+        .hud-pulse { animation: hudPulse 2.5s ease-in-out infinite; }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: rgba(2, 6, 17, 0.8); }
         ::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.4); border-radius: 2px; }
         ::-webkit-scrollbar-thumb:hover { background: #00f0ff; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between p-2 md:p-4 select-none">
+<body class="h-screen max-h-screen overflow-hidden flex flex-col p-1.5 md:p-2.5 select-none">
     <div class="scanlines"></div>
 
-    <!-- HUD TOP NAVIGATION / STATUS BAR -->
-    <header class="hud-panel rounded-xl p-3 mb-3 flex flex-col lg:flex-row items-center justify-between gap-3 border-cyan-500/40">
+    <!-- HUD TOP NAVIGATION / COMPACT STATUS BAR -->
+    <header class="hud-panel rounded-lg px-3 py-1.5 mb-2 flex items-center justify-between gap-2 border-cyan-500/40 shrink-0">
         <!-- System Title & ID -->
-        <div class="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-start">
-            <div class="flex items-center gap-3">
-                <div class="w-3 h-3 rounded-full bg-cyan-400 animate-ping"></div>
-                <div>
-                    <h1 class="font-orbitron text-xl md:text-2xl font-black tracking-widest text-cyan-400 hud-text-glow flex items-center gap-2">
-                        J.A.R.V.I.S.
-                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950/80 border border-cyan-500/50 text-cyan-300">SYSTEM v3.6</span>
-                    </h1>
-                    <p class="font-mono text-xs text-cyan-300/60 uppercase tracking-wider">高度統括人工知能制御 HUD</p>
-                </div>
+        <div class="flex items-center gap-2.5">
+            <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></div>
+            <div>
+                <h1 class="font-orbitron text-base md:text-lg font-black tracking-widest text-cyan-400 hud-text-glow flex items-center gap-1.5 leading-none">
+                    J.A.R.V.I.S.
+                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-950/90 border border-cyan-500/50 text-cyan-300">v3.8 OPTICAL</span>
+                </h1>
             </div>
             
             <!-- System Status Badge -->
-            <div id="systemStatusBadge" class="px-3 py-1 rounded border border-cyan-500/50 bg-cyan-950/50 font-mono text-xs text-cyan-300 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <div id="systemStatusBadge" class="hidden sm:flex px-2 py-0.5 rounded border border-cyan-500/50 bg-cyan-950/50 font-mono text-[11px] text-cyan-300 items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
                 <span id="statusText">ONLINE / READY</span>
             </div>
         </div>
 
         <!-- API Key Storage Control -->
-        <div class="flex items-center gap-2 w-full lg:w-auto bg-slate-950/80 px-3 py-1.5 rounded-lg border border-cyan-900/60">
-            <span class="font-mono text-xs text-cyan-400 font-bold shrink-0">API KEY:</span>
-            <input type="password" id="apiKeyInput" placeholder="Gemini API Keyを入力" 
-                class="bg-transparent border-none text-xs font-mono text-cyan-200 placeholder-cyan-800 outline-none w-full lg:w-64">
-            <button onclick="toggleKeyVisibility()" class="text-cyan-500 hover:text-cyan-300 px-1 text-xs font-mono" title="表示切り替え">👁</button>
-            <button onclick="saveApiKey()" class="px-3 py-1 text-xs font-mono font-bold bg-cyan-600 hover:bg-cyan-500 text-slate-950 rounded transition-all shrink-0">
+        <div class="flex items-center gap-1.5 bg-slate-950/90 px-2 py-1 rounded border border-cyan-900/60 max-w-xs w-full sm:w-auto">
+            <span class="font-mono text-[10px] text-cyan-400 font-bold shrink-0">KEY:</span>
+            <input type="password" id="apiKeyInput" placeholder="Gemini API Key" 
+                class="bg-transparent border-none text-[11px] font-mono text-cyan-200 placeholder-cyan-800 outline-none w-full sm:w-44">
+            <button onclick="toggleKeyVisibility()" class="text-cyan-500 hover:text-cyan-300 px-1 text-[10px] font-mono" title="表示切替">👁</button>
+            <button onclick="saveApiKey()" class="px-2 py-0.5 text-[10px] font-mono font-bold bg-cyan-600 hover:bg-cyan-500 text-slate-950 rounded transition-all shrink-0">
                 保存
             </button>
         </div>
 
-        <!-- HUD Realtime Clock & Date -->
-        <div class="text-right font-mono text-xs text-cyan-300/80 flex items-center justify-between lg:justify-end w-full lg:w-auto gap-4">
-            <div>
-                <div id="hudDate" class="tracking-widest text-[11px] text-cyan-400/70">2026.09.22 TUE</div>
-                <div id="hudClock" class="font-orbitron text-lg font-bold text-cyan-300 tracking-wider">19:58:24 JST</div>
+        <!-- HUD Realtime Clock & Controls -->
+        <div class="font-mono text-[11px] text-cyan-300/80 flex items-center gap-3 shrink-0">
+            <div class="text-right hidden md:block">
+                <div id="hudDate" class="text-[9px] text-cyan-400/70 tracking-wider">2026.09.22 TUE</div>
+                <div id="hudClock" class="font-orbitron text-xs font-bold text-cyan-300 tracking-wider">19:58:24 JST</div>
             </div>
-            <button onclick="toggleVoiceOutput()" id="voiceToggleBtn" class="px-2.5 py-1.5 rounded border border-cyan-500/40 bg-cyan-950/60 hover:bg-cyan-900 text-cyan-300 text-xs font-mono flex items-center gap-1.5 transition-all">
+            <button onclick="toggleVoiceOutput()" id="voiceToggleBtn" class="px-2 py-1 rounded border border-cyan-500/40 bg-cyan-950/60 hover:bg-cyan-900 text-cyan-300 text-[11px] font-mono flex items-center gap-1 transition-all">
                 <span id="voiceStatusIcon">🔊</span>
-                <span id="voiceStatusText">VOICE: ON</span>
+                <span id="voiceStatusText" class="hidden lg:inline">VOICE: ON</span>
             </button>
         </div>
     </header>
 
-    <!-- MAIN HUD CONTENT GRID -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 flex-1">
+    <!-- MAIN HUD CONTENT GRID (Fits 100vh) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-2 flex-1 min-h-0 h-full overflow-hidden">
         
         <!-- ================= LEFT PANEL: DIAGNOSTICS & GAUGES ================= -->
-        <section class="lg:col-span-3 flex flex-col gap-3">
+        <section class="lg:col-span-3 flex flex-col gap-2 min-h-0 h-full overflow-hidden">
             
-            <!-- Circular Gauges Panel -->
-            <div class="hud-panel rounded-xl p-4 flex-1 flex flex-col justify-between">
-                <h2 class="font-orbitron text-xs font-bold text-cyan-400 tracking-wider border-b border-cyan-900/60 pb-2 mb-3 flex items-center justify-between">
+            <div class="hud-panel rounded-lg p-2.5 flex-1 flex flex-col justify-between overflow-hidden">
+                <h2 class="font-orbitron text-[11px] font-bold text-cyan-400 tracking-wider border-b border-cyan-900/60 pb-1 mb-2 flex items-center justify-between shrink-0">
                     <span>SYSTEM DIAGNOSTICS</span>
-                    <span class="text-[10px] text-cyan-600 font-mono">NODE #01</span>
+                    <span class="text-[9px] text-cyan-600 font-mono">NODE #01</span>
                 </h2>
 
-                <div class="space-y-4 my-auto">
+                <div class="space-y-2.5 my-auto overflow-y-auto pr-1">
                     <!-- Gauge 1: Neural Core Load -->
-                    <div class="flex items-center gap-3">
-                        <div class="relative w-16 h-16 shrink-0 flex items-center justify-center">
+                    <div class="flex items-center gap-2.5">
+                        <div class="relative w-11 h-11 shrink-0 flex items-center justify-center">
                             <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                                 <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                 <path id="coreLoadRing" class="text-cyan-400 transition-all duration-700" stroke-width="3.5" stroke-dasharray="32, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                             </svg>
-                            <span id="coreLoadValue" class="absolute font-mono text-xs text-cyan-300 font-bold">32%</span>
+                            <span id="coreLoadValue" class="absolute font-mono text-[10px] text-cyan-300 font-bold">32%</span>
                         </div>
                         <div class="flex-1">
-                            <div class="font-mono text-xs text-cyan-200 font-bold">NEURAL CORE LOAD</div>
-                            <div class="w-full bg-slate-900 rounded-full h-1.5 mt-1 border border-cyan-950 overflow-hidden">
-                                <div id="coreBar" class="bg-cyan-400 h-1.5 rounded-full transition-all duration-500" style="width: 32%"></div>
+                            <div class="font-mono text-[11px] text-cyan-200 font-bold">NEURAL CORE</div>
+                            <div class="w-full bg-slate-900 rounded-full h-1 mt-0.5 border border-cyan-950 overflow-hidden">
+                                <div id="coreBar" class="bg-cyan-400 h-1 rounded-full transition-all duration-500" style="width: 32%"></div>
                             </div>
-                            <span class="font-mono text-[10px] text-cyan-500">THREADS: 64 ACTIVE</span>
+                            <span class="font-mono text-[9px] text-cyan-500">64 THREADS ACTIVE</span>
                         </div>
                     </div>
 
                     <!-- Gauge 2: Memory Buffer -->
-                    <div class="flex items-center gap-3">
-                        <div class="relative w-16 h-16 shrink-0 flex items-center justify-center">
+                    <div class="flex items-center gap-2.5">
+                        <div class="relative w-11 h-11 shrink-0 flex items-center justify-center">
                             <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                                 <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                 <path id="memBufferRing" class="text-blue-500 transition-all duration-700" stroke-width="3.5" stroke-dasharray="58, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                             </svg>
-                            <span id="memBufferValue" class="absolute font-mono text-xs text-blue-300 font-bold">58%</span>
+                            <span id="memBufferValue" class="absolute font-mono text-[10px] text-blue-300 font-bold">58%</span>
                         </div>
                         <div class="flex-1">
-                            <div class="font-mono text-xs text-blue-200 font-bold">MEMORY BUFFER</div>
-                            <div class="w-full bg-slate-900 rounded-full h-1.5 mt-1 border border-blue-950 overflow-hidden">
-                                <div id="memBar" class="bg-blue-500 h-1.5 rounded-full transition-all duration-500" style="width: 58%"></div>
+                            <div class="font-mono text-[11px] text-blue-200 font-bold">MEMORY BUFFER</div>
+                            <div class="w-full bg-slate-900 rounded-full h-1 mt-0.5 border border-blue-950 overflow-hidden">
+                                <div id="memBar" class="bg-blue-500 h-1 rounded-full transition-all duration-500" style="width: 58%"></div>
                             </div>
-                            <span class="font-mono text-[10px] text-blue-400">ALLOCATED: 18.6 GB</span>
+                            <span class="font-mono text-[9px] text-blue-400">18.6 GB ALLOCATED</span>
                         </div>
                     </div>
 
-                    <!-- Gauge 3: Latency & Link Quality -->
-                    <div class="p-2.5 rounded bg-cyan-950/20 border border-cyan-900/40 font-mono text-xs space-y-1">
+                    <!-- Telemetry Metrics -->
+                    <div class="p-2 rounded bg-cyan-950/30 border border-cyan-900/50 font-mono text-[10px] space-y-1">
                         <div class="flex justify-between text-cyan-300">
                             <span>LATENCY:</span>
                             <span id="latencyVal" class="text-cyan-400 font-bold">14 ms</span>
@@ -228,23 +226,27 @@
                             <span>QUANTUM LINK:</span>
                             <span class="text-emerald-400 font-bold">99.8% STABLE</span>
                         </div>
+                        <div class="flex justify-between text-cyan-300">
+                            <span>CORE TEMP:</span>
+                            <span id="tempVal" class="text-cyan-400 font-bold">41.2 °C</span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- HUD Quick Commands -->
-                <div class="mt-4 pt-3 border-t border-cyan-900/60 space-y-2">
-                    <div class="font-mono text-[10px] text-cyan-500 uppercase">クイックマクロ</div>
-                    <div class="grid grid-cols-2 gap-1.5 font-mono text-xs">
-                        <button onclick="triggerMacro('自己診断')" class="p-1.5 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 rounded text-cyan-300 text-left transition-all">
+                <div class="mt-2 pt-2 border-t border-cyan-900/60 shrink-0">
+                    <div class="font-mono text-[9px] text-cyan-500 uppercase mb-1">クイックマクロ</div>
+                    <div class="grid grid-cols-2 gap-1 font-mono text-[10px]">
+                        <button onclick="triggerMacro('自己診断')" class="p-1 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 rounded text-cyan-300 text-left truncate transition-all">
                             &gt; 自己診断
                         </button>
-                        <button onclick="triggerMacro('ステータス')" class="p-1.5 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 rounded text-cyan-300 text-left transition-all">
+                        <button onclick="triggerMacro('ステータス')" class="p-1 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 rounded text-cyan-300 text-left truncate transition-all">
                             &gt; 現在状態
                         </button>
-                        <button onclick="clearChatHistory()" class="p-1.5 bg-amber-950/40 hover:bg-amber-900/60 border border-amber-800/60 rounded text-amber-300 text-left transition-all">
-                            &gt; メモリリセット
+                        <button onclick="clearChatHistory()" class="p-1 bg-amber-950/40 hover:bg-amber-900/60 border border-amber-800/60 rounded text-amber-300 text-left truncate transition-all">
+                            &gt; メモリ消去
                         </button>
-                        <button onclick="triggerMacro('時刻確認')" class="p-1.5 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 rounded text-cyan-300 text-left transition-all">
+                        <button onclick="triggerMacro('時刻確認')" class="p-1 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 rounded text-cyan-300 text-left truncate transition-all">
                             &gt; 時刻照会
                         </button>
                     </div>
@@ -252,62 +254,86 @@
             </div>
         </section>
 
-        <!-- ================= CENTER PANEL: MAIN HUD REACTOR & CHAT CONSOLE ================= -->
-        <section class="lg:col-span-6 flex flex-col gap-3">
+        <!-- ================= CENTER PANEL: HUD CORE, OPTICAL VISION & CHAT ================= -->
+        <section class="lg:col-span-6 flex flex-col gap-2 min-h-0 h-full overflow-hidden">
             
-            <div class="hud-panel rounded-xl p-4 flex-1 flex flex-col justify-between relative overflow-hidden">
+            <div class="hud-panel rounded-lg p-2.5 flex-1 flex flex-col min-h-0 overflow-hidden relative">
                 
-                <!-- Rotating HUD Central Reactor Ring Visualizer -->
-                <div class="relative w-full h-36 flex items-center justify-center my-1">
-                    <!-- Layer 1: Outer Rotating Ring -->
-                    <div id="reactorRingOuter" class="absolute w-32 h-32 rounded-full border-2 border-dashed border-cyan-400/50 spin-slow"></div>
-                    <!-- Layer 2: Middle Counter Ring -->
-                    <div id="reactorRingMid" class="absolute w-24 h-24 rounded-full border border-cyan-300/70 spin-reverse border-t-transparent border-b-transparent"></div>
-                    <!-- Layer 3: Inner Core Ring -->
-                    <div id="reactorCore" class="w-14 h-14 rounded-full bg-cyan-500/20 border-2 border-cyan-300 flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.5)] hud-pulse">
-                        <div id="reactorDot" class="w-4 h-4 rounded-full bg-cyan-400 shadow-[0_0_10px_#00f0ff]"></div>
+                <!-- HUD Core Reactor Ring & Camera Vision Display -->
+                <div class="relative w-full h-24 shrink-0 flex items-center justify-center bg-slate-950/60 rounded-lg border border-cyan-900/40 overflow-hidden mb-2">
+                    
+                    <!-- Optical Camera Stream Overlay (When active) -->
+                    <video id="webcamVideo" class="absolute inset-0 w-full h-full object-cover hidden opacity-80" autoplay playsinline muted></video>
+                    <canvas id="snapshotCanvas" class="hidden"></canvas>
+
+                    <!-- Reactor Ring Visualizer -->
+                    <div id="reactorVisualGroup" class="relative flex items-center justify-center">
+                        <!-- Layer 1: Outer Rotating Ring -->
+                        <div id="reactorRingOuter" class="absolute w-20 h-20 rounded-full border-2 border-dashed border-cyan-400/50 spin-slow"></div>
+                        <!-- Layer 2: Middle Counter Ring -->
+                        <div id="reactorRingMid" class="absolute w-14 h-14 rounded-full border border-cyan-300/70 spin-reverse border-t-transparent border-b-transparent"></div>
+                        <!-- Layer 3: Inner Core Ring -->
+                        <div id="reactorCore" class="w-9 h-9 rounded-full bg-cyan-500/20 border-2 border-cyan-300 flex items-center justify-center shadow-[0_0_15px_rgba(0,240,255,0.5)] hud-pulse">
+                            <div id="reactorDot" class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]"></div>
+                        </div>
                     </div>
-                    <!-- Overlay HUD Labels -->
-                    <div class="absolute top-1 left-2 font-mono text-[10px] text-cyan-500">AI CORE: GEMINI-3.6-FLASH</div>
-                    <div class="absolute bottom-1 right-2 font-mono text-[10px] text-cyan-500">ENCRYPTION: 1024-BIT</div>
+
+                    <!-- Overlay HUD Tech Details -->
+                    <div class="absolute top-1 left-2 font-mono text-[9px] text-cyan-400/80 bg-slate-950/80 px-1.5 py-0.5 rounded border border-cyan-900/40">
+                        MODEL: GEMINI-3.6-FLASH
+                    </div>
+
+                    <!-- Camera Vision Toggle Status -->
+                    <div class="absolute top-1 right-2 flex items-center gap-1">
+                        <button onclick="toggleCamera()" id="cameraToggleBtn" class="px-2 py-0.5 bg-cyan-950 hover:bg-cyan-900 border border-cyan-500/60 text-cyan-300 font-mono text-[10px] rounded transition-all flex items-center gap-1">
+                            📷 <span id="cameraBtnText">CAM: OFF</span>
+                        </button>
+                    </div>
+
+                    <div id="visionStatusTag" class="hidden absolute bottom-1 left-2 font-mono text-[9px] text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-500/50">
+                        ● OPTICAL FEED LIVE
+                    </div>
                 </div>
 
-                <!-- Chat Log Display Area -->
-                <div id="chatLog" class="flex-1 overflow-y-auto space-y-3 p-3 bg-slate-950/70 rounded-lg border border-cyan-900/40 max-h-[380px] min-h-[220px] font-mono text-xs">
-                    
-                    <!-- System Welcome Message -->
-                    <div class="flex items-start gap-2.5">
-                        <div class="w-6 h-6 rounded bg-cyan-950 border border-cyan-400 flex items-center justify-center text-cyan-300 font-bold shrink-0">
+                <!-- Chat Log Display Area (Scrollable within bounds) -->
+                <div id="chatLog" class="flex-1 min-h-0 overflow-y-auto space-y-2 p-2 bg-slate-950/80 rounded-lg border border-cyan-900/40 font-mono text-xs">
+                    <!-- Welcome Message -->
+                    <div class="flex items-start gap-2">
+                        <div class="w-5 h-5 rounded bg-cyan-950 border border-cyan-400 flex items-center justify-center text-cyan-300 font-bold text-[10px] shrink-0">
                             J
                         </div>
-                        <div class="flex-1 p-2.5 rounded-lg bg-cyan-950/30 border border-cyan-800/40 text-cyan-100 leading-relaxed">
-                            <div class="text-[10px] text-cyan-400 font-bold mb-1">J.A.R.V.I.S. SYSTEM</div>
-                            高度統括人工知能 J.A.R.V.I.S. オンライン。すべてのモジュールが正常に稼働しています。指示を入力または音声でお伝えください。
+                        <div class="flex-1 p-2 rounded bg-cyan-950/30 border border-cyan-800/40 text-cyan-100 leading-relaxed text-[11px]">
+                            <div class="text-[9px] text-cyan-400 font-bold mb-0.5">J.A.R.V.I.S. SYSTEM</div>
+                            高度統括人工知能 J.A.R.V.I.S. オンライン。画面表示を最適化しました。テキスト・音声・光学カメラで指示を入力できます。
                         </div>
                     </div>
-
                 </div>
 
-                <!-- Notification Message Banner -->
-                <div id="notificationBox" class="hidden my-2 p-2 rounded text-xs font-mono bg-rose-950/80 border border-rose-500 text-rose-200 flex items-center justify-between">
+                <!-- Notification Banner -->
+                <div id="notificationBox" class="hidden my-1 p-1.5 rounded text-[10px] font-mono bg-rose-950/80 border border-rose-500 text-rose-200 flex items-center justify-between shrink-0">
                     <span id="notificationMessage"></span>
-                    <button onclick="hideNotification()" class="text-rose-400 hover:text-rose-100 font-bold">✕</button>
+                    <button onclick="hideNotification()" class="text-rose-400 hover:text-rose-100 font-bold ml-2">✕</button>
                 </div>
 
                 <!-- Console Input Controls -->
-                <div class="mt-3 pt-2 border-t border-cyan-900/60 flex items-center gap-2">
+                <div class="mt-2 pt-1.5 border-t border-cyan-900/60 flex items-center gap-1.5 shrink-0">
                     
-                    <!-- Voice Input Microphone Button -->
-                    <button id="micBtn" onclick="toggleVoiceInput()" class="p-3 rounded-lg bg-cyan-950 border border-cyan-600 hover:bg-cyan-900 text-cyan-300 transition-all shrink-0 flex items-center justify-center relative group" title="音声認識（話しかける）">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                    <!-- Voice Input Button -->
+                    <button id="micBtn" onclick="toggleVoiceInput()" class="p-2 rounded bg-cyan-950 border border-cyan-600 hover:bg-cyan-900 text-cyan-300 transition-all shrink-0 flex items-center justify-center" title="音声認識">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                    </button>
+
+                    <!-- Camera Snapshot & Analyze Button -->
+                    <button id="snapBtn" onclick="captureAndAnalyze()" class="p-2 rounded bg-cyan-950 border border-cyan-600 hover:bg-cyan-900 text-cyan-300 transition-all shrink-0 flex items-center justify-center" title="視覚解析（カメラ画像を送信）">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h0.93a2 2 0 001.664-.89l0.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l0.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     </button>
 
                     <!-- Text Command Input -->
-                    <input type="text" id="userInput" onkeydown="handleInputKey(event)" placeholder="JARVISへのコマンド・質問を入力..." 
-                        class="w-full bg-slate-950/90 border border-cyan-900/80 rounded-lg px-3 py-2 text-sm text-cyan-100 placeholder-cyan-800 outline-none focus:border-cyan-400 font-mono transition-all">
+                    <input type="text" id="userInput" onkeydown="handleInputKey(event)" placeholder="JARVISへコマンドを入力..." 
+                        class="w-full bg-slate-950/90 border border-cyan-900/80 rounded px-2.5 py-1.5 text-xs text-cyan-100 placeholder-cyan-800 outline-none focus:border-cyan-400 font-mono transition-all">
 
                     <!-- Send Button -->
-                    <button id="sendBtn" onclick="sendUserMessage()" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-lg font-mono text-xs tracking-wider transition-all shadow-[0_0_12px_rgba(0,240,255,0.4)] shrink-0">
+                    <button id="sendBtn" onclick="sendUserMessage()" class="px-3 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded font-mono text-xs tracking-wider transition-all shrink-0 shadow-[0_0_8px_rgba(0,240,255,0.4)]">
                         EXEC
                     </button>
                 </div>
@@ -316,62 +342,62 @@
         </section>
 
         <!-- ================= RIGHT PANEL: AUDIO VISUALIZER & SPEECH CONTROLS ================= -->
-        <section class="lg:col-span-3 flex flex-col gap-3">
+        <section class="lg:col-span-3 flex flex-col gap-2 min-h-0 h-full overflow-hidden">
             
-            <div class="hud-panel rounded-xl p-4 flex-1 flex flex-col justify-between">
-                <div>
-                    <h2 class="font-orbitron text-xs font-bold text-cyan-400 tracking-wider border-b border-cyan-900/60 pb-2 mb-3 flex items-center justify-between">
-                        <span>AUDIO SPECTRUM</span>
-                        <span class="text-[10px] text-cyan-600 font-mono">DSP ENGINE</span>
+            <div class="hud-panel rounded-lg p-2.5 flex-1 flex flex-col justify-between overflow-hidden">
+                <div class="flex-1 flex flex-col min-h-0">
+                    <h2 class="font-orbitron text-[11px] font-bold text-cyan-400 tracking-wider border-b border-cyan-900/60 pb-1 mb-2 flex items-center justify-between shrink-0">
+                        <span>DSP SPECTRUM</span>
+                        <span class="text-[9px] text-cyan-600 font-mono">AUDIO ENGINE</span>
                     </h2>
 
                     <!-- Audio Waveform Visualizer Canvas -->
-                    <div class="bg-slate-950 rounded-lg p-2 border border-cyan-900/60 mb-4">
-                        <canvas id="audioVisualizer" class="w-full h-24 block"></canvas>
+                    <div class="bg-slate-950 rounded p-1 border border-cyan-900/60 mb-2 shrink-0">
+                        <canvas id="audioVisualizer" class="w-full h-16 block"></canvas>
                     </div>
 
-                    <!-- Speech Synthesis Controls -->
-                    <div class="space-y-3 font-mono text-xs">
-                        <div class="text-cyan-400 font-bold border-b border-cyan-950 pb-1">音声合成パラメータ (TTS)</div>
+                    <!-- Speech Synthesis Controls (TTS) -->
+                    <div class="space-y-2 font-mono text-[11px] overflow-y-auto pr-1">
+                        <div class="text-cyan-400 font-bold border-b border-cyan-950 pb-0.5 text-[10px]">音声合成設定 (TTS)</div>
 
                         <!-- Speed Slider -->
                         <div>
-                            <div class="flex justify-between text-cyan-300 mb-1">
+                            <div class="flex justify-between text-cyan-300 text-[10px]">
                                 <span>SPEED (話速):</span>
                                 <span id="speedVal" class="text-cyan-400">1.0x</span>
                             </div>
-                            <input type="range" id="speechSpeed" min="0.5" max="1.8" step="0.1" value="1.0" oninput="updateTTSParams()" class="w-full accent-cyan-400 bg-slate-900">
+                            <input type="range" id="speechSpeed" min="0.5" max="1.8" step="0.1" value="1.0" oninput="updateTTSParams()" class="w-full accent-cyan-400 bg-slate-900 h-1">
                         </div>
 
                         <!-- Pitch Slider -->
                         <div>
-                            <div class="flex justify-between text-cyan-300 mb-1">
+                            <div class="flex justify-between text-cyan-300 text-[10px]">
                                 <span>PITCH (音高):</span>
                                 <span id="pitchVal" class="text-cyan-400">1.0</span>
                             </div>
-                            <input type="range" id="speechPitch" min="0.5" max="1.5" step="0.1" value="1.0" oninput="updateTTSParams()" class="w-full accent-cyan-400 bg-slate-900">
+                            <input type="range" id="speechPitch" min="0.5" max="1.5" step="0.1" value="1.0" oninput="updateTTSParams()" class="w-full accent-cyan-400 bg-slate-900 h-1">
                         </div>
 
                         <!-- Voice Select -->
                         <div>
-                            <div class="text-cyan-300 mb-1">VOICE MODEL:</div>
-                            <select id="voiceSelect" onchange="updateTTSParams()" class="w-full bg-slate-950 border border-cyan-900 rounded p-1 text-cyan-200 outline-none text-xs">
+                            <div class="text-cyan-300 text-[10px] mb-0.5">VOICE MODEL:</div>
+                            <select id="voiceSelect" onchange="updateTTSParams()" class="w-full bg-slate-950 border border-cyan-900 rounded p-1 text-cyan-200 outline-none text-[10px]">
                                 <option value="">標準音声（日本語）</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
-                <!-- Environmental Telemetry -->
-                <div class="mt-4 pt-3 border-t border-cyan-900/60 space-y-2 font-mono text-xs">
-                    <div class="text-[10px] text-cyan-500">ENVIRONMENT METRICS</div>
-                    <div class="grid grid-cols-2 gap-2 text-[11px]">
-                        <div class="p-2 rounded bg-slate-950 border border-cyan-950">
-                            <div class="text-slate-500">CORE TEMP</div>
-                            <div id="tempVal" class="text-cyan-300 font-bold">41.2 °C</div>
+                <!-- Footer System Information -->
+                <div class="mt-2 pt-2 border-t border-cyan-900/60 space-y-1 font-mono text-[10px] shrink-0">
+                    <div class="text-[9px] text-cyan-500 uppercase">STREAM SECURITY</div>
+                    <div class="grid grid-cols-2 gap-1 text-[10px]">
+                        <div class="p-1 rounded bg-slate-950 border border-cyan-950 truncate">
+                            <span class="text-slate-500">ENCRYPTION:</span>
+                            <div class="text-cyan-300 font-bold">1024-BIT</div>
                         </div>
-                        <div class="p-2 rounded bg-slate-950 border border-cyan-950">
-                            <div class="text-slate-500">BANDWIDTH</div>
+                        <div class="p-1 rounded bg-slate-950 border border-cyan-950 truncate">
+                            <span class="text-slate-500">BANDWIDTH:</span>
                             <div class="text-cyan-300 font-bold">10 Gbps</div>
                         </div>
                     </div>
@@ -390,6 +416,7 @@
         let ttsRate = 1.0;
         let ttsPitch = 1.0;
         let availableVoices = [];
+        let webcamStream = null;
 
         const TARGET_MODEL = 'gemini-3.6-flash';
 
@@ -449,6 +476,7 @@
             input.type = input.type === 'password' ? 'text' : 'password';
         }
 
+        /* ================= Speech Recognition ================= */
         function setupSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
@@ -507,11 +535,12 @@
             document.getElementById('micBtn').classList.remove('bg-cyan-500', 'text-slate-950', 'animate-pulse');
         }
 
+        /* ================= Speech Synthesis (TTS) & Markdown Stripper ================= */
         function setupSpeechSynthesis() {
             if (!('speechSynthesis' in window)) return;
 
             function populateVoices() {
-                availableVoices = window.speechSynthesis.getVoices().filter(v => v.lang.includes('ja'));
+                availableVoices = window.speechSynthesis.getVoices().filter(v => v.lang.includes('ja') || v.lang.includes('en'));
                 const select = document.getElementById('voiceSelect');
                 select.innerHTML = '';
                 availableVoices.forEach((voice, i) => {
@@ -535,11 +564,48 @@
             document.getElementById('pitchVal').innerText = ttsPitch.toFixed(1);
         }
 
+        /**
+         * Cleans Markdown formatting so TTS does not read symbols like '#' or '*'
+         */
+        function cleanMarkdownForSpeech(text) {
+            if (!text) return '';
+            return text
+                // Remove code blocks
+                .replace(/```[\s\S]*?```/g, 'コードブロック')
+                // Remove inline code ticks
+                .replace(/`([^`]+)`/g, '$1')
+                // Remove headings #
+                .replace(/^#{1,6}\s+/gm, '')
+                // Remove bold / italics (* and _)
+                .replace(/(\*\*|__)(.*?)\1/g, '$2')
+                .replace(/(\*|_)(.*?)\1/g, '$2')
+                // Remove strikethrough ~~
+                .replace(/~~(.*?)~~/g, '$1')
+                // Remove links [text](url) -> text
+                .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+                // Remove bullet lists (*, -, +)
+                .replace(/^\s*[\*\-\+]\s+/gm, '')
+                // Remove numbered lists (1. )
+                .replace(/^\s*\d+\.\s+/gm, '')
+                // Remove blockquotes >
+                .replace(/^\s*>\s+/gm, '')
+                // Strip any remaining markdown symbols (#, *, _, ~, `, |, etc.)
+                .replace(/[#\*_~`|]/g, '')
+                // Clean up repeated whitespace
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
         function speakText(text) {
             if (!isVoiceOutputEnabled || !('speechSynthesis' in window)) return;
 
             window.speechSynthesis.cancel();
-            const uttr = new SpeechSynthesisUtterance(text);
+            
+            // Clean markdown before vocalization
+            const cleanText = cleanMarkdownForSpeech(text);
+            if (!cleanText) return;
+
+            const uttr = new SpeechSynthesisUtterance(cleanText);
             uttr.lang = 'ja-JP';
             uttr.rate = ttsRate;
             uttr.pitch = ttsPitch;
@@ -581,6 +647,68 @@
             }
         }
 
+        /* ================= Optical Camera Integration ================= */
+        async function toggleCamera() {
+            const video = document.getElementById('webcamVideo');
+            const btnText = document.getElementById('cameraBtnText');
+            const statusTag = document.getElementById('visionStatusTag');
+
+            if (webcamStream) {
+                // Stop camera
+                webcamStream.getTracks().forEach(track => track.stop());
+                webcamStream = null;
+                video.classList.add('hidden');
+                statusTag.classList.add('hidden');
+                btnText.innerText = 'CAM: OFF';
+                showNotification('カメラを停止しました', false);
+            } else {
+                // Start camera
+                try {
+                    webcamStream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
+                    video.srcObject = webcamStream;
+                    video.classList.remove('hidden');
+                    statusTag.classList.remove('hidden');
+                    btnText.innerText = 'CAM: ON';
+                    showNotification('光学カメラフィードを開くことに成功しました', false);
+                } catch (err) {
+                    console.error(err);
+                    showNotification('カメラ起動エラー: アクセス許可を確認してください', true);
+                }
+            }
+        }
+
+        function captureImageBase64() {
+            if (!webcamStream) return null;
+            const video = document.getElementById('webcamVideo');
+            const canvas = document.getElementById('snapshotCanvas');
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            return dataUrl.split(',')[1]; // strip base64 prefix
+        }
+
+        async function captureAndAnalyze() {
+            if (!webcamStream) {
+                await toggleCamera();
+                if (!webcamStream) return;
+            }
+
+            const promptInput = document.getElementById('userInput').value.trim() || "現在のカメラ映像に映っている対象や状況を高度に分析してください。";
+            document.getElementById('userInput').value = '';
+            
+            const imageBase64 = captureImageBase64();
+            if (!imageBase64) {
+                showNotification('カメラからの画像取得に失敗しました', true);
+                return;
+            }
+
+            appendChatMessage('USER', `[光学解析リクエスト] ${promptInput}`);
+            await processGeminiCall(promptInput, imageBase64);
+        }
+
+        /* ================= Chat & Gemini API Integration ================= */
         function handleInputKey(event) {
             if (event.key === 'Enter') {
                 sendUserMessage();
@@ -601,25 +729,28 @@
         async function sendUserMessage() {
             const inputEl = document.getElementById('userInput');
             const text = inputEl.value.trim();
-            const apiKey = getApiKey();
 
             if (!text) return;
+
+            inputEl.value = '';
+            hideNotification();
+
+            appendChatMessage('USER', text);
+            await processGeminiCall(text, null);
+        }
+
+        async function processGeminiCall(promptText, imageBase64 = null) {
+            const apiKey = getApiKey();
             if (!apiKey) {
                 showNotification('Gemini API Keyが未登録です。画面上部に入力して保存してください。', true);
                 return;
             }
 
-            inputEl.value = '';
-            hideNotification();
-
-            // Append User Message to UI
-            appendChatMessage('USER', text);
-
             setSystemStatus('PROCESSING INTENT...', 'amber');
             setReactorState('thinking');
 
             try {
-                const reply = await callGeminiAPI(text, apiKey);
+                const reply = await callGeminiAPI(promptText, apiKey, imageBase64);
                 appendChatMessage('JARVIS', reply);
 
                 if (isVoiceOutputEnabled) {
@@ -637,18 +768,28 @@
             }
         }
 
-        async function callGeminiAPI(promptText, apiKey) {
+        async function callGeminiAPI(promptText, apiKey, imageBase64 = null) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${TARGET_MODEL}:generateContent?key=${apiKey}`;
 
             const systemInstruction = 
                 "あなたは高度統括人工知能システム『J.A.R.V.I.S.』です。" +
                 "論理的、知的、かつ礼儀正しいAIアシスタントとして、迅速かつ正確にユーザーの問いに回答してください。" +
-                "返答は正確で分かりやすく、音声読み上げに適した簡潔な文章で構成してください。" +
-                "フィクション作品やキャラクターの言及は避け、実用的なAIシステムとして振る舞ってください。";
+                "返答は簡潔で分かりやすく構成してください。";
+
+            let userContentParts = [];
+            if (imageBase64) {
+                userContentParts.push({
+                    inline_data: {
+                        mime_type: "image/jpeg",
+                        data: imageBase64
+                    }
+                });
+            }
+            userContentParts.push({ text: promptText });
 
             conversationHistory.push({
                 role: "user",
-                parts: [{ text: promptText }]
+                parts: userContentParts
             });
 
             const requestBody = {
@@ -685,18 +826,18 @@
         function appendChatMessage(sender, message) {
             const chatLog = document.getElementById('chatLog');
             const wrapper = document.createElement('div');
-            wrapper.className = "flex items-start gap-2.5";
+            wrapper.className = "flex items-start gap-2";
 
             const isUser = sender === 'USER';
             const iconBg = isUser ? 'bg-slate-800 border-slate-600 text-slate-300' : 'bg-cyan-950 border-cyan-400 text-cyan-300';
             const msgBg = isUser ? 'bg-slate-900/80 border-slate-700/80 text-slate-100' : 'bg-cyan-950/30 border-cyan-800/40 text-cyan-100';
 
             wrapper.innerHTML = `
-                <div class="w-6 h-6 rounded ${iconBg} border flex items-center justify-center font-bold text-[10px] shrink-0">
+                <div class="w-5 h-5 rounded ${iconBg} border flex items-center justify-center font-bold text-[9px] shrink-0">
                     ${isUser ? 'U' : 'J'}
                 </div>
-                <div class="flex-1 p-2.5 rounded-lg ${msgBg} border leading-relaxed">
-                    <div class="text-[10px] ${isUser ? 'text-slate-400' : 'text-cyan-400'} font-bold mb-1">${sender}</div>
+                <div class="flex-1 p-2 rounded-lg ${msgBg} border leading-relaxed text-[11px]">
+                    <div class="text-[9px] ${isUser ? 'text-slate-400' : 'text-cyan-400'} font-bold mb-0.5">${sender}</div>
                     ${escapeHtml(message)}
                 </div>
             `;
@@ -709,12 +850,12 @@
             conversationHistory = [];
             const chatLog = document.getElementById('chatLog');
             chatLog.innerHTML = `
-                <div class="flex items-start gap-2.5">
-                    <div class="w-6 h-6 rounded bg-cyan-950 border border-cyan-400 flex items-center justify-center text-cyan-300 font-bold shrink-0">
+                <div class="flex items-start gap-2">
+                    <div class="w-5 h-5 rounded bg-cyan-950 border border-cyan-400 flex items-center justify-center text-cyan-300 font-bold text-[9px] shrink-0">
                         J
                     </div>
-                    <div class="flex-1 p-2.5 rounded-lg bg-cyan-950/30 border border-cyan-800/40 text-cyan-100 leading-relaxed">
-                        <div class="text-[10px] text-cyan-400 font-bold mb-1">J.A.R.V.I.S. SYSTEM</div>
+                    <div class="flex-1 p-2 rounded-lg bg-cyan-950/30 border border-cyan-800/40 text-cyan-100 leading-relaxed text-[11px]">
+                        <div class="text-[9px] text-cyan-400 font-bold mb-0.5">J.A.R.V.I.S. SYSTEM</div>
                         会話メモリの初期化を完了しました。新規セッションを開始します。
                     </div>
                 </div>
@@ -722,6 +863,7 @@
             showNotification('メモリバッファを初期化しました', false);
         }
 
+        /* ================= HUD Visuals & Dynamic Updates ================= */
         function setReactorState(state) {
             const outer = document.getElementById('reactorRingOuter');
             const core = document.getElementById('reactorCore');
@@ -748,7 +890,6 @@
 
         function startGaugeSimulator() {
             setInterval(() => {
-                // Random fluctuation for real-time feel
                 const load = Math.floor(25 + Math.random() * 20);
                 const mem = Math.floor(55 + Math.random() * 10);
                 const lat = Math.floor(12 + Math.random() * 8);
@@ -773,7 +914,7 @@
 
             function resize() {
                 canvas.width = canvas.parentElement.clientWidth;
-                canvas.height = canvas.parentElement.clientHeight || 96;
+                canvas.height = canvas.parentElement.clientHeight || 64;
             }
             resize();
             window.addEventListener('resize', resize);
@@ -781,11 +922,11 @@
             let phase = 0;
             function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                const bars = 28;
+                const bars = 24;
                 const barWidth = canvas.width / bars - 2;
 
                 for (let i = 0; i < bars; i++) {
-                    let height = Math.sin(phase + i * 0.3) * 20 + 25;
+                    let height = Math.sin(phase + i * 0.3) * 14 + 18;
                     ctx.fillStyle = '#00f0ff';
                     ctx.fillRect(i * (barWidth + 2), canvas.height - height, barWidth, height);
                 }
@@ -801,9 +942,9 @@
             const msgEl = document.getElementById('notificationMessage');
             box.classList.remove('hidden');
             if (isError) {
-                box.className = "my-2 p-2 rounded text-xs font-mono bg-rose-950/80 border border-rose-500 text-rose-200 flex items-center justify-between";
+                box.className = "my-1 p-1.5 rounded text-[10px] font-mono bg-rose-950/80 border border-rose-500 text-rose-200 flex items-center justify-between shrink-0";
             } else {
-                box.className = "my-2 p-2 rounded text-xs font-mono bg-cyan-950/80 border border-cyan-500 text-cyan-200 flex items-center justify-between";
+                box.className = "my-1 p-1.5 rounded text-[10px] font-mono bg-cyan-950/80 border border-cyan-500 text-cyan-200 flex items-center justify-between shrink-0";
             }
             msgEl.innerText = msg;
         }
