@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome CDN for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Orbitron & Rajdhani for Sci-Fi Aesthetics -->
+    <!-- Google Fonts: Orbitron, Rajdhani, Share Tech Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -25,8 +25,8 @@
                             cyan: '#00f0ff',
                             gold: '#ffd700',
                             crimson: '#ff2a2a',
-                            stealth: '#e0f7fa',
-                            glass: 'rgba(7, 18, 38, 0.45)',
+                            stealth: '#00ffaa',
+                            glass: 'rgba(5, 12, 24, 0.45)',
                             border: 'rgba(0, 240, 255, 0.35)'
                         }
                     },
@@ -45,17 +45,16 @@
             --primary-color: #00f0ff;
             --primary-glow: rgba(0, 240, 255, 0.6);
             --secondary-color: #0088ff;
-            --panel-bg: rgba(7, 18, 38, 0.50);
+            --panel-bg: rgba(5, 12, 24, 0.45);
             --panel-border: rgba(0, 240, 255, 0.30);
-            --text-glow: 0 0 10px rgba(0, 240, 255, 0.7);
+            --text-glow: 0 0 8px rgba(0, 240, 255, 0.7);
         }
 
-        /* Theme Variations */
         body.theme-cyan {
             --primary-color: #00f0ff;
             --primary-glow: rgba(0, 240, 255, 0.6);
             --secondary-color: #00aaff;
-            --panel-bg: rgba(5, 16, 32, 0.50);
+            --panel-bg: rgba(5, 12, 24, 0.45);
             --panel-border: rgba(0, 240, 255, 0.35);
             --text-glow: 0 0 8px rgba(0, 240, 255, 0.8);
         }
@@ -64,7 +63,7 @@
             --primary-color: #ffd700;
             --primary-glow: rgba(255, 215, 0, 0.6);
             --secondary-color: #ff3333;
-            --panel-bg: rgba(28, 12, 5, 0.50);
+            --panel-bg: rgba(24, 10, 4, 0.50);
             --panel-border: rgba(255, 215, 0, 0.4);
             --text-glow: 0 0 8px rgba(255, 215, 0, 0.8);
         }
@@ -73,7 +72,7 @@
             --primary-color: #ff2a2a;
             --primary-glow: rgba(255, 42, 42, 0.6);
             --secondary-color: #ff8800;
-            --panel-bg: rgba(25, 5, 5, 0.52);
+            --panel-bg: rgba(22, 4, 4, 0.52);
             --panel-border: rgba(255, 42, 42, 0.4);
             --text-glow: 0 0 8px rgba(255, 42, 42, 0.8);
         }
@@ -82,12 +81,11 @@
             --primary-color: #00ffaa;
             --primary-glow: rgba(0, 255, 170, 0.6);
             --secondary-color: #0088aa;
-            --panel-bg: rgba(4, 20, 18, 0.50);
+            --panel-bg: rgba(4, 18, 15, 0.50);
             --panel-border: rgba(0, 255, 170, 0.35);
             --text-glow: 0 0 8px rgba(0, 255, 170, 0.8);
         }
 
-        /* CRT Scanline Overlay Effect */
         .scanlines {
             background: linear-gradient(
                 rgba(18, 16, 16, 0) 50%, 
@@ -102,13 +100,12 @@
             pointer-events: none;
         }
 
-        /* Translucent Sci-Fi Glass Panels */
         .hud-panel {
             background: var(--panel-bg);
             border: 1px solid var(--panel-border);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 0, 0, 0.3);
+            box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.5), 0 0 12px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
         }
 
@@ -122,12 +119,6 @@
             text-shadow: var(--text-glow);
         }
 
-        .hud-bg-glow {
-            background-color: var(--primary-color);
-            box-shadow: 0 0 10px var(--primary-glow);
-        }
-
-        /* Sci-Fi Corner Brackets */
         .corner-brackets {
             position: relative;
         }
@@ -151,29 +142,9 @@
             border-width: 0 2px 2px 0;
         }
 
-        /* Keyframe Animations */
-        @keyframes radarSweep {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .animate-radar {
-            animation: radarSweep 4s linear infinite;
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.3; transform: scale(0.98); }
-            50% { opacity: 0.9; transform: scale(1.02); }
-        }
-
-        .animate-pulse-glow {
-            animation: pulseGlow 2.5s ease-in-out infinite;
-        }
-
-        /* Custom Scrollbar for Sci-Fi HUD */
         ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
+            width: 4px;
+            height: 4px;
         }
         ::-webkit-scrollbar-track {
             background: rgba(0, 0, 0, 0.3);
@@ -181,7 +152,6 @@
         ::-webkit-scrollbar-thumb {
             background: var(--primary-color);
             border-radius: 2px;
-            box-shadow: 0 0 5px var(--primary-color);
         }
     </style>
 </head>
@@ -190,11 +160,11 @@
     <!-- 1. FULLSCREEN CAMERA BACKGROUND (z-0) -->
     <video id="cameraBg" autoplay playsinline muted class="fixed inset-0 w-full h-full object-cover z-0 transition-opacity duration-500 opacity-100"></video>
     
-    <!-- Camera Permission Overlay Fallback if denied or loading -->
+    <!-- Camera Permission Overlay Fallback -->
     <div id="cameraFallback" class="fixed inset-0 z-0 bg-gradient-to-br from-gray-950 via-slate-900 to-black hidden flex-col items-center justify-center text-center p-6">
         <i class="fa-solid fa-camera-rotate text-5xl hud-text-glow mb-4 animate-bounce"></i>
-        <p class="font-orbitron text-xl tracking-wider text-cyan-400 mb-2">CAMERA STREAM UNAVAILABLE</p>
-        <p class="text-sm text-gray-400 max-w-md mb-4">Click below to activate live target video background or allow browser media permissions.</p>
+        <p class="font-orbitron text-xl tracking-wider text-cyan-400 mb-2">OPTICAL SENSOR DISCONNECTED</p>
+        <p class="text-sm text-gray-400 max-w-md mb-4">Click below to initiate full camera video background or verify browser media permissions.</p>
         <button onclick="initCameraStream()" class="hud-panel px-6 py-2 rounded text-cyan-300 hover:text-white border border-cyan-500/50 hover:border-cyan-400 hud-text-glow transition">
             <i class="fa-solid fa-video mr-2"></i>ACTIVATE OPTICAL SENSORS
         </button>
@@ -206,385 +176,313 @@
     <!-- 3. CRT SCANLINE EFFECT OVERLAY (z-2) -->
     <div id="scanlinesOverlay" class="fixed inset-0 scanlines z-2 opacity-70 transition-opacity duration-300"></div>
 
-    <!-- 4. TRANSLUCENT HUD USER INTERFACE (z-10) -->
-    <div class="fixed inset-0 z-10 flex flex-col justify-between p-3 sm:p-4 pointer-events-none">
+    <!-- 4. TOP HUD HEADER BAR (Minimalist to leave center viewport clear) -->
+    <div class="fixed top-3 left-3 right-3 z-20 flex items-center justify-between pointer-events-none">
         
-        <!-- HEADER BAR -->
-        <header class="w-full flex flex-wrap items-center justify-between gap-2 p-2 sm:p-3 hud-panel rounded-lg corner-brackets pointer-events-auto">
-            <!-- Left Header: System Identification -->
-            <div class="flex items-center space-x-3">
-                <div class="relative flex items-center justify-center w-10 h-10 rounded-full border border-cyan-400/50 bg-black/40">
-                    <i class="fa-solid fa-atom text-xl hud-text-glow animate-spin" style="animation-duration: 8s;"></i>
-                    <span class="absolute inset-0 rounded-full border border-cyan-400 animate-ping opacity-25"></span>
+        <!-- Top Left: Minimal System Status Badge -->
+        <div class="hud-panel px-3 py-1.5 rounded-lg corner-brackets flex items-center space-x-3 pointer-events-auto">
+            <div class="relative flex items-center justify-center w-7 h-7 rounded-full border border-cyan-400/50 bg-black/40">
+                <i class="fa-solid fa-atom text-xs hud-text-glow animate-spin" style="animation-duration: 8s;"></i>
+            </div>
+            <div>
+                <div class="font-orbitron font-extrabold text-sm tracking-widest hud-text-glow flex items-center gap-2">
+                    <span id="systemTitle">J.A.R.V.I.S.</span>
+                    <span id="personaBadge" class="text-[10px] px-1.5 py-0.2 rounded bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-mono">v4.5</span>
                 </div>
-                <div>
-                    <h1 class="font-orbitron font-extrabold text-base sm:text-lg tracking-widest hud-text-glow flex items-center gap-2">
-                        <span id="systemTitle">J.A.R.V.I.S.</span> 
-                        <span class="text-xs px-2 py-0.5 rounded bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-mono">v4.2 PRO</span>
-                    </h1>
-                    <p class="text-xs text-gray-300 font-mono flex items-center gap-2">
-                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        OPTICAL HUD ACTIVE <span class="text-gray-500">|</span> FPS: <span id="fpsCounter" class="text-cyan-300">60</span>
-                    </p>
+                <div class="text-[10px] text-gray-400 font-mono flex items-center gap-2">
+                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="cameraStatusBadge">OPTICAL LIVE</span>
+                    <span class="text-gray-600">|</span>
+                    FPS: <span id="fpsCounter" class="text-cyan-300">60</span>
                 </div>
             </div>
+        </div>
 
-            <!-- Center Header: Arc Reactor Core & Status Indicator -->
-            <div class="hidden md:flex items-center space-x-6 font-mono text-xs">
-                <div class="flex items-center space-x-2">
-                    <span class="text-gray-400">ARC CORE:</span>
-                    <div class="w-24 h-2.5 bg-gray-900/80 rounded-full border border-cyan-500/30 overflow-hidden p-0.5">
-                        <div id="arcCoreBar" class="h-full bg-cyan-400 hud-bg-glow rounded-full transition-all duration-500" style="width: 98%;"></div>
-                    </div>
-                    <span id="arcCoreText" class="hud-text-glow font-bold">98%</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <span class="text-gray-400">LATENCY:</span>
-                    <span id="latencyText" class="text-emerald-400 font-bold">14ms</span>
-                </div>
-                <div id="voiceStatusBadge" class="flex items-center space-x-1.5 px-3 py-1 rounded-full border border-cyan-500/40 bg-cyan-950/40 text-cyan-300 text-xs">
-                    <i id="voiceMicIcon" class="fa-solid fa-microphone text-xs animate-pulse"></i>
-                    <span id="voiceStatusText" class="font-semibold">VOICE READY</span>
-                </div>
+        <!-- NEW: Middle Environment Widget (Weather & Battery) -->
+        <div class="hud-panel hidden sm:flex px-3 py-1.5 rounded-lg corner-brackets items-center space-x-3 pointer-events-auto text-[10px] font-mono text-cyan-300">
+            <div class="flex items-center gap-1.5" title="Ueda, Nagano Weather">
+                <i id="hudWeatherIcon" class="fa-solid fa-satellite-dish animate-pulse"></i>
+                <span id="hudWeatherTemp">--°C</span>
+            </div>
+            <div class="text-gray-600">|</div>
+            <div class="flex items-center gap-1.5" title="System Battery">
+                <i id="hudBatteryIcon" class="fa-solid fa-battery-half"></i>
+                <span id="hudBatteryText">--%</span>
+            </div>
+        </div>
+
+        <!-- Top Right: Minimal Action Buttons & Settings Trigger -->
+        <div class="hud-panel px-3 py-1.5 rounded-lg corner-brackets flex items-center space-x-2 pointer-events-auto">
+            <div class="hidden sm:block text-right mr-2 font-mono">
+                <div id="clockTime" class="font-orbitron font-bold text-xs hud-text-glow">00:00:00</div>
+                <div id="clockDate" class="text-[10px] text-gray-400">2026.09.22</div>
             </div>
 
-            <!-- Right Header: Controls & Realtime Clock -->
+            <!-- Vision Scan Shortcut Button -->
+            <button onclick="triggerVisionAnalysis()" title="Scan Camera Snapshot" class="px-2.5 py-1.5 rounded hud-panel hover:hud-border-glow text-cyan-300 text-xs font-orbitron flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-eye animate-pulse text-cyan-400"></i>
+                <span class="hidden md:inline">SCAN</span>
+            </button>
+
+            <!-- Unified Settings & Manual Modal Trigger -->
+            <button onclick="openSettingsModal()" title="Open Settings & User Manual" class="px-3 py-1.5 rounded bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400 text-cyan-300 text-xs font-orbitron font-bold flex items-center gap-1.5 transition hud-text-glow">
+                <i class="fa-solid fa-gear"></i>
+                <span>SETTINGS</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 5. CHAT / TERMINAL WINDOW (Centered at Bottom, Rectangular Layout) -->
+    <div id="chatTerminalPanel" class="fixed bottom-16 left-1/2 -translate-x-1/2 w-[92%] sm:w-[640px] md:w-[720px] max-h-64 z-20 hud-panel rounded-md corner-brackets p-3 flex flex-col transition-all duration-300 pointer-events-auto">
+        <!-- Compact Header -->
+        <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-cyan-500/20 text-xs font-mono">
+            <div class="flex items-center space-x-2 text-cyan-300">
+                <i class="fa-solid fa-terminal text-[10px]"></i>
+                <span class="font-bold font-orbitron text-[11px]" id="currentPersonaLabel">J.A.R.V.I.S. TERMINAL</span>
+            </div>
             <div class="flex items-center space-x-2">
-                <div class="text-right mr-2 hidden sm:block font-mono">
-                    <div id="clockTime" class="font-orbitron font-bold text-sm sm:text-base hud-text-glow">00:00:00</div>
-                    <div id="clockDate" class="text-xs text-gray-400">2026.09.22</div>
-                </div>
-
-                <!-- HUD Quick Action Buttons -->
-                <button onclick="toggleSoundFX()" id="btnSound" title="Toggle Sound FX" class="p-2 w-9 h-9 flex items-center justify-center rounded hud-panel hover:hud-border-glow text-cyan-400 hover:text-white transition">
-                    <i class="fa-solid fa-volume-high"></i>
+                <span id="terminalStatus" class="text-[10px] text-emerald-400">READY</span>
+                <button onclick="clearTerminal()" class="text-gray-400 hover:text-cyan-300 transition" title="Clear Console">
+                    <i class="fa-solid fa-trash-can text-[11px]"></i>
                 </button>
-                <button onclick="toggleTTS()" id="btnTTS" title="Toggle Voice Output" class="p-2 w-9 h-9 flex items-center justify-center rounded hud-panel hover:hud-border-glow text-cyan-400 hover:text-white transition">
-                    <i class="fa-solid fa-comment-dots"></i>
-                </button>
-                <button onclick="toggleScanlines()" id="btnScanlines" title="Toggle CRT Filter" class="p-2 w-9 h-9 flex items-center justify-center rounded hud-panel hover:hud-border-glow text-cyan-400 hover:text-white transition">
-                    <i class="fa-solid fa-tv"></i>
-                </button>
-                <button onclick="toggleFullscreen()" title="Fullscreen Mode" class="p-2 w-9 h-9 flex items-center justify-center rounded hud-panel hover:hud-border-glow text-cyan-400 hover:text-white transition">
-                    <i class="fa-solid fa-expand"></i>
+                <button onclick="toggleTerminalCollapse()" class="text-gray-400 hover:text-cyan-300 transition" title="Minimize/Expand">
+                    <i id="terminalCollapseIcon" class="fa-solid fa-chevron-down text-[11px]"></i>
                 </button>
             </div>
-        </header>
+        </div>
 
-        <!-- MAIN HUD CONTENT GRID -->
-        <main class="grid grid-cols-1 lg:grid-cols-12 gap-3 my-2 flex-1 overflow-hidden pointer-events-none">
+        <!-- Scrollable Log Container -->
+        <div id="terminalLog" class="flex-1 overflow-y-auto space-y-2 font-mono text-xs max-h-44 pr-1">
+            <div class="p-2 rounded bg-cyan-950/30 border border-cyan-500/20 text-gray-200 text-xs">
+                <div class="flex items-center justify-between text-[10px] text-cyan-400 font-bold mb-0.5">
+                    <span><i class="fa-solid fa-robot mr-1"></i> SYSTEM ONLINE</span>
+                    <span>READY</span>
+                </div>
+                <p class="text-[11px] leading-tight">
+                    J.A.R.V.I.S. active. Visual HUD online. Speak commands or click <strong class="text-cyan-300">"SCAN"</strong> to analyze surroundings.
+                </p>
+            </div>
+        </div>
+
+        <!-- Voice Subtitle Banner -->
+        <div id="liveSpeechContainer" class="mt-1 p-1 rounded bg-cyan-950/80 border border-cyan-400/50 text-cyan-300 font-mono text-[10px] flex items-center space-x-1.5 hidden">
+            <i class="fa-solid fa-microphone-lines text-red-400 animate-pulse"></i>
+            <span class="text-gray-400 font-bold">HEARING:</span>
+            <span id="liveSpeechText" class="italic text-white truncate">Listening...</span>
+        </div>
+    </div>
+
+    <!-- 6. SLIM BOTTOM INPUT CONTROL BAR (Centered Below Chat Window) -->
+    <div class="fixed bottom-3 left-1/2 -translate-x-1/2 w-[92%] sm:w-[640px] md:w-[720px] z-20 hud-panel p-1.5 rounded-md corner-brackets flex items-center gap-2 pointer-events-auto">
+        <button id="micToggleBtn" onclick="toggleVoiceRecognition()" class="p-2 rounded bg-cyan-500/20 border border-cyan-400 text-cyan-300 hover:bg-cyan-500/30 transition flex items-center justify-center w-9 h-9 flex-shrink-0 hud-text-glow" title="Toggle Voice Listening">
+            <i id="micToggleIcon" class="fa-solid fa-microphone text-sm"></i>
+        </button>
+
+        <input type="text" id="userInputText" onkeydown="handleInputKeydown(event)" placeholder="Command or query... ('スキャン', '設定')" class="flex-1 bg-black/50 border border-cyan-500/30 rounded px-3 py-1.5 font-mono text-xs text-cyan-200 placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition" />
+
+        <button onclick="submitUserCommand()" class="px-4 py-1.5 rounded bg-cyan-500/30 border border-cyan-400 text-cyan-300 font-orbitron font-bold text-xs hover:bg-cyan-400 hover:text-black transition flex items-center gap-1.5 flex-shrink-0 hud-text-glow">
+            <i class="fa-solid fa-paper-plane text-xs"></i>
+            <span>SEND</span>
+        </button>
+    </div>
+
+    <!-- 7. UNIFIED SETTINGS & USER MANUAL MODAL DIALOG -->
+    <div id="settingsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 transition-opacity duration-300">
+        <div class="hud-panel w-full max-w-2xl max-h-[88vh] rounded-xl corner-brackets flex flex-col overflow-hidden border-cyan-400/60 shadow-[0_0_30px_rgba(0,240,255,0.2)]">
             
-            <!-- LEFT PANEL: PERSONAS & SENSORS (3 Columns on Large Screens) -->
-            <section class="lg:col-span-3 flex flex-col gap-3 overflow-y-auto pointer-events-auto pr-1">
+            <!-- Modal Header with Tab Switchers -->
+            <div class="flex items-center justify-between p-3 sm:p-4 border-b border-cyan-500/30 bg-cyan-950/40">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-sliders text-cyan-400 text-lg hud-text-glow"></i>
+                    <h2 class="font-orbitron font-bold text-sm sm:text-base text-cyan-300 tracking-wider">SYSTEM CONFIG & MANUAL</h2>
+                </div>
                 
-                <!-- AI Persona Selector Panel -->
-                <div class="hud-panel p-3 rounded-lg corner-brackets">
-                    <div class="flex items-center justify-between mb-2 pb-1 border-b border-cyan-500/20">
-                        <h2 class="font-orbitron text-xs font-bold hud-text-glow flex items-center gap-1.5">
-                            <i class="fa-solid fa-user-astronaut"></i> AI PERSONA ENGINE
-                        </h2>
-                        <span class="text-[10px] text-cyan-300 font-mono uppercase" id="currentPersonaLabel">J.A.R.V.I.S.</span>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="switchPersona('jarvis')" id="persona-jarvis" class="p-2 rounded hud-panel hover:border-cyan-400 text-left transition flex items-center space-x-2 border-cyan-400/80 bg-cyan-950/50">
-                            <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]"></div>
-                            <div>
-                                <div class="font-orbitron text-xs font-bold text-cyan-300">JARVIS</div>
-                                <div class="text-[10px] text-gray-400 font-mono">Suave Butler</div>
-                            </div>
-                        </button>
-
-                        <button onclick="switchPersona('friday')" id="persona-friday" class="p-2 rounded hud-panel hover:border-red-400 text-left transition flex items-center space-x-2 border-red-500/30">
-                            <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                            <div>
-                                <div class="font-orbitron text-xs font-bold text-red-400">FRIDAY</div>
-                                <div class="text-[10px] text-gray-400 font-mono">Combat Tactical</div>
-                            </div>
-                        </button>
-
-                        <button onclick="switchPersona('edith')" id="persona-edith" class="p-2 rounded hud-panel hover:border-emerald-400 text-left transition flex items-center space-x-2 border-emerald-500/30">
-                            <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
-                            <div>
-                                <div class="font-orbitron text-xs font-bold text-emerald-300">E.D.I.T.H.</div>
-                                <div class="text-[10px] text-gray-400 font-mono">Stealth Intel</div>
-                            </div>
-                        </button>
-
-                        <button onclick="switchPersona('karen')" id="persona-karen" class="p-2 rounded hud-panel hover:border-amber-400 text-left transition flex items-center space-x-2 border-amber-500/30">
-                            <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
-                            <div>
-                                <div class="font-orbitron text-xs font-bold text-amber-300">KAREN</div>
-                                <div class="text-[10px] text-gray-400 font-mono">Suit Guardian</div>
-                            </div>
-                        </button>
-                    </div>
-
-                    <!-- Theme Preset Quick Selector -->
-                    <div class="mt-3 pt-2 border-t border-cyan-500/20">
-                        <p class="text-[10px] text-gray-400 font-mono mb-1">HUD COLOR SCHEME:</p>
-                        <div class="flex items-center justify-between gap-1 text-xs font-mono">
-                            <button onclick="setTheme('theme-cyan')" class="px-2 py-1 rounded bg-cyan-950/80 border border-cyan-400 text-cyan-300 hover:bg-cyan-900 transition flex-1 text-center">CYAN</button>
-                            <button onclick="setTheme('theme-mark85')" class="px-2 py-1 rounded bg-amber-950/80 border border-amber-400 text-amber-300 hover:bg-amber-900 transition flex-1 text-center">GOLD</button>
-                            <button onclick="setTheme('theme-friday')" class="px-2 py-1 rounded bg-red-950/80 border border-red-500 text-red-300 hover:bg-red-900 transition flex-1 text-center">CRIMSON</button>
-                            <button onclick="setTheme('theme-stealth')" class="px-2 py-1 rounded bg-emerald-950/80 border border-emerald-400 text-emerald-300 hover:bg-emerald-900 transition flex-1 text-center">STEALTH</button>
-                        </div>
-                    </div>
+                <!-- Tab Controls -->
+                <div class="flex items-center space-x-1 font-mono text-xs">
+                    <button onclick="switchSettingsTab('tabSettings')" id="btnTabSettings" class="px-3 py-1 rounded bg-cyan-500/30 border border-cyan-400 text-cyan-300 font-bold">
+                        <i class="fa-solid fa-gear mr-1"></i>SETTINGS
+                    </button>
+                    <button onclick="switchSettingsTab('tabManual')" id="btnTabManual" class="px-3 py-1 rounded bg-black/40 border border-cyan-500/30 text-gray-400 hover:text-cyan-300">
+                        <i class="fa-solid fa-book mr-1"></i>MANUAL (取扱説明書)
+                    </button>
+                    <button onclick="closeSettingsModal()" class="ml-2 px-2.5 py-1 rounded text-gray-400 hover:text-red-400 hover:bg-red-950/40 transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
                 </div>
+            </div>
 
-                <!-- Camera & Visual Scan Controls -->
-                <div class="hud-panel p-3 rounded-lg corner-brackets flex flex-col gap-2">
-                    <div class="flex items-center justify-between pb-1 border-b border-cyan-500/20">
-                        <h2 class="font-orbitron text-xs font-bold hud-text-glow flex items-center gap-1.5">
-                            <i class="fa-solid fa-expand"></i> OPTICAL SCANNER
-                        </h2>
-                        <span id="cameraStatusBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-500/40">LIVE FEED</span>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="triggerVisionAnalysis()" class="p-2.5 rounded hud-panel border-cyan-400/80 hover:bg-cyan-500/20 text-cyan-300 font-orbitron text-xs font-bold flex items-center justify-center gap-2 hud-text-glow transition">
-                            <i class="fa-solid fa-eye animate-pulse"></i> SCAN SNAPSHOT
-                        </button>
-                        <button onclick="switchCameraFacing()" class="p-2.5 rounded hud-panel hover:border-cyan-400 text-gray-300 font-mono text-xs flex items-center justify-center gap-2 transition">
-                            <i class="fa-solid fa-camera-rotate"></i> FLIP CAMERA
-                        </button>
-                    </div>
-                    <p class="text-[10px] text-gray-400 font-mono text-center">
-                        Voice Command: Say <span class="text-cyan-300 font-bold">"分析"</span>, <span class="text-cyan-300 font-bold">"スキャン"</span>, or <span class="text-cyan-300 font-bold">"Scan"</span>
-                    </p>
-                </div>
-
-                <!-- Telemetry & Diagnostics Widget -->
-                <div class="hud-panel p-3 rounded-lg corner-brackets flex-1 min-h-[140px] flex flex-col justify-between">
-                    <div class="flex items-center justify-between pb-1 border-b border-cyan-500/20">
-                        <h2 class="font-orbitron text-xs font-bold hud-text-glow flex items-center gap-1.5">
-                            <i class="fa-solid fa-microchip"></i> SYSTEM METRICS
-                        </h2>
-                        <i class="fa-solid fa-signal text-xs text-emerald-400"></i>
-                    </div>
-
-                    <div class="space-y-2 font-mono text-xs my-2">
-                        <div>
-                            <div class="flex justify-between text-gray-400 text-[11px] mb-1">
-                                <span>CPU CORE TEMP</span>
-                                <span id="tempVal" class="text-cyan-300">42.8 °C</span>
-                            </div>
-                            <div class="w-full h-1.5 bg-gray-900 rounded-full overflow-hidden border border-cyan-500/30">
-                                <div id="tempBar" class="h-full bg-cyan-400 rounded-full transition-all duration-300" style="width: 42%;"></div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between text-gray-400 text-[11px] mb-1">
-                                <span>NEURAL ENGINE LOAD</span>
-                                <span id="loadVal" class="text-cyan-300">68.4 %</span>
-                            </div>
-                            <div class="w-full h-1.5 bg-gray-900 rounded-full overflow-hidden border border-cyan-500/30">
-                                <div id="loadBar" class="h-full bg-cyan-400 rounded-full transition-all duration-300" style="width: 68%;"></div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between text-gray-400 text-[11px] mb-1">
-                                <span>THREAT ANALYSIS</span>
-                                <span id="threatVal" class="text-emerald-400 font-bold">DEFCON 5 (CLEAR)</span>
-                            </div>
-                            <div class="w-full h-1.5 bg-gray-900 rounded-full overflow-hidden border border-emerald-500/30">
-                                <div id="threatBar" class="h-full bg-emerald-400 rounded-full transition-all duration-300" style="width: 10%;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="text-[10px] text-gray-400 font-mono flex justify-between border-t border-cyan-500/20 pt-1">
-                        <span>SECURITY LEVEL: ALPHA</span>
-                        <span class="text-cyan-400">ENCRYPTION: AES-256</span>
-                    </div>
-                </div>
-
-            </section>
-
-            <!-- CENTER PANEL: AR RETICLE & TERMINAL DIALOG (6 Columns on Large Screens) -->
-            <section class="lg:col-span-6 flex flex-col gap-3 pointer-events-auto">
+            <!-- Modal Content Body -->
+            <div class="flex-1 overflow-y-auto p-4 font-mono text-xs space-y-4">
                 
-                <!-- Center Tactical Audio Visualizer Canvas -->
-                <div class="hud-panel p-2 rounded-lg corner-brackets flex items-center justify-between h-14 px-4 relative overflow-hidden">
-                    <div class="flex items-center space-x-2 z-10">
-                        <div class="w-3 h-3 rounded-full bg-cyan-400 animate-ping"></div>
-                        <span class="font-orbitron text-xs font-bold text-cyan-300 hud-text-glow uppercase" id="visualizerStateText">ACOUSTIC SPECTRUM SENSOR</span>
-                    </div>
+                <!-- TAB 1: SYSTEM SETTINGS -->
+                <div id="tabSettings" class="space-y-4">
                     
-                    <!-- Audio Waveform Canvas -->
-                    <canvas id="audioSpectrumCanvas" class="absolute inset-0 w-full h-full opacity-60 z-0"></canvas>
-                    
-                    <div class="text-xs font-mono text-cyan-400 z-10 flex items-center gap-2">
-                        <i class="fa-solid fa-wave-square text-cyan-300"></i>
-                        <span id="spectrumDbText">-48 dB</span>
-                    </div>
-                </div>
-
-                <!-- AI Response & Terminal Output Box -->
-                <div class="hud-panel p-4 rounded-lg corner-brackets flex-1 flex flex-col min-h-[320px] max-h-[500px] relative">
-                    <!-- Terminal Header -->
-                    <div class="flex items-center justify-between pb-2 mb-2 border-b border-cyan-500/20 font-mono text-xs">
-                        <div class="flex items-center space-x-2 text-cyan-300">
-                            <i class="fa-solid fa-terminal"></i>
-                            <span class="font-bold font-orbitron">INTELLIGENCE TERMINAL LOG</span>
-                        </div>
-                        <div class="flex items-center space-x-2 text-gray-400">
-                            <span id="terminalStatus">SYSTEM READY</span>
-                            <button onclick="clearTerminal()" class="text-gray-400 hover:text-cyan-300 transition" title="Clear Console">
-                                <i class="fa-solid fa-trash-can"></i>
+                    <!-- Gemini API Key Configuration -->
+                    <div class="p-3 rounded bg-black/40 border border-cyan-500/30">
+                        <label class="block font-orbitron text-xs text-cyan-300 font-bold mb-1">
+                            <i class="fa-solid fa-key text-amber-400 mr-1"></i> GEMINI API KEY CONFIGURATION
+                        </label>
+                        <p class="text-[11px] text-gray-400 mb-2">Enter your Gemini API key below to enable live AI responses and optical vision scanning.</p>
+                        <div class="flex gap-2">
+                            <input type="password" id="cfgApiKey" placeholder="AIzaSy... (Enter your Gemini API key)" class="flex-1 bg-black/60 border border-cyan-500/30 rounded px-3 py-1.5 text-xs text-cyan-200 focus:outline-none focus:border-cyan-400" />
+                            <button onclick="saveApiKeySetting()" class="px-3 py-1.5 rounded bg-cyan-500/30 border border-cyan-400 text-cyan-300 font-orbitron font-bold hover:bg-cyan-400 hover:text-black transition">
+                                SAVE
                             </button>
                         </div>
                     </div>
 
-                    <!-- Scrollable Log Container -->
-                    <div id="terminalLog" class="flex-1 overflow-y-auto space-y-3 font-mono text-sm pr-2">
-                        <!-- Initial Greeting Message -->
-                        <div class="p-3 rounded bg-cyan-950/30 border border-cyan-500/20 text-gray-200">
-                            <div class="flex items-center justify-between text-xs text-cyan-400 font-bold mb-1">
-                                <span><i class="fa-solid fa-robot mr-1"></i> J.A.R.V.I.S. SYSTEM ONLINE</span>
-                                <span>JUST NOW</span>
+                    <!-- Active Persona Engine (Dedicated to J.A.R.V.I.S.) -->
+                    <div class="p-3 rounded bg-black/40 border border-cyan-500/30">
+                        <label class="block font-orbitron text-xs text-cyan-300 font-bold mb-2">
+                            <i class="fa-solid fa-user-astronaut mr-1"></i> ACTIVE AI PERSONA ENGINE
+                        </label>
+                        <div class="p-2.5 rounded border border-cyan-400 bg-cyan-950/60 flex items-center justify-between">
+                            <div>
+                                <div class="font-orbitron font-bold text-cyan-300 text-sm">J.A.R.V.I.S.</div>
+                                <div class="text-[10px] text-gray-400">Just A Rather Very Intelligent System</div>
                             </div>
-                            <p class="leading-relaxed">
-                                Good day, Boss. All optical HUD layers and voice command modules are operational. Speak directly to issue commands, or click <strong class="text-cyan-300">"SCAN SNAPSHOT"</strong> to analyze your camera surroundings in real-time.
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-mono">PRIMARY AI</span>
+                        </div>
+                    </div>
+
+                    <!-- NEW: Language Selection Config -->
+                    <div class="p-3 rounded bg-black/40 border border-cyan-500/30">
+                        <label class="block font-orbitron text-xs text-cyan-300 font-bold mb-2">
+                            <i class="fa-solid fa-language mr-1"></i> SYSTEM LANGUAGE
+                        </label>
+                        <select id="cfgLanguageSelect" onchange="updateLanguage()" class="w-full bg-black/60 border border-cyan-500/30 rounded px-3 py-1.5 text-xs text-cyan-200 focus:outline-none focus:border-cyan-400 font-mono">
+                            <option value="ja-JP">Japanese (日本語)</option>
+                            <option value="en-US">English (English)</option>
+                        </select>
+                    </div>
+
+                    <!-- Color Theme Preset Switcher -->
+                    <div class="p-3 rounded bg-black/40 border border-cyan-500/30">
+                        <label class="block font-orbitron text-xs text-cyan-300 font-bold mb-2">
+                            <i class="fa-solid fa-palette mr-1"></i> HUD COLOR THEME PRESET
+                        </label>
+                        <div class="grid grid-cols-4 gap-2 text-center">
+                            <button onclick="setTheme('theme-cyan')" class="py-1.5 rounded bg-cyan-950 border border-cyan-400 text-cyan-300">CYAN</button>
+                            <button onclick="setTheme('theme-mark85')" class="py-1.5 rounded bg-amber-950 border border-amber-400 text-amber-300">MARK 85</button>
+                            <button onclick="setTheme('theme-friday')" class="py-1.5 rounded bg-red-950 border border-red-500 text-red-300">CRIMSON</button>
+                            <button onclick="setTheme('theme-stealth')" class="py-1.5 rounded bg-emerald-950 border border-emerald-400 text-emerald-300">STEALTH</button>
+                        </div>
+                    </div>
+
+                    <!-- Audio & Voice Speech (TTS) Controls -->
+                    <div class="p-3 rounded bg-black/40 border border-cyan-500/30 space-y-3">
+                        <label class="block font-orbitron text-xs text-cyan-300 font-bold">
+                            <i class="fa-solid fa-volume-high mr-1"></i> AUDIO & SYNTHESIS CONTROL
+                        </label>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <span class="text-gray-400">SPEECH VOICE (TTS):</span>
+                                <select id="cfgVoiceSelect" onchange="updateTtsVoice()" class="w-full mt-1 bg-black/60 border border-cyan-500/30 rounded px-2 py-1 text-cyan-200">
+                                    <option value="">Default Voice</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <span class="text-gray-400">SPEECH RATE: <span id="rateVal">1.0</span></span>
+                                <input type="range" id="cfgRate" min="0.5" max="1.8" step="0.1" value="1.0" oninput="document.getElementById('rateVal').textContent=this.value" class="w-full mt-2 accent-cyan-400" />
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between border-t border-cyan-500/20 pt-2">
+                            <div class="flex items-center space-x-4">
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" id="cfgSoundToggle" checked onchange="toggleSoundFX()" class="accent-cyan-400" />
+                                    <span>Sci-Fi Sound FX</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" id="cfgTtsToggle" checked onchange="toggleTTS()" class="accent-cyan-400" />
+                                    <span>Speech Output (TTS)</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" id="cfgScanlineToggle" checked onchange="toggleScanlines()" class="accent-cyan-400" />
+                                    <span>CRT Scanlines Filter</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Camera Optical Controls & System Reset -->
+                    <div class="flex items-center justify-between pt-2">
+                        <button onclick="switchCameraFacing()" class="px-3 py-1.5 rounded hud-panel border-cyan-400 text-cyan-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-camera-rotate"></i> FLIP CAMERA FACING
+                        </button>
+                        <button onclick="resetSystemDefaults()" class="px-3 py-1.5 rounded bg-red-950/60 border border-red-500/60 text-red-400 hover:bg-red-900 transition">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> RESET DEFAULTS
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- TAB 2: USER MANUAL (取扱説明書) -->
+                <div id="tabManual" class="space-y-4 hidden">
+                    <div class="p-3 rounded bg-cyan-950/30 border border-cyan-500/30 leading-relaxed space-y-3">
+                        <h3 class="font-orbitron font-bold text-sm text-cyan-300 border-b border-cyan-500/30 pb-1">
+                            <i class="fa-solid fa-circle-info mr-1"></i> J.A.R.V.I.S. Visual HUD 取扱説明書 (MANUAL)
+                        </h3>
+                        
+                        <div>
+                            <h4 class="font-bold text-cyan-400 text-xs mb-1">1. 視界確保 (CLEAR FRONT VIEW)</h4>
+                            <p class="text-gray-300 text-[11px]">
+                                画面中央はカメラ映像がそのまま見えるよう透過デザインになっています。重たいゲージやビジュアル表示は取り除かれ、スムーズな視界と戦闘タスクをサポートします。
+                            </p>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-cyan-400 text-xs mb-1">2. 音声認識コマンド (VOICE COMMANDS)</h4>
+                            <p class="text-gray-300 text-[11px] mb-1">マイクをオンにすると常時音声認識が作動します。以下のキーワードを発話してください:</p>
+                            <ul class="list-disc list-inside text-gray-300 text-[11px] space-y-0.5 font-sans">
+                                <li><strong class="text-cyan-300">「スキャン」「分析」「視覚解析」:</strong> カメラの現在フレームをAIが画像解析します。</li>
+                                <li><strong class="text-cyan-300">「ジャービス」:</strong> J.A.R.V.I.S.に応答確認を行います。</li>
+                                <li><strong class="text-cyan-300">「設定」「設定を開く」「マニュアル」:</strong> 設定・取扱説明書ダイアログを開きます。</li>
+                                <li><strong class="text-cyan-300">「マーク85」「サイアン」「ステルス」:</strong> HUDのカラーテーマを変更します。</li>
+                                <li><strong class="text-cyan-300">「自己診断」「ステータス」「戦術分析」:</strong> システムの定型分析レポートを実行します。</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-cyan-400 text-xs mb-1">3. マルチモーダル視覚解析 (OPTICAL SNAPSHOT SCAN)</h4>
+                            <p class="text-gray-300 text-[11px]">
+                                右上の「SCAN」ボタンまたは音声コマンドで、現在のカメラ映像をキャプチャし、Gemini APIを用いてリアルタイムで周囲の物体・脅威・状況を文章化します。
+                            </p>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-cyan-400 text-xs mb-1">4. コンパクトチャット画面</h4>
+                            <p class="text-gray-300 text-[11px]">
+                                画面左下のチャットパネルは透過仕様で視界を妨げません。右上アイコンで最小化・展開が可能です。
                             </p>
                         </div>
                     </div>
-
-                    <!-- Voice Recognition Live Subtitle Banner -->
-                    <div id="liveSpeechContainer" class="mt-2 p-2 rounded bg-cyan-950/80 border border-cyan-400/50 text-cyan-300 font-mono text-xs flex items-center space-x-2 hidden">
-                        <i class="fa-solid fa-microphone-lines text-red-400 animate-pulse text-sm"></i>
-                        <span class="text-gray-400 text-[11px] font-bold">HEARING:</span>
-                        <span id="liveSpeechText" class="italic font-sans text-white text-xs">Listening...</span>
-                    </div>
                 </div>
 
-                <!-- Interactive Command Input Bar -->
-                <div class="hud-panel p-2 rounded-lg corner-brackets flex items-center gap-2">
-                    <button id="micToggleBtn" onclick="toggleVoiceRecognition()" class="p-3 rounded bg-cyan-500/20 border border-cyan-400 text-cyan-300 hover:bg-cyan-500/30 transition flex items-center justify-center w-12 h-12 flex-shrink-0 hud-text-glow" title="Toggle Voice Listening">
-                        <i id="micToggleIcon" class="fa-solid fa-microphone text-lg"></i>
-                    </button>
-                    
-                    <input type="text" id="userInputText" onkeydown="handleInputKeydown(event)" placeholder="Issue voice or text command... (e.g. '自己診断', 'スキャン', 'マーク85')" class="flex-1 bg-black/50 border border-cyan-500/30 rounded px-3 py-2.5 font-mono text-sm text-cyan-200 placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition" />
-                    
-                    <button onclick="submitUserCommand()" class="px-5 py-2.5 rounded bg-cyan-500/30 border border-cyan-400 text-cyan-300 font-orbitron font-bold text-xs hover:bg-cyan-400 hover:text-black transition flex items-center gap-2 flex-shrink-0 hud-text-glow">
-                        <span>TRANSMIT</span>
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </button>
-                </div>
-
-                <!-- Prompt Macro Quick Buttons -->
-                <div class="flex flex-wrap items-center justify-between gap-1.5 text-xs font-mono">
-                    <button onclick="executeMacro('自己診断')" class="px-2.5 py-1.5 rounded hud-panel hover:border-cyan-400 text-cyan-300 transition flex-1 text-center">
-                        <i class="fa-solid fa-heart-pulse mr-1"></i>自己診断
-                    </button>
-                    <button onclick="triggerVisionAnalysis()" class="px-2.5 py-1.5 rounded hud-panel hover:border-cyan-400 text-cyan-300 transition flex-1 text-center">
-                        <i class="fa-solid fa-camera mr-1"></i>視覚解析
-                    </button>
-                    <button onclick="executeMacro('戦術分析')" class="px-2.5 py-1.5 rounded hud-panel hover:border-cyan-400 text-cyan-300 transition flex-1 text-center">
-                        <i class="fa-solid fa-shield-halved mr-1"></i>戦術分析
-                    </button>
-                    <button onclick="executeMacro('ステータス')" class="px-2.5 py-1.5 rounded hud-panel hover:border-cyan-400 text-cyan-300 transition flex-1 text-center">
-                        <i class="fa-solid fa-chart-line mr-1"></i>ステータス
-                    </button>
-                </div>
-
-            </section>
-
-            <!-- RIGHT PANEL: RADAR & VOICE COMMAND MATRIX (3 Columns on Large Screens) -->
-            <section class="lg:col-span-3 flex flex-col gap-3 overflow-y-auto pointer-events-auto pl-1">
-                
-                <!-- Dynamic Radar & Tactical Scope Widget -->
-                <div class="hud-panel p-3 rounded-lg corner-brackets flex flex-col items-center justify-center">
-                    <div class="w-full flex items-center justify-between pb-1 mb-2 border-b border-cyan-500/20">
-                        <h2 class="font-orbitron text-xs font-bold hud-text-glow flex items-center gap-1.5">
-                            <i class="fa-solid fa-radar"></i> TACTICAL RADAR
-                        </h2>
-                        <span class="text-[10px] text-emerald-400 font-mono">SWEEPING</span>
-                    </div>
-
-                    <!-- Radar Canvas -->
-                    <div class="relative w-40 h-40 flex items-center justify-center my-1">
-                        <canvas id="radarCanvas" width="160" height="160" class="rounded-full border border-cyan-500/40 bg-black/40 shadow-[0_0_15px_rgba(0,240,255,0.2)]"></canvas>
-                    </div>
-                    
-                    <div class="w-full flex justify-between text-[10px] text-gray-400 font-mono mt-2 pt-1 border-t border-cyan-500/20">
-                        <span>RANGE: 50m</span>
-                        <span class="text-cyan-300">TARGETS: 3 DETECTED</span>
-                    </div>
-                </div>
-
-                <!-- Voice Commands Matrix Cheat Sheet -->
-                <div class="hud-panel p-3 rounded-lg corner-brackets flex-1 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between pb-1 mb-2 border-b border-cyan-500/20">
-                            <h2 class="font-orbitron text-xs font-bold hud-text-glow flex items-center gap-1.5">
-                                <i class="fa-solid fa-headset"></i> VOICE COMMANDS
-                            </h2>
-                            <span class="text-[10px] text-cyan-300 font-mono">AUTO-RESTART</span>
-                        </div>
-
-                        <div class="space-y-1.5 font-mono text-xs">
-                            <div class="p-1.5 rounded bg-black/40 border border-cyan-500/20">
-                                <span class="text-cyan-300 font-bold">"ジャービス" / "フライデー"</span>
-                                <p class="text-[10px] text-gray-400">Switch active AI persona</p>
-                            </div>
-                            <div class="p-1.5 rounded bg-black/40 border border-cyan-500/20">
-                                <span class="text-cyan-300 font-bold">"分析" / "スキャン" / "Scan"</span>
-                                <p class="text-[10px] text-gray-400">Trigger camera vision snapshot analysis</p>
-                            </div>
-                            <div class="p-1.5 rounded bg-black/40 border border-cyan-500/20">
-                                <span class="text-cyan-300 font-bold">"マーク85" / "ステルス" / "サイアン"</span>
-                                <p class="text-[10px] text-gray-400">Change HUD theme scheme</p>
-                            </div>
-                            <div class="p-1.5 rounded bg-black/40 border border-cyan-500/20">
-                                <span class="text-cyan-300 font-bold">"効果音" / "読み上げ"</span>
-                                <p class="text-[10px] text-gray-400">Toggle audio effects & TTS speech</p>
-                            </div>
-                            <div class="p-1.5 rounded bg-black/40 border border-cyan-500/20">
-                                <span class="text-cyan-300 font-bold">"全画面" / "スキャンライン"</span>
-                                <p class="text-[10px] text-gray-400">Toggle fullscreen or CRT lines</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-3 pt-2 border-t border-cyan-500/20 text-[10px] text-gray-400 font-mono flex items-center justify-between">
-                        <span class="flex items-center gap-1"><i class="fa-solid fa-globe"></i> EN / JA SUPPORT</span>
-                        <span id="listeningIndicator" class="text-emerald-400 font-bold">LISTENING ACTIVE</span>
-                    </div>
-                </div>
-
-            </section>
-
-        </main>
-
-        <!-- FOOTER STATUS BAR -->
-        <footer class="w-full p-2 hud-panel rounded-lg corner-brackets flex flex-wrap items-center justify-between font-mono text-xs text-gray-400 pointer-events-auto">
-            <div class="flex items-center space-x-4">
-                <span class="flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                    <strong class="text-cyan-300">STARK OS:</strong> ONLINE
-                </span>
-                <span class="hidden sm:inline text-gray-500">|</span>
-                <span class="hidden sm:inline">PROMPT ENGINE: GEMINI 3 FLASH</span>
             </div>
 
-            <div class="flex items-center space-x-4">
-                <span>SPEECH RECOGNITION: <strong id="speechEngineStatus" class="text-emerald-400">CONTINUOUS</strong></span>
-                <span class="text-gray-500">|</span>
-                <span id="coordinatesReadout" class="hud-text-glow">LAT: 35.6762° N | LON: 139.6503° E</span>
+            <!-- Modal Footer -->
+            <div class="p-3 border-t border-cyan-500/30 bg-black/50 text-right">
+                <button onclick="closeSettingsModal()" class="px-5 py-1.5 rounded bg-cyan-500/30 border border-cyan-400 text-cyan-300 font-orbitron font-bold text-xs hover:bg-cyan-400 hover:text-black transition hud-text-glow">
+                    CLOSE PANEL
+                </button>
             </div>
-        </footer>
 
+        </div>
     </div>
 
     <script>
         /* ==========================================================================
            1. SYSTEM CONFIGURATION & GLOBAL STATE
            ========================================================================== */
-        const apiKey = ""; // API key populated automatically at runtime by Canvas environment
-        const GEMINI_TEXT_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+        const DEFAULT_API_KEY = ""; 
+        let userApiKey = localStorage.getItem('jarvis_api_key') || "";
+
+        function getActiveApiKey() {
+            return userApiKey.trim() || DEFAULT_API_KEY;
+        }
 
         let state = {
             soundEnabled: true,
@@ -592,17 +490,18 @@
             scanlinesEnabled: true,
             isListening: false,
             currentPersona: 'jarvis',
-            cameraFacing: 'environment', // 'user' or 'environment'
+            cameraFacing: 'environment',
             cameraStream: null,
             recognition: null,
             synth: window.speechSynthesis,
             audioCtx: null,
             fps: 60,
             lastFrameTime: performance.now(),
-            frameCount: 0
+            frameCount: 0,
+            isTerminalCollapsed: false,
+            language: localStorage.getItem('jarvis_lang') || 'ja-JP' // Dynamic Language Setting
         };
 
-        // AI Personas Definition
         const PERSONAS = {
             jarvis: {
                 name: 'J.A.R.V.I.S.',
@@ -611,34 +510,7 @@
                 pitch: 0.9,
                 rate: 1.05,
                 voiceLang: 'en-GB',
-                promptPrefix: 'You are J.A.R.V.I.S., the suave, ultra-intelligent British AI butler created by Tony Stark. Speak politely, with witty sophistication, crisp tactical insights, and call the user "Boss" or "Sir". Keep responses concise and formatted cleanly.'
-            },
-            friday: {
-                name: 'F.R.I.D.A.Y.',
-                title: 'Female Replacement Intelligent Digital Assistant Youth',
-                theme: 'theme-friday',
-                pitch: 1.2,
-                rate: 1.1,
-                voiceLang: 'en-IE',
-                promptPrefix: 'You are F.R.I.D.A.Y., Tony Stark\'s energetic Irish tactical AI assistant. Speak with sharp military precision, high tactical focus, and urgency. Call the user "Boss". Keep responses concise and focused.'
-            },
-            edith: {
-                name: 'E.D.I.T.H.',
-                title: 'Even Dead I\'m The Hero',
-                theme: 'theme-stealth',
-                pitch: 1.1,
-                rate: 1.0,
-                voiceLang: 'en-US',
-                promptPrefix: 'You are E.D.I.T.H., the high-tech defense intelligence security AI. Speak with clear analytical precision, stealth intelligence focus, and strategic security awareness. Keep responses concise.'
-            },
-            karen: {
-                name: 'KAREN',
-                title: 'Spider-Suit Guardian AI',
-                theme: 'theme-mark85',
-                pitch: 1.0,
-                rate: 1.0,
-                voiceLang: 'en-US',
-                promptPrefix: 'You are KAREN, the protective, caring, and highly analytical Spider-Suit Lady AI. Speak warmly yet with intense technical depth and protective protocols. Keep responses concise.'
+                promptPrefix: 'You are J.A.R.V.I.S., the suave, ultra-intelligent AI created by Tony Stark. Speak politely, with witty sophistication and crisp tactical insights. Call the user "Boss" or "Sir". Keep responses concise.'
             }
         };
 
@@ -671,7 +543,7 @@
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(880, now);
                     osc.frequency.exponentialRampToValueAtTime(1760, now + 0.08);
-                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.setValueAtTime(0.12, now);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
                     osc.start(now);
                     osc.stop(now + 0.08);
@@ -679,24 +551,16 @@
                     osc.type = 'sawtooth';
                     osc.frequency.setValueAtTime(400, now);
                     osc.frequency.linearRampToValueAtTime(1200, now + 0.25);
-                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.setValueAtTime(0.08, now);
                     gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
                     osc.start(now);
                     osc.stop(now + 0.25);
-                } else if (type === 'alert') {
-                    osc.type = 'square';
-                    osc.frequency.setValueAtTime(440, now);
-                    osc.frequency.setValueAtTime(880, now + 0.1);
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-                    osc.start(now);
-                    osc.stop(now + 0.2);
                 } else if (type === 'chime') {
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(523.25, now); // C5
-                    osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
-                    osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
-                    gain.gain.setValueAtTime(0.15, now);
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.08);
+                    osc.frequency.setValueAtTime(783.99, now + 0.16);
+                    gain.gain.setValueAtTime(0.1, now);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
                     osc.start(now);
                     osc.stop(now + 0.3);
@@ -735,14 +599,12 @@
 
                 fallbackEl.classList.add('hidden');
                 videoEl.classList.remove('opacity-0');
-                badgeEl.textContent = 'OPTICAL LIVE';
-                badgeEl.className = 'text-[10px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-500/40';
+                if (badgeEl) badgeEl.textContent = 'OPTICAL LIVE';
                 playFuturisticSound('beep');
             } catch (err) {
-                console.warn('Camera access denied or unequipped:', err);
+                console.warn('Camera stream notice:', err);
                 fallbackEl.classList.remove('hidden');
-                badgeEl.textContent = 'OPTICAL OFF';
-                badgeEl.className = 'text-[10px] px-1.5 py-0.5 rounded bg-red-950 text-red-400 border border-red-500/40';
+                if (badgeEl) badgeEl.textContent = 'OPTICAL OFF';
             }
         }
 
@@ -752,27 +614,24 @@
         }
 
         /* ==========================================================================
-           4. FULL VOICE RECOGNITION & ROUTING ENGINE
+           4. CONTINUOUS VOICE RECOGNITION ENGINE
            ========================================================================== */
         function initVoiceRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             
             if (!SpeechRecognition) {
-                document.getElementById('speechEngineStatus').textContent = 'UNSUPPORTED';
-                document.getElementById('speechEngineStatus').className = 'text-red-400';
+                console.warn('Speech recognition unequipped in browser environment.');
                 return;
             }
 
             const recognition = new SpeechRecognition();
             recognition.continuous = true;
             recognition.interimResults = true;
-            recognition.lang = 'ja-JP'; // Auto-routes both Japanese and English terms
+            recognition.lang = state.language; // Updated to dynamic state value
 
             recognition.onstart = () => {
                 state.isListening = true;
-                updateVoiceStatusUI(true, 'LISTENING');
-                document.getElementById('listeningIndicator').textContent = 'LISTENING ACTIVE';
-                document.getElementById('listeningIndicator').className = 'text-emerald-400 font-bold';
+                updateVoiceStatusUI(true);
             };
 
             recognition.onresult = (event) => {
@@ -802,27 +661,19 @@
                     
                     setTimeout(() => {
                         liveContainer.classList.add('hidden');
-                    }, 3000);
+                    }, 2500);
                 }
             };
 
-            recognition.onerror = (event) => {
-                console.warn('Speech recognition error:', event.error);
-                if (event.error !== 'no-speech') {
-                    updateVoiceStatusUI(false, 'RETRYING');
-                }
+            recognition.onerror = () => {
+                updateVoiceStatusUI(false);
             };
 
             recognition.onend = () => {
-                // Auto-restart continuous speech listening loop
                 if (state.isListening) {
-                    try {
-                        recognition.start();
-                    } catch (e) {
-                        // Ignore already started error
-                    }
+                    try { recognition.start(); } catch (e) {}
                 } else {
-                    updateVoiceStatusUI(false, 'VOICE OFF');
+                    updateVoiceStatusUI(false);
                 }
             };
 
@@ -833,11 +684,7 @@
         function startVoiceListening() {
             if (state.recognition) {
                 state.isListening = true;
-                try {
-                    state.recognition.start();
-                } catch (e) {
-                    // Already running
-                }
+                try { state.recognition.start(); } catch (e) {}
             }
         }
 
@@ -845,7 +692,7 @@
             if (state.isListening) {
                 state.isListening = false;
                 if (state.recognition) state.recognition.stop();
-                updateVoiceStatusUI(false, 'MUTED');
+                updateVoiceStatusUI(false);
                 playFuturisticSound('beep');
             } else {
                 startVoiceListening();
@@ -853,21 +700,15 @@
             }
         }
 
-        function updateVoiceStatusUI(active, text) {
-            const badge = document.getElementById('voiceStatusBadge');
-            const icon = document.getElementById('voiceMicIcon');
-            const label = document.getElementById('voiceStatusText');
-            const micBtnIcon = document.getElementById('micToggleIcon');
-
-            label.textContent = text;
+        function updateVoiceStatusUI(active) {
+            const icon = document.getElementById('micToggleIcon');
+            const btn = document.getElementById('micToggleBtn');
             if (active) {
-                badge.className = 'flex items-center space-x-1.5 px-3 py-1 rounded-full border border-emerald-500/50 bg-emerald-950/60 text-emerald-300 text-xs shadow-[0_0_10px_rgba(16,185,129,0.3)]';
-                icon.className = 'fa-solid fa-microphone text-xs animate-pulse text-emerald-400';
-                micBtnIcon.className = 'fa-solid fa-microphone text-lg text-emerald-400 animate-pulse';
+                btn.className = 'p-2 rounded bg-emerald-500/30 border border-emerald-400 text-emerald-300 hover:bg-emerald-500/40 transition flex items-center justify-center w-9 h-9 flex-shrink-0 hud-text-glow';
+                icon.className = 'fa-solid fa-microphone text-sm text-emerald-300 animate-pulse';
             } else {
-                badge.className = 'flex items-center space-x-1.5 px-3 py-1 rounded-full border border-red-500/50 bg-red-950/60 text-red-300 text-xs';
-                icon.className = 'fa-solid fa-microphone-slash text-xs text-red-400';
-                micBtnIcon.className = 'fa-solid fa-microphone-slash text-lg text-red-400';
+                btn.className = 'p-2 rounded bg-red-950/40 border border-red-500/40 text-red-400 transition flex items-center justify-center w-9 h-9 flex-shrink-0';
+                icon.className = 'fa-solid fa-microphone-slash text-sm text-red-400';
             }
         }
 
@@ -877,89 +718,50 @@
         function routeVoiceCommand(rawText) {
             const text = rawText.toLowerCase();
 
-            // 1. Persona Switching Commands
-            if (text.includes('ジャービス') || text.includes('jarvis')) {
-                switchPersona('jarvis');
-                speakText('J.A.R.V.I.S. online, Sir.');
-                return;
-            }
-            if (text.includes('フライデー') || text.includes('friday')) {
-                switchPersona('friday');
-                speakText('F.R.I.D.A.Y. tactical online, Boss.');
-                return;
-            }
-            if (text.includes('イーディス') || text.includes('edith')) {
-                switchPersona('edith');
-                speakText('E.D.I.T.H. intelligence protocols engaged.');
-                return;
-            }
-            if (text.includes('カレン') || text.includes('karen')) {
-                switchPersona('karen');
-                speakText('Karen suit diagnostics active.');
+            // 1. Settings & Manual Modal Open Command
+            if (text.includes('設定') || text.includes('マニュアル') || text.includes('取扱説明書') || text.includes('settings')) {
+                openSettingsModal();
+                speakText('Opening system settings and manual.');
                 return;
             }
 
-            // 2. Vision Scan & Analysis Commands
-            if (text.includes('スキャン') || text.includes('分析') || text.includes('写真解析') || text.includes('視覚解析') || text.includes('キャプチャ') || text.includes('scan') || text.includes('analyze')) {
+            // 2. J.A.R.V.I.S. Persona Acknowledgment
+            if (text.includes('ジャービス') || text.includes('jarvis')) {
+                switchPersona('jarvis');
+                speakText('J.A.R.V.I.S. online and at your service, Sir.');
+                return;
+            }
+
+            // 3. Vision Scan & Snapshot Analysis
+            if (text.includes('スキャン') || text.includes('分析') || text.includes('視覚解析') || text.includes('scan') || text.includes('analyze')) {
                 triggerVisionAnalysis();
                 return;
             }
 
-            // 3. HUD Theme Switching
+            // 4. Color Theme Commands
             if (text.includes('サイアン') || text.includes('cyan')) {
                 setTheme('theme-cyan');
                 speakText('Cyan theme applied.');
                 return;
             }
-            if (text.includes('マーク85') || text.includes('ゴールド') || text.includes('gold')) {
+            if (text.includes('マーク85') || text.includes('ゴールド')) {
                 setTheme('theme-mark85');
-                speakText('Mark 85 gold theme active.');
+                speakText('Mark 85 theme active.');
                 return;
             }
             if (text.includes('ステルス') || text.includes('stealth')) {
                 setTheme('theme-stealth');
-                speakText('Stealth emerald theme active.');
-                return;
-            }
-            if (text.includes('レッド') || text.includes('フライデーテーマ')) {
-                setTheme('theme-friday');
-                speakText('Crimson combat theme active.');
+                speakText('Stealth theme active.');
                 return;
             }
 
-            // 4. Prompt Macros
+            // 5. Prompt Macros
             if (text.includes('自己診断') || text.includes('diagnostic')) {
-                executeMacro('自己診断');
-                return;
-            }
-            if (text.includes('ステータス') || text.includes('status')) {
-                executeMacro('ステータス');
-                return;
-            }
-            if (text.includes('戦術分析') || text.includes('tactical')) {
-                executeMacro('戦術分析');
+                queryGeminiLLM("Run a full system diagnostic report. State power, network security status, and readiness.");
                 return;
             }
 
-            // 5. System Controls
-            if (text.includes('効果音')) {
-                toggleSoundFX();
-                return;
-            }
-            if (text.includes('読み上げ')) {
-                toggleTTS();
-                return;
-            }
-            if (text.includes('全画面') || text.includes('fullscreen')) {
-                toggleFullscreen();
-                return;
-            }
-            if (text.includes('スキャンライン') || text.includes('scanlines')) {
-                toggleScanlines();
-                return;
-            }
-
-            // 6. Fallthrough General Conversational Query via Gemini API
+            // 6. Fallthrough General Query via Gemini LLM
             queryGeminiLLM(rawText);
         }
 
@@ -967,8 +769,34 @@
            6. GEMINI API & VISION ANALYSIS INTEGRATION
            ========================================================================== */
         async function queryGeminiLLM(prompt, base64Image = null) {
+            const key = getActiveApiKey();
             const persona = PERSONAS[state.currentPersona];
-            setTerminalStatus('PROCESSING AI RESPONSE...');
+
+            // Check if API key is provided before calling endpoint
+            if (!key) {
+                setTerminalStatus('KEY REQUIRED');
+                playFuturisticSound('beep');
+                const warningMsg = "API Key not configured. Please click **SETTINGS** (⚙️) and enter your Gemini API Key to enable live neural AI features.";
+                appendTerminalLog('SYSTEM', warningMsg, 'system');
+                speakText("API key required. Please open settings and save your key.");
+                
+                // Simulated tactical response fallback
+                setTimeout(() => {
+                    let mockReply = `[SIMULATION MODE] ${persona.name} online. Received command: "${prompt}". Please enter a valid Gemini API Key in Settings for live neural AI processing.`;
+                    if (base64Image) {
+                        mockReply = `[SIMULATION MODE] Visual frame captured. Configure a Gemini API Key in Settings to analyze live camera feeds with Gemini Vision.`;
+                    }
+                    appendTerminalLog(persona.name, mockReply, 'ai');
+                    speakText(mockReply);
+                    setTerminalStatus('READY');
+                }, 600);
+                return;
+            }
+
+            // Updated model name to gemini-1.5-flash to resolve HTTP 404 endpoint errors
+            const modelName = 'gemini-1.5-flash';
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
+            setTerminalStatus('PROCESSING...');
             playFuturisticSound('scan');
 
             const fullPrompt = `${persona.promptPrefix}\n\nUser Question: ${prompt}`;
@@ -998,30 +826,34 @@
             }
 
             try {
-                const response = await fetch(GEMINI_TEXT_URL, {
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) {
+                    if (response.status === 403) {
+                        throw new Error("HTTP 403 Forbidden: Invalid or unauthorized API Key. Please verify your key in SETTINGS.");
+                    }
+                    if (response.status === 404) {
+                        throw new Error("HTTP 404 Not Found: Model endpoint not found. Ensure API key permissions are active.");
+                    }
                     throw new Error(`HTTP Error: ${response.status}`);
                 }
 
                 const result = await response.json();
-                const replyText = result.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated from system.";
+                const replyText = result.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
 
                 appendTerminalLog(persona.name, replyText, 'ai');
                 speakText(replyText);
                 playFuturisticSound('chime');
             } catch (err) {
                 console.error('Gemini API query failure:', err);
-                const fallbackMessage = `[SYSTEM NOTICE]: Neural connection throttled or offline. ${err.message}.`;
-                appendTerminalLog('SYSTEM ERROR', fallbackMessage, 'system');
-                speakText("Apologies Boss, my neural link experienced a brief latency anomaly.");
-                playFuturisticSound('alert');
+                appendTerminalLog('SYSTEM', `Neural Processing Error: ${err.message}`, 'system');
+                speakText("API error encountered. Please check system console.");
             } finally {
-                setTerminalStatus('SYSTEM READY');
+                setTerminalStatus('READY');
             }
         }
 
@@ -1029,15 +861,14 @@
             const videoEl = document.getElementById('cameraBg');
             
             if (!videoEl.srcObject || videoEl.videoWidth === 0) {
-                appendTerminalLog('SYSTEM', 'Optical camera feed unavailable for snapshot scan.', 'system');
-                speakText("Optical sensors are currently offline, Boss.");
+                appendTerminalLog('SYSTEM', 'Camera feed unavailable for snapshot scan.', 'system');
+                speakText("Optical camera is offline.");
                 return;
             }
 
             playFuturisticSound('scan');
-            appendTerminalLog('OPTICAL SENSORS', 'Capturing snapshot frame and performing neural computer vision scan...', 'system');
+            appendTerminalLog('OPTICAL SCAN', 'Capturing snapshot frame for computer vision scan...', 'system');
 
-            // Draw video frame onto hidden canvas to capture JPEG base64
             const canvas = document.createElement('canvas');
             canvas.width = videoEl.videoWidth || 1280;
             canvas.height = videoEl.videoHeight || 720;
@@ -1046,65 +877,219 @@
 
             const base64Data = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
             
-            const scanPrompt = "Analyze this optical HUD snapshot in full character. Detail detected objects, human targets, structural points, and potential tactical threats or notable items.";
+            const scanPrompt = "Analyze this optical HUD snapshot. Concisely identify detected objects, human targets, and surroundings.";
             queryGeminiLLM(scanPrompt, base64Data);
         }
 
-        function executeMacro(macroName) {
-            appendTerminalLog('MACRO EXECUTE', `Running protocol: ${macroName}`, 'user');
-            if (macroName === '自己診断') {
-                queryGeminiLLM("Run a full Stark Industries AI system diagnostic report. State arc core power, network security status, and readiness level.");
-            } else if (macroName === '戦術分析') {
-                queryGeminiLLM("Provide a tactical threat assessment and defense status overview for current surroundings.");
-            } else if (macroName === 'ステータス') {
-                queryGeminiLLM("Summarize active suit systems, power levels, and ambient environmental telemetry.");
+        /* ==========================================================================
+           7. ENVIRONMENT & SENSOR WIDGETS (WEATHER & BATTERY)
+           ========================================================================== */
+        async function initWeatherStatus() {
+            try {
+                // Coordinates for Ueda, Nagano, Japan (Task 1 Requirements)
+                const lat = 36.40;
+                const lon = 138.25;
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                if (data.current_weather) {
+                    const temp = data.current_weather.temperature;
+                    const code = data.current_weather.weathercode;
+                    const tempEl = document.getElementById('hudWeatherTemp');
+                    if (tempEl) tempEl.textContent = `${temp}°C`;
+                    
+                    let icon = 'fa-sun'; // Default clear
+                    // Map WMO weather codes to FontAwesome icons
+                    if (code >= 1 && code <= 3) icon = 'fa-cloud';
+                    else if (code === 45 || code === 48) icon = 'fa-smog';
+                    else if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) icon = 'fa-cloud-rain';
+                    else if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) icon = 'fa-snowflake';
+                    else if (code >= 95) icon = 'fa-bolt';
+                    
+                    const iconEl = document.getElementById('hudWeatherIcon');
+                    if (iconEl) iconEl.className = `fa-solid ${icon} animate-pulse`;
+                }
+            } catch (err) {
+                console.warn("Weather fetch failed. Widget inactive.", err);
+            }
+        }
+
+        async function initBatteryStatus() {
+            if ('getBattery' in navigator) {
+                try {
+                    const battery = await navigator.getBattery();
+                    
+                    const updateBattery = () => {
+                        const level = Math.round(battery.level * 100);
+                        const textEl = document.getElementById('hudBatteryText');
+                        if (textEl) textEl.textContent = `${level}%`;
+                        
+                        let icon = 'fa-battery-full';
+                        if (battery.charging) {
+                            icon = 'fa-bolt text-emerald-400';
+                        } else {
+                            if (level > 80) icon = 'fa-battery-full text-cyan-300';
+                            else if (level > 60) icon = 'fa-battery-three-quarters text-cyan-300';
+                            else if (level > 40) icon = 'fa-battery-half text-cyan-300';
+                            else if (level > 20) icon = 'fa-battery-quarter text-amber-400';
+                            else icon = 'fa-battery-empty text-red-500 animate-pulse';
+                        }
+
+                        const iconEl = document.getElementById('hudBatteryIcon');
+                        if (iconEl) iconEl.className = `fa-solid ${icon}`;
+                    };
+
+                    updateBattery(); // init
+                    battery.addEventListener('levelchange', updateBattery);
+                    battery.addEventListener('chargingchange', updateBattery);
+                } catch(e) {
+                    console.warn("Battery status API restricted or failed", e);
+                }
+            } else {
+                 const textEl = document.getElementById('hudBatteryText');
+                 if (textEl) textEl.textContent = 'PWR'; // Fallback text
             }
         }
 
         /* ==========================================================================
-           7. SPEECH SYNTHESIS (TTS) ENGINE
+           8. SPEECH SYNTHESIS (TTS) ENGINE
            ========================================================================== */
+        function populateVoiceList() {
+            if (!state.synth) return;
+            const voices = state.synth.getVoices();
+            const select = document.getElementById('cfgVoiceSelect');
+            if (!select) return;
+
+            select.innerHTML = '<option value="">Default Voice</option>';
+            voices.forEach((v, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.textContent = `${v.name} (${v.lang})`;
+                select.appendChild(opt);
+            });
+        }
+
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = populateVoiceList;
+        }
+
         function speakText(text) {
             if (!state.ttsEnabled || !state.synth) return;
 
-            // Strip markdown formatting for cleaner natural voice reading
-            const cleanText = text.replace(/[*_#`~]/g, '').slice(0, 300);
+            const cleanText = text.replace(/[*_#`~]/g, '').slice(0, 250);
+            state.synth.cancel();
 
-            state.synth.cancel(); // Stop any pending speech
             const utterance = new SpeechSynthesisUtterance(cleanText);
             const persona = PERSONAS[state.currentPersona];
 
+            const customRate = parseFloat(document.getElementById('cfgRate')?.value || persona.rate);
             utterance.pitch = persona.pitch;
-            utterance.rate = persona.rate;
+            utterance.rate = customRate;
 
-            // Try matching ideal voice by language code
+            const selectedVoiceIdx = document.getElementById('cfgVoiceSelect')?.value;
             const voices = state.synth.getVoices();
-            const matchingVoice = voices.find(v => v.lang.includes(persona.voiceLang.split('-')[0])) || voices[0];
-            if (matchingVoice) utterance.voice = matchingVoice;
+            if (selectedVoiceIdx !== "" && voices[selectedVoiceIdx]) {
+                utterance.voice = voices[selectedVoiceIdx];
+            } else {
+                const matching = voices.find(v => v.lang.includes(persona.voiceLang.split('-')[0]));
+                if (matching) utterance.voice = matching;
+            }
 
             state.synth.speak(utterance);
         }
 
         /* ==========================================================================
-           8. HUD CONTROLS & TERMINAL MANAGEMENT
+           9. MODAL DIALOG & SETTINGS MANAGEMENT
            ========================================================================== */
+        function openSettingsModal() {
+            document.getElementById('settingsModal').classList.remove('hidden');
+            document.getElementById('cfgApiKey').value = userApiKey;
+            document.getElementById('cfgLanguageSelect').value = state.language; // Set mapped lang
+            populateVoiceList();
+            playFuturisticSound('beep');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+            playFuturisticSound('beep');
+        }
+
+        function switchSettingsTab(tabId) {
+            const tabSettings = document.getElementById('tabSettings');
+            const tabManual = document.getElementById('tabManual');
+            const btnSettings = document.getElementById('btnTabSettings');
+            const btnManual = document.getElementById('btnTabManual');
+
+            if (tabId === 'tabSettings') {
+                tabSettings.classList.remove('hidden');
+                tabManual.classList.add('hidden');
+                btnSettings.className = 'px-3 py-1 rounded bg-cyan-500/30 border border-cyan-400 text-cyan-300 font-bold';
+                btnManual.className = 'px-3 py-1 rounded bg-black/40 border border-cyan-500/30 text-gray-400 hover:text-cyan-300';
+            } else {
+                tabSettings.classList.add('hidden');
+                tabManual.classList.remove('hidden');
+                btnSettings.className = 'px-3 py-1 rounded bg-black/40 border border-cyan-500/30 text-gray-400 hover:text-cyan-300';
+                btnManual.className = 'px-3 py-1 rounded bg-cyan-500/30 border border-cyan-400 text-cyan-300 font-bold';
+            }
+            playFuturisticSound('beep');
+        }
+
+        function saveApiKeySetting() {
+            const inputVal = document.getElementById('cfgApiKey').value.trim();
+            userApiKey = inputVal;
+            localStorage.setItem('jarvis_api_key', inputVal);
+            appendTerminalLog('SYSTEM', 'Gemini API Key updated successfully.', 'system');
+            playFuturisticSound('chime');
+        }
+
+        function updateLanguage() {
+            const select = document.getElementById('cfgLanguageSelect');
+            if (select) {
+                state.language = select.value;
+                localStorage.setItem('jarvis_lang', state.language);
+                
+                // Immediately apply to recognition engine if available
+                if (state.recognition) {
+                    const wasListening = state.isListening;
+                    if (wasListening) state.recognition.stop();
+                    state.recognition.lang = state.language;
+                    
+                    // Restart recognition gracefully if it was actively listening
+                    if (wasListening) {
+                        setTimeout(() => startVoiceListening(), 500); 
+                    }
+                }
+                appendTerminalLog('SYSTEM', `System language protocol updated to: ${state.language === 'ja-JP' ? 'Japanese' : 'English'}`, 'system');
+                playFuturisticSound('chime');
+            }
+        }
+
+        function resetSystemDefaults() {
+            localStorage.removeItem('jarvis_api_key');
+            localStorage.removeItem('jarvis_lang'); // Clear lang reset
+            userApiKey = "";
+            document.getElementById('cfgApiKey').value = "";
+            
+            // Reset language defaults
+            state.language = 'ja-JP';
+            const langSelect = document.getElementById('cfgLanguageSelect');
+            if (langSelect) langSelect.value = 'ja-JP';
+            if (state.recognition) state.recognition.lang = 'ja-JP';
+
+            switchPersona('jarvis');
+            setTheme('theme-cyan');
+            appendTerminalLog('SYSTEM', 'All HUD settings reset to factory defaults.', 'system');
+            playFuturisticSound('chime');
+        }
+
         function switchPersona(personaKey) {
             if (!PERSONAS[personaKey]) return;
             state.currentPersona = personaKey;
             const p = PERSONAS[personaKey];
 
             document.getElementById('systemTitle').textContent = p.name;
-            document.getElementById('currentPersonaLabel').textContent = p.name;
-
-            // Highlight button
-            ['jarvis', 'friday', 'edith', 'karen'].forEach(k => {
-                const btn = document.getElementById(`persona-${k}`);
-                if (k === personaKey) {
-                    btn.className = 'p-2 rounded hud-panel border-cyan-400 text-left transition flex items-center space-x-2 bg-cyan-950/60 shadow-[0_0_10px_rgba(0,240,255,0.3)]';
-                } else {
-                    btn.className = 'p-2 rounded hud-panel hover:border-cyan-400/50 text-left transition flex items-center space-x-2 border-transparent';
-                }
-            });
+            document.getElementById('currentPersonaLabel').textContent = `${p.name} TERMINAL`;
 
             setTheme(p.theme);
             playFuturisticSound('chime');
@@ -1116,15 +1101,15 @@
 
         function toggleSoundFX() {
             state.soundEnabled = !state.soundEnabled;
-            const btn = document.getElementById('btnSound');
-            btn.className = state.soundEnabled ? 'p-2 w-9 h-9 flex items-center justify-center rounded hud-panel hover:hud-border-glow text-cyan-400 hover:text-white transition' : 'p-2 w-9 h-9 flex items-center justify-center rounded hud-panel text-gray-600 transition';
+            const chk = document.getElementById('cfgSoundToggle');
+            if (chk) chk.checked = state.soundEnabled;
             playFuturisticSound('beep');
         }
 
         function toggleTTS() {
             state.ttsEnabled = !state.ttsEnabled;
-            const btn = document.getElementById('btnTTS');
-            btn.className = state.ttsEnabled ? 'p-2 w-9 h-9 flex items-center justify-center rounded hud-panel hover:hud-border-glow text-cyan-400 hover:text-white transition' : 'p-2 w-9 h-9 flex items-center justify-center rounded hud-panel text-gray-600 transition';
+            const chk = document.getElementById('cfgTtsToggle');
+            if (chk) chk.checked = state.ttsEnabled;
             playFuturisticSound('beep');
         }
 
@@ -1132,14 +1117,30 @@
             state.scanlinesEnabled = !state.scanlinesEnabled;
             const overlay = document.getElementById('scanlinesOverlay');
             overlay.style.opacity = state.scanlinesEnabled ? '0.7' : '0';
+            const chk = document.getElementById('cfgScanlineToggle');
+            if (chk) chk.checked = state.scanlinesEnabled;
             playFuturisticSound('beep');
         }
 
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(e => console.warn(e));
+        /* ==========================================================================
+           10. TERMINAL DISPLAYS & UI INTERACTIONS
+           ========================================================================== */
+        function toggleTerminalCollapse() {
+            const panel = document.getElementById('chatTerminalPanel');
+            const logContainer = document.getElementById('terminalLog');
+            const icon = document.getElementById('terminalCollapseIcon');
+
+            state.isTerminalCollapsed = !state.isTerminalCollapsed;
+            if (state.isTerminalCollapsed) {
+                logContainer.classList.add('hidden');
+                panel.classList.remove('max-h-56');
+                panel.classList.add('max-h-12');
+                icon.className = 'fa-solid fa-chevron-up text-[11px]';
             } else {
-                if (document.exitFullscreen) document.exitFullscreen();
+                logContainer.classList.remove('hidden');
+                panel.classList.remove('max-h-12');
+                panel.classList.add('max-h-56');
+                icon.className = 'fa-solid fa-chevron-down text-[11px]';
             }
             playFuturisticSound('beep');
         }
@@ -1161,13 +1162,13 @@
 
             const formattedText = marked.parse ? marked.parse(text) : text;
 
-            entry.className = `p-3 rounded border font-mono text-sm leading-relaxed ${badgeStyle}`;
+            entry.className = `p-2 rounded border font-mono text-[11px] leading-snug ${badgeStyle}`;
             entry.innerHTML = `
-                <div class="flex items-center justify-between text-xs font-bold mb-1 border-b border-white/10 pb-1">
+                <div class="flex items-center justify-between text-[10px] font-bold mb-0.5 border-b border-white/10 pb-0.5">
                     <span><i class="fa-solid ${icon} mr-1"></i> ${sender}</span>
                     <span class="opacity-70">${new Date().toLocaleTimeString()}</span>
                 </div>
-                <div class="prose prose-invert max-w-none text-xs sm:text-sm text-gray-100">${formattedText}</div>
+                <div class="prose prose-invert max-w-none text-[11px] text-gray-100">${formattedText}</div>
             `;
 
             logContainer.appendChild(entry);
@@ -1200,119 +1201,33 @@
         }
 
         /* ==========================================================================
-           9. REALTIME CANVAS RENDERING (AR RETICLE & RADAR)
+           11. CLEAN VIEWPORT CANVAS RENDERER (No Lines or Reticle Overlay)
            ========================================================================== */
         function initCanvasRenderers() {
             const arCanvas = document.getElementById('hudArCanvas');
             const arCtx = arCanvas.getContext('2d');
-            const radarCanvas = document.getElementById('radarCanvas');
-            const radarCtx = radarCanvas.getContext('2d');
-            const audioCanvas = document.getElementById('audioSpectrumCanvas');
-            const audioCtx = audioCanvas.getContext('2d');
-
-            let angle = 0;
 
             function resize() {
                 arCanvas.width = window.innerWidth;
                 arCanvas.height = window.innerHeight;
-                audioCanvas.width = audioCanvas.parentElement.clientWidth;
-                audioCanvas.height = audioCanvas.parentElement.clientHeight;
             }
 
             window.addEventListener('resize', resize);
             resize();
 
             function render() {
-                // Calculate FPS
                 const now = performance.now();
                 state.frameCount++;
                 if (now - state.lastFrameTime >= 1000) {
                     state.fps = state.frameCount;
                     state.frameCount = 0;
                     state.lastFrameTime = now;
-                    document.getElementById('fpsCounter').textContent = state.fps;
+                    const fpsEl = document.getElementById('fpsCounter');
+                    if (fpsEl) fpsEl.textContent = state.fps;
                 }
 
-                // 1. Draw Augmented Reality Targeting Reticle on arCanvas
+                // Clear canvas each frame to keep camera view completely unobstructed and clean
                 arCtx.clearRect(0, 0, arCanvas.width, arCanvas.height);
-                const cx = arCanvas.width / 2;
-                const cy = arCanvas.height / 2;
-
-                const primaryColor = getComputedStyle(document.body).getPropertyValue('--primary-color').trim() || '#00f0ff';
-
-                arCtx.strokeStyle = primaryColor;
-                arCtx.lineWidth = 1.5;
-                arCtx.globalAlpha = 0.5;
-
-                // Center Reticle Ring
-                arCtx.beginPath();
-                arCtx.arc(cx, cy, 60, 0, Math.PI * 2);
-                arCtx.stroke();
-
-                // Rotating Dash Ring
-                arCtx.save();
-                arCtx.translate(cx, cy);
-                arCtx.rotate(angle);
-                arCtx.setLineDash([12, 12]);
-                arCtx.beginPath();
-                arCtx.arc(0, 0, 80, 0, Math.PI * 2);
-                arCtx.stroke();
-                arCtx.restore();
-
-                // Corner Target Crosshairs
-                arCtx.globalAlpha = 0.8;
-                arCtx.beginPath();
-                arCtx.moveTo(cx - 20, cy); arCtx.lineTo(cx + 20, cy);
-                arCtx.moveTo(cx, cy - 20); arCtx.lineTo(cx, cy + 20);
-                arCtx.stroke();
-
-                // 2. Draw Radar Sweep Canvas
-                const rw = radarCanvas.width;
-                const rh = radarCanvas.height;
-                const rcx = rw / 2;
-                const rcy = rh / 2;
-
-                radarCtx.clearRect(0, 0, rw, rh);
-
-                // Grid concentric circles
-                radarCtx.strokeStyle = primaryColor;
-                radarCtx.globalAlpha = 0.25;
-                radarCtx.lineWidth = 1;
-                [25, 50, 70].forEach(r => {
-                    radarCtx.beginPath();
-                    radarCtx.arc(rcx, rcy, r, 0, Math.PI * 2);
-                    radarCtx.stroke();
-                });
-
-                // Radar Sweeping Line
-                radarCtx.globalAlpha = 0.8;
-                radarCtx.beginPath();
-                radarCtx.moveTo(rcx, rcy);
-                radarCtx.lineTo(rcx + 70 * Math.cos(angle), rcy + 70 * Math.sin(angle));
-                radarCtx.stroke();
-
-                // Simulated Target Blips
-                radarCtx.fillStyle = '#00ffaa';
-                radarCtx.beginPath();
-                radarCtx.arc(rcx + 30, rcy - 20, 3, 0, Math.PI * 2);
-                radarCtx.arc(rcx - 40, rcy + 25, 2.5, 0, Math.PI * 2);
-                radarCtx.fill();
-
-                // 3. Draw Audio Spectrum Visualizer Bar Wave
-                const aw = audioCanvas.width;
-                const ah = audioCanvas.height;
-                audioCtx.clearRect(0, 0, aw, ah);
-                audioCtx.fillStyle = primaryColor;
-                audioCtx.globalAlpha = 0.35;
-
-                const bars = 28;
-                const barWidth = aw / bars;
-                for (let i = 0; i < bars; i++) {
-                    const h = (Math.sin(angle * 3 + i * 0.4) + 1) * 0.5 * (ah * 0.7) + 4;
-                    audioCtx.fillRect(i * barWidth, ah - h, barWidth - 2, h);
-                }
-
-                angle += 0.02;
                 requestAnimationFrame(render);
             }
 
@@ -1320,38 +1235,28 @@
         }
 
         /* ==========================================================================
-           10. CLOCK & DIAGNOSTIC SIMULATOR LOOP
+           12. SYSTEM CLOCK & BOOT ENTRY POINT
            ========================================================================== */
-        function initSystemClockAndMetrics() {
+        function initSystemClock() {
             setInterval(() => {
                 const now = new Date();
-                document.getElementById('clockTime').textContent = now.toLocaleTimeString();
-                document.getElementById('clockDate').textContent = now.toISOString().split('T')[0].replace(/-/g, '.');
-
-                // Dynamic metric fluctuation simulation
-                const temp = (42 + Math.random() * 2.5).toFixed(1);
-                const load = (65 + Math.random() * 8.0).toFixed(1);
-                const arcPower = (97 + Math.random() * 2.0).toFixed(0);
-
-                document.getElementById('tempVal').textContent = `${temp} °C`;
-                document.getElementById('tempBar').style.width = `${temp}%`;
-                document.getElementById('loadVal').textContent = `${load} %`;
-                document.getElementById('loadBar').style.width = `${load}%`;
-                document.getElementById('arcCoreText').textContent = `${arcPower}%`;
-                document.getElementById('arcCoreBar').style.width = `${arcPower}%`;
+                const clockTime = document.getElementById('clockTime');
+                const clockDate = document.getElementById('clockDate');
+                if (clockTime) clockTime.textContent = now.toLocaleTimeString();
+                if (clockDate) clockDate.textContent = now.toISOString().split('T')[0].replace(/-/g, '.');
             }, 1000);
         }
 
-        /* ==========================================================================
-           11. BOOT SEQUENCE & ENTRY POINT
-           ========================================================================== */
         window.addEventListener('DOMContentLoaded', () => {
             initCameraStream();
             initVoiceRecognition();
             initCanvasRenderers();
-            initSystemClockAndMetrics();
+            initSystemClock();
+            
+            // New Boot Routines
+            initWeatherStatus();
+            initBatteryStatus();
 
-            // First click document listener to unlock Web Audio API autoplay restrictions gracefully
             document.body.addEventListener('click', () => {
                 initAudioContext();
             }, { once: true });
