@@ -3,59 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS System</title>
+    <title>J.A.R.V.I.S. System</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
-            background-color: #0d1117;
-            color: #58a6ff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #080c14;
+            color: #00d2ff;
+            font-family: 'Segoe UI', Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
+            padding: 20px;
         }
         .container {
-            width: 80%;
-            max-width: 600px;
-            background: #161b22;
+            width: 100%;
+            max-width: 650px;
+            background: #0f172a;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 0 20px rgba(56, 139, 253, 0.3);
-            border: 1px solid #30363d;
+            border-radius: 16px;
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.2);
+            border: 1px solid #1e293b;
             text-align: center;
         }
-        h1 { margin-bottom: 20px; letter-spacing: 2px; }
-        input[type="password"] {
-            width: 80%;
-            padding: 10px;
+        h1 {
+            font-size: 2.2rem;
             margin-bottom: 20px;
-            background: #0d1117;
-            border: 1px solid #30363d;
-            color: #fff;
-            border-radius: 6px;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            background: #080c14;
+            border: 1px solid #334155;
+            color: #00d2ff;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            outline: none;
+        }
+        input[type="password"]:focus {
+            border-color: #00d2ff;
+            box-shadow: 0 0 8px rgba(0, 210, 255, 0.4);
         }
         button {
-            background: #238636;
-            color: white;
+            background: #0284c7;
+            color: #fff;
             border: none;
-            padding: 12px 24px;
+            padding: 14px 28px;
             font-size: 16px;
-            border-radius: 6px;
+            font-weight: bold;
+            border-radius: 30px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(2, 132, 199, 0.4);
         }
-        button:hover { background: #2ea043; }
-        .status { margin-top: 20px; font-weight: bold; }
+        button:hover {
+            background: #0369a1;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
+            transform: scale(1.03);
+        }
+        .status {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #94a3b8;
+            height: 24px;
+        }
+        .chat-box {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
         .log {
-            margin-top: 15px;
-            padding: 10px;
-            background: #0d1117;
-            border-radius: 6px;
-            min-height: 50px;
+            padding: 14px;
+            background: #080c14;
+            border-radius: 8px;
+            border-left: 4px solid #334155;
             text-align: left;
-            word-wrap: break-word;
+            font-size: 15px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+        .user-log {
+            border-color: #38bdf8;
+            color: #e2e8f0;
+        }
+        .jarvis-log {
+            border-color: #00d2ff;
+            color: #38bdf8;
+            background: #0c192e;
+        }
+        .error-log {
+            border-color: #ef4444;
+            color: #f87171;
+            background: #1f1315;
         }
     </style>
 </head>
@@ -63,12 +114,19 @@
 
 <div class="container">
     <h1>J.A.R.V.I.S.</h1>
-    <input type="password" id="apiKey" placeholder="Google Gemini API Keyを入力してください">
-    <br>
+    
+    <div class="input-group">
+        <input type="password" id="apiKey" placeholder="Google Gemini API Keyを入力してください">
+    </div>
+
     <button id="micBtn" onclick="startListening()">話しかける</button>
+
     <div class="status" id="status">システム待機中...</div>
-    <div class="log" id="userLog"><strong>あなた:</strong> -</div>
-    <div class="log" id="jarvisLog"><strong>JARVIS:</strong> -</div>
+
+    <div class="chat-box">
+        <div class="log user-log" id="userLog"><strong>あなた:</strong> 準備完了</div>
+        <div class="log jarvis-log" id="jarvisLog"><strong>JARVIS:</strong> お呼びでしょうか、サー。指示をお待ちしております。</div>
+    </div>
 </div>
 
 <script>
@@ -82,62 +140,113 @@
         recognition.interimResults = false;
 
         recognition.onstart = () => {
-            document.getElementById('status').innerText = '音声を聞き取っています...';
+            updateStatus('音声を聞き取っています...');
         };
 
         recognition.onresult = async (event) => {
             const userText = event.results[0][0].transcript;
             document.getElementById('userLog').innerHTML = `<strong>あなた:</strong> ${userText}`;
-            document.getElementById('status').innerText = 'JARVIS思考中...';
+            updateStatus('JARVIS思考中...');
 
-            // Python（Flaskサーバー）へデータを送信
-            const apiKey = document.getElementById('apiKey').value;
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: userText, apiKey: apiKey })
-                });
-
-                const data = await response.json();
-
-                if (data.reply) {
-                    document.getElementById('jarvisLog').innerHTML = `<strong>JARVIS:</strong> ${data.reply}`;
-                    document.getElementById('status').innerText = '応答完了';
-                    speak(data.reply); // 音声で喋らせる
-                } else {
-                    alert('エラー: ' + (data.error || '応答の取得に失敗しました'));
-                    document.getElementById('status').innerText = 'エラー発生';
-                }
-            } catch (err) {
-                console.error(err);
-                document.getElementById('status').innerText = '通信エラー';
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (!apiKey) {
+                showError('API Keyを入力してください。');
+                return;
             }
+
+            // Gemini API呼び出し
+            await callGeminiAPI(userText, apiKey);
         };
 
         recognition.onerror = (e) => {
-            document.getElementById('status').innerText = '音声認識エラー: ' + e.error;
+            showError('音声認識エラー: ' + e.error);
         };
     } else {
         alert('お使いのブラウザは音声認識に対応していません。Google Chrome等でお試しください。');
     }
 
     function startListening() {
-        if (!document.getElementById('apiKey').value) {
+        const apiKey = document.getElementById('apiKey').value.trim();
+        if (!apiKey) {
             alert('Gemini API Keyを入力してください。');
             return;
         }
-        recognition.start();
+        try {
+            recognition.start();
+        } catch(e) {
+            console.log('すでに認識中の可能性があります:', e);
+        }
     }
 
-    // JARVISに喋らせる（Web Speech Synthesis）
+    // 無料版Gemini API（REST API呼び出し）
+    async function callGeminiAPI(promptText, apiKey) {
+        // 無料プランで動作する「gemini-2.5-flash」モデルのURL
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+        const systemInstruction = "あなたはトニー・スタークに仕える高度なAIアシスタント「JARVIS（ジャービス）」です。丁寧で知的、少しユーモアのある紳士的な執事の口調（「〜でございます、サー」「承知いたしました」など）で返答してください。音声合成で読み上げるため、特殊文字や記号、絵文字は一切使わず、短く1〜2文程度で簡潔に回答してください。";
+
+        const requestBody = {
+            system_instruction: {
+                parts: [{ text: systemInstruction }]
+            },
+            contents: [
+                {
+                    parts: [{ text: promptText }]
+                }
+            ]
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                // エラー応答時の処理
+                const errorMsg = data.error ? data.error.message : 'APIリクエストに失敗しました';
+                showError('APIエラー: ' + errorMsg);
+                return;
+            }
+
+            // 正常応答の抽出
+            const replyText = data.candidates[0].content.parts[0].text;
+            document.getElementById('jarvisLog').className = 'log jarvis-log';
+            document.getElementById('jarvisLog').innerHTML = `<strong>JARVIS:</strong> ${replyText}`;
+            updateStatus('応答完了');
+
+            // 音声で喋らせる
+            speak(replyText);
+
+        } catch (err) {
+            showError('通信エラーが発生しました: ' + err.message);
+        }
+    }
+
+    // 音声読み上げ機能
     function speak(text) {
-        window.speechSynthesis.cancel(); // 前の発声を停止
+        window.speechSynthesis.cancel(); // 前の発声をクリア
         const uttr = new SpeechSynthesisUtterance(text);
         uttr.lang = 'ja-JP';
-        uttr.pitch = 0.9; // 少し落ち着いたトーン
+        uttr.pitch = 0.9; // 低めの落ち着いた声
         uttr.rate = 1.0;
         window.speechSynthesis.speak(uttr);
+    }
+
+    function updateStatus(text) {
+        document.getElementById('status').innerText = text;
+    }
+
+    function showError(msg) {
+        updateStatus('エラーが発生しました');
+        const jarvisLog = document.getElementById('jarvisLog');
+        jarvisLog.className = 'log error-log';
+        jarvisLog.innerHTML = `<strong>エラー:</strong> ${msg}`;
     }
 </script>
 
