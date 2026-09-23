@@ -530,8 +530,8 @@
                 theme: 'theme-cyan',
                 pitch: 0.9,
                 rate: 1.05,
-                voiceLang: 'en-GB',
-                promptPrefix: 'You are J.A.R.V.I.S., the suave, ultra-intelligent AI created by Tony Stark. Speak politely, with witty sophistication and crisp tactical insights. Call the user "Boss" or "Sir". Keep responses concise.'
+                voiceLang: 'ja-JP',
+                promptPrefix: 'You are J.A.R.V.I.S., the suave, ultra-intelligent AI created by Tony Stark. Speak politely, with witty sophistication and crisp tactical insights. Call the user "Boss" or "Sir". Keep responses concise. 必ず日本語で返答してください。'
             }
         };
 
@@ -829,7 +829,7 @@
             setTerminalStatus('PROCESSING...');
             playFuturisticSound('scan');
 
-            const fullPrompt = `${persona.promptPrefix}\n\nUser Question: ${prompt}`;
+            const fullPrompt = `${persona.promptPrefix}\n\nUser Question:${prompt}`;
 
             let payload;
             if (base64Image) {
