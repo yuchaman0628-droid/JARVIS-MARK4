@@ -561,7 +561,7 @@
       appState.isSpeaking = true;
       document.getElementById('core-state-label').innerText = 'SPEAKING';
 
-      if (recognition && appState.isListening) {
+      if (recognition) {
         try { recognition.stop(); } catch(e){}
       }
 
@@ -623,7 +623,7 @@
       appState.isSpeaking = false;
       document.getElementById('core-state-label').innerText = appState.isRecordingVideo ? 'REC' : 'READY';
       if (appState.autoListen) {
-        setTimeout(() => startVoiceRecognition(), 300);
+        setTimeout(() => startVoiceRecognition(), 800);
       }
     }
 
@@ -1118,6 +1118,8 @@
       };
 
       recognition.onresult = (e) => {
+        if (appState.isSpeaking) return; // AI読み上げ中は音声入力を無視して無限ループを防止
+
         let transcript = '';
         for (let i = e.resultIndex; i < e.results.length; i++) {
           transcript += e.results[i][0].transcript;
@@ -1125,7 +1127,9 @@
         transcriptText.innerText = transcript;
 
         if (e.results[e.results.length - 1].isFinal) {
-          userInput.value = transcript;
+          const finalTrimmed = transcript.trim();
+          if (!finalTrimmed) return; // 空認識の場合は処理を中止
+          userInput.value = finalTrimmed;
           handleUserSubmit(null);
         }
       };
@@ -1179,7 +1183,8 @@
       let query = userInput.value.trim();
       const hasImg = !!appState.currentImage.base64;
 
-      if (!query && !hasImg && !appState.cameraActive) return;
+      // 入力テキストも画像もない場合は誤送信・空送信を防ぐため即座に終了
+      if (!query && !hasImg) return;
 
       userInput.value = '';
       playBeep(750);
