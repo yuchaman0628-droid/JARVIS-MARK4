@@ -555,7 +555,7 @@
         window.speechSynthesis.cancel();
       }
 
-      const cleanText = text.replace(/<[^>]*>?/gm, '').replace(/https?:\/\/\S+/g, '').trim();
+      const cleanText = text.replace(/<[^>]*>?/gm, '').replace(/https?:\/\/\S+/g, '').replace(/[*#]/g, '').trim();
       if (!cleanText) return;
 
       appState.isSpeaking = true;
