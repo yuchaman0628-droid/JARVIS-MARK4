@@ -336,7 +336,7 @@
                         </label>
                         <p class="text-[11px] text-gray-400 mb-2">Enter your Gemini API key below to enable live AI responses and optical vision scanning.</p>
                         <div class="flex gap-2">
-                            <input type="password" id="cfgApiKey" placeholder="AIzaSy... (Enter your Gemini API key)" class="flex-1 bg-black/60 border border-cyan-500/30 rounded px-3 py-1.5 text-xs text-cyan-200 focus:outline-none focus:border-cyan-400" />
+                            <input type="password" id="cfgApiKey" placeholder="AIzaSy... or API Token" class="flex-1 bg-black/60 border border-cyan-500/30 rounded px-3 py-1.5 text-xs text-cyan-200 focus:outline-none focus:border-cyan-400" />
                             <button onclick="saveApiKeySetting()" class="px-3 py-1.5 rounded bg-cyan-500/30 border border-cyan-400 text-cyan-300 font-orbitron font-bold hover:bg-cyan-400 hover:text-black transition">
                                 SAVE
                             </button>
@@ -799,7 +799,7 @@
         }
 
         /* ==========================================================================
-           6. GEMINI API & VISION ANALYSIS INTEGRATION
+           6. GEMINI API & VISION ANALYSIS INTEGRATION (NORMAL/PAID CODE COMPATIBLE)
            ========================================================================== */
         async function queryGeminiLLM(prompt, base64Image = null) {
             const key = getActiveApiKey();
@@ -825,7 +825,6 @@
             }
 
             const modelName = 'gemini-1.5-flash';
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
             setTerminalStatus('PROCESSING...');
             playFuturisticSound('scan');
 
@@ -856,20 +855,55 @@
             }
 
             try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+                let response = null;
+                let lastError = null;
 
-                if (!response.ok) {
-                    if (response.status === 403) {
-                        throw new Error("HTTP 403 Forbidden: Invalid or unauthorized API Key. Please verify your key in SETTINGS.");
+                // 柔軟な認証フォールバック試行 (通常のAPIキー形式・特殊形式のどちらでも確実に作動)
+                const attempts = [
+                    // 1. クエリパラメータ形式 (?key=...)
+                    async () => {
+                        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
+                        return await fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                    },
+                    // 2. Authorization Bearer ヘッダー形式
+                    async () => {
+                        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`;
+                        return await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${key}`
+                            },
+                            body: JSON.stringify(payload)
+                        });
                     }
-                    if (response.status === 404) {
-                        throw new Error("HTTP 404 Not Found: Model endpoint not found. Ensure API key permissions are active.");
+                ];
+
+                // キーの形式に応じて優先順位を調整（AIzaで始まらなければBearerを先にする）
+                if (!key.startsWith('AIza')) {
+                    attempts.reverse();
+                }
+
+                for (const attempt of attempts) {
+                    try {
+                        const res = await attempt();
+                        if (res.ok) {
+                            response = res;
+                            break;
+                        } else {
+                            lastError = new Error(`HTTP Error: ${res.status}`);
+                        }
+                    } catch (e) {
+                        lastError = e;
                     }
-                    throw new Error(`HTTP Error: ${response.status}`);
+                }
+
+                if (!response || !response.ok) {
+                    throw lastError || new Error("Failed to connect to model endpoint.");
                 }
 
                 const result = await response.json();
