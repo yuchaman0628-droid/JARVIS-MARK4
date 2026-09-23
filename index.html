@@ -1,1441 +1,1396 @@
 <!DOCTYPE html>
-<html lang="ja" class="h-full dark">
+<html lang="ja" class="dark h-full">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S. Tactical Visual HUD System</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome CDN for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Orbitron, Rajdhani, Share Tech Mono -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <!-- Marked.js for Markdown Rendering -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        hud: {
-                            cyan: '#00f0ff',
-                            gold: '#ffd700',
-                            crimson: '#ff2a2a',
-                            stealth: '#00ffaa',
-                            glass: 'rgba(5, 12, 24, 0.45)',
-                            border: 'rgba(0, 240, 255, 0.35)'
-                        }
-                    },
-                    fontFamily: {
-                        orbitron: ['Orbitron', 'sans-serif'],
-                        rajdhani: ['Rajdhani', 'sans-serif'],
-                        mono: ['Share Tech Mono', 'monospace']
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        :root {
-            --primary-color: #00f0ff;
-            --primary-glow: rgba(0, 240, 255, 0.6);
-            --secondary-color: #0088ff;
-            --panel-bg: rgba(5, 12, 24, 0.45);
-            --panel-border: rgba(0, 240, 255, 0.30);
-            --text-glow: 0 0 8px rgba(0, 240, 255, 0.7);
-        }
-
-        body.theme-cyan {
-            --primary-color: #00f0ff;
-            --primary-glow: rgba(0, 240, 255, 0.6);
-            --secondary-color: #00aaff;
-            --panel-bg: rgba(5, 12, 24, 0.45);
-            --panel-border: rgba(0, 240, 255, 0.35);
-            --text-glow: 0 0 8px rgba(0, 240, 255, 0.8);
-        }
-
-        body.theme-mark85 {
-            --primary-color: #ffd700;
-            --primary-glow: rgba(255, 215, 0, 0.6);
-            --secondary-color: #ff3333;
-            --panel-bg: rgba(24, 10, 4, 0.50);
-            --panel-border: rgba(255, 215, 0, 0.4);
-            --text-glow: 0 0 8px rgba(255, 215, 0, 0.8);
-        }
-
-        body.theme-friday {
-            --primary-color: #ff2a2a;
-            --primary-glow: rgba(255, 42, 42, 0.6);
-            --secondary-color: #ff8800;
-            --panel-bg: rgba(22, 4, 4, 0.52);
-            --panel-border: rgba(255, 42, 42, 0.4);
-            --text-glow: 0 0 8px rgba(255, 42, 42, 0.8);
-        }
-
-        body.theme-stealth {
-            --primary-color: #00ffaa;
-            --primary-glow: rgba(0, 255, 170, 0.6);
-            --secondary-color: #0088aa;
-            --panel-bg: rgba(4, 18, 15, 0.50);
-            --panel-border: rgba(0, 255, 170, 0.35);
-            --text-glow: 0 0 8px rgba(0, 255, 170, 0.8);
-        }
-
-        .scanlines {
-            background: linear-gradient(
-                rgba(18, 16, 16, 0) 50%, 
-                rgba(0, 0, 0, 0.25) 50%
-            ), linear-gradient(
-                90deg,
-                rgba(255, 0, 0, 0.03),
-                rgba(0, 255, 0, 0.01),
-                rgba(0, 0, 255, 0.03)
-            );
-            background-size: 100% 4px, 6px 100%;
-            pointer-events: none;
-        }
-
-        .hud-panel {
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.5), 0 0 12px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .hud-border-glow {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 12px var(--primary-glow);
-        }
-
-        .hud-text-glow {
-            color: var(--primary-color);
-            text-shadow: var(--text-glow);
-        }
-
-        .corner-brackets {
-            position: relative;
-        }
-        .corner-brackets::before, .corner-brackets::after {
-            content: '';
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-color: var(--primary-color);
-            border-style: solid;
-            pointer-events: none;
-        }
-        .corner-brackets::before {
-            top: -1px;
-            left: -1px;
-            border-width: 2px 0 0 2px;
-        }
-        .corner-brackets::after {
-            bottom: -1px;
-            right: -1px;
-            border-width: 0 2px 2px 0;
-        }
-
-        ::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.3);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
-            border-radius: 2px;
-        }
-    </style>
-</head>
-<body class="h-full bg-black text-gray-100 font-rajdhani select-none overflow-hidden theme-cyan">
-
-    <!-- 1. FULLSCREEN CAMERA BACKGROUND (z-0) -->
-    <video id="cameraBg" autoplay playsinline muted class="fixed inset-0 w-full h-full object-cover z-0 transition-opacity duration-500 opacity-100"></video>
-    
-    <!-- Camera Permission Overlay Fallback -->
-    <div id="cameraFallback" class="fixed inset-0 z-0 bg-gradient-to-br from-gray-950 via-slate-900 to-black hidden flex-col items-center justify-center text-center p-6">
-        <i class="fa-solid fa-camera-rotate text-5xl hud-text-glow mb-4 animate-bounce"></i>
-        <p class="font-orbitron text-xl tracking-wider text-cyan-400 mb-2">OPTICAL SENSOR DISCONNECTED</p>
-        <p class="text-sm text-gray-400 max-w-md mb-4">Click below to initiate full camera video background or verify browser media permissions.</p>
-        <button onclick="initCameraStream()" class="hud-panel px-6 py-2 rounded text-cyan-300 hover:text-white border border-cyan-500/50 hover:border-cyan-400 hud-text-glow transition">
-            <i class="fa-solid fa-video mr-2"></i>ACTIVATE OPTICAL SENSORS
-        </button>
-    </div>
-
-    <!-- 2. AUGMENTED REALITY CANVAS OVERLAY (z-1) -->
-    <canvas id="hudArCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-1"></canvas>
-
-    <!-- 3. CRT SCANLINE EFFECT OVERLAY (z-2) -->
-    <div id="scanlinesOverlay" class="fixed inset-0 scanlines z-2 opacity-70 transition-opacity duration-300"></div>
-
-    <!-- 4. TOP HUD HEADER BAR -->
-    <div class="fixed top-3 left-3 right-3 z-20 flex items-center justify-between pointer-events-none">
-        
-        <!-- Top Left: Minimal System Status Badge -->
-        <div class="hud-panel px-3 py-1.5 rounded-lg corner-brackets flex items-center space-x-3 pointer-events-auto">
-            <div class="relative flex items-center justify-center w-7 h-7 rounded-full border border-cyan-400/50 bg-black/40">
-                <i class="fa-solid fa-atom text-xs hud-text-glow animate-spin" style="animation-duration: 8s;"></i>
-            </div>
-            <div>
-                <div class="font-orbitron font-extrabold text-sm tracking-widest hud-text-glow flex items-center gap-2">
-                    <span id="systemTitle">J.A.R.V.I.S.</span>
-                    <span id="personaBadge" class="text-[10px] px-1.5 py-0.2 rounded bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-mono">v4.5</span>
-                </div>
-                <div class="text-[10px] text-gray-400 font-mono flex items-center gap-2">
-                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span id="cameraStatusBadge">OPTICAL LIVE</span>
-                    <span class="text-gray-600">|</span>
-                    FPS: <span id="fpsCounter" class="text-cyan-300">60</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Middle Environment Widget (Weather & Battery) -->
-        <div class="hud-panel hidden sm:flex px-3 py-1.5 rounded-lg corner-brackets items-center space-x-3 pointer-events-auto text-[10px] font-mono text-cyan-300">
-            <div class="flex items-center gap-1.5" title="Ueda, Nagano Weather">
-                <i id="hudWeatherIcon" class="fa-solid fa-satellite-dish animate-pulse"></i>
-                <span id="hudWeatherTemp">--°C</span>
-            </div>
-            <div class="text-gray-600">|</div>
-            <div class="flex items-center gap-1.5" title="System Battery">
-                <i id="hudBatteryIcon" class="fa-solid fa-battery-half"></i>
-                <span id="hudBatteryText">--%</span>
-            </div>
-        </div>
-
-        <!-- Top Right: Action Buttons & Settings Trigger -->
-        <div class="hud-panel px-3 py-1.5 rounded-lg corner-brackets flex items-center space-x-2 pointer-events-auto">
-            <div class="hidden sm:block text-right mr-2 font-mono">
-                <div id="clockTime" class="font-orbitron font-bold text-xs hud-text-glow">00:00:00</div>
-                <div id="clockDate" class="text-[10px] text-gray-400">2026.09.23</div>
-            </div>
-
-            <!-- Photo Capture Shortcut Button -->
-            <button onclick="takePhoto()" title="Take Photo Snapshot" class="px-2.5 py-1.5 rounded hud-panel hover:hud-border-glow text-cyan-300 text-xs font-orbitron flex items-center gap-1.5 transition">
-                <i class="fa-solid fa-camera text-cyan-400"></i>
-                <span class="hidden md:inline">PHOTO</span>
-            </button>
-
-            <!-- Video Recording Shortcut Button -->
-            <button id="recToggleBtn" onclick="toggleVideoRecording()" title="Record Video" class="px-2.5 py-1.5 rounded hud-panel hover:hud-border-glow text-cyan-300 text-xs font-orbitron flex items-center gap-1.5 transition">
-                <i id="recIcon" class="fa-solid fa-circle text-red-500 animate-pulse"></i>
-                <span id="recBtnText" class="hidden md:inline">REC</span>
-            </button>
-
-            <!-- Vision Scan Shortcut Button -->
-            <button onclick="triggerVisionAnalysis()" title="Scan Camera Snapshot" class="px-2.5 py-1.5 rounded hud-panel hover:hud-border-glow text-cyan-300 text-xs font-orbitron flex items-center gap-1.5 transition">
-                <i class="fa-solid fa-eye animate-pulse text-cyan-400"></i>
-                <span class="hidden md:inline">SCAN</span>
-            </button>
-
-            <!-- Unified Settings & Manual Modal Trigger -->
-            <button onclick="openSettingsModal()" title="Open Settings & User Manual" class="px-3 py-1.5 rounded bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400 text-cyan-300 text-xs font-orbitron font-bold flex items-center gap-1.5 transition hud-text-glow">
-                <i class="fa-solid fa-gear"></i>
-                <span>SETTINGS</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- 5. CHAT / TERMINAL WINDOW (Centered at Bottom) -->
-    <div id="chatTerminalPanel" class="fixed bottom-16 left-1/2 -translate-x-1/2 w-[92%] sm:w-[640px] md:w-[720px] max-h-64 z-20 hud-panel rounded-md corner-brackets p-3 flex flex-col transition-all duration-300 pointer-events-auto">
-        <!-- Compact Header -->
-        <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-cyan-500/20 text-xs font-mono">
-            <div class="flex items-center space-x-2 text-cyan-300">
-                <i class="fa-solid fa-terminal text-[10px]"></i>
-                <span class="font-bold font-orbitron text-[11px]" id="currentPersonaLabel">J.A.R.V.I.S. TERMINAL</span>
-            </div>
-            <div class="flex items-center space-x-2">
-                <span id="terminalStatus" class="text-[10px] text-emerald-400">READY</span>
-                <button onclick="clearTerminal()" class="text-gray-400 hover:text-cyan-300 transition" title="Clear Console">
-                    <i class="fa-solid fa-trash-can text-[11px]"></i>
-                </button>
-                <button onclick="toggleTerminalCollapse()" class="text-gray-400 hover:text-cyan-300 transition" title="Minimize/Expand">
-                    <i id="terminalCollapseIcon" class="fa-solid fa-chevron-down text-[11px]"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Scrollable Log Container -->
-        <div id="terminalLog" class="flex-1 overflow-y-auto space-y-2 font-mono text-xs max-h-44 pr-1">
-            <div class="p-2 rounded bg-cyan-950/30 border border-cyan-500/20 text-gray-200 text-xs">
-                <div class="flex items-center justify-between text-[10px] text-cyan-400 font-bold mb-0.5">
-                    <span><i class="fa-solid fa-robot mr-1"></i> SYSTEM ONLINE</span>
-                    <span>READY</span>
-                </div>
-                <p class="text-[11px] leading-tight">
-                    J.A.R.V.I.S. active. Visual HUD online. Speak commands or click <strong class="text-cyan-300">"PHOTO"</strong> / <strong class="text-cyan-300">"REC"</strong> / <strong class="text-cyan-300">"SCAN"</strong> to interact.
-                </p>
-            </div>
-        </div>
-
-        <!-- Voice Subtitle Banner -->
-        <div id="liveSpeechContainer" class="mt-1 p-1 rounded bg-cyan-950/80 border border-cyan-400/50 text-cyan-300 font-mono text-[10px] flex items-center space-x-1.5 hidden">
-            <i class="fa-solid fa-microphone-lines text-red-400 animate-pulse"></i>
-            <span class="text-gray-400 font-bold">HEARING:</span>
-            <span id="liveSpeechText" class="italic text-white truncate">Listening...</span>
-        </div>
-    </div>
-
-    <!-- 6. SLIM BOTTOM INPUT CONTROL BAR -->
-    <div class="fixed bottom-3 left-1/2 -translate-x-1/2 w-[92%] sm:w-[640px] md:w-[720px] z-20 hud-panel p-1.5 rounded-md corner-brackets flex items-center gap-2 pointer-events-auto">
-        <button id="micToggleBtn" onclick="toggleVoiceRecognition()" class="p-2 rounded bg-cyan-500/20 border border-cyan-400 text-cyan-300 hover:bg-cyan-500/30 transition flex items-center justify-center w-9 h-9 flex-shrink-0 hud-text-glow" title="Toggle Voice Listening">
-            <i id="micToggleIcon" class="fa-solid fa-microphone text-sm"></i>
-        </button>
-
-        <input type="text" id="userInputText" onkeydown="handleInputKeydown(event)" placeholder="Command or query... ('写真', '録画', 'スキャン', '設定')" class="flex-1 bg-black/50 border border-cyan-500/30 rounded px-3 py-1.5 font-mono text-xs text-cyan-200 placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition" />
-
-        <button onclick="submitUserCommand()" class="px-4 py-1.5 rounded bg-cyan-500/30 border border-cyan-400 text-cyan-300 font-orbitron font-bold text-xs hover:bg-cyan-400 hover:text-black transition flex items-center gap-1.5 flex-shrink-0 hud-text-glow">
-            <i class="fa-solid fa-paper-plane text-xs"></i>
-            <span>SEND</span>
-        </button>
-    </div>
-
-    <!-- 7. UNIFIED SETTINGS & USER MANUAL MODAL DIALOG -->
-    <div id="settingsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 transition-opacity duration-300">
-        <div class="hud-panel w-full max-w-2xl max-h-[88vh] rounded-xl corner-brackets flex flex-col overflow-hidden border-cyan-400/60 shadow-[0_0_30px_rgba(0,240,255,0.2)]">
-            
-            <!-- Modal Header with Tab Switchers -->
-            <div class="flex items-center justify-between p-3 sm:p-4 border-b border-cyan-500/30 bg-cyan-950/40">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-sliders text-cyan-400 text-lg hud-text-glow"></i>
-                    <h2 class="font-orbitron font-bold text-sm sm:text-base text-cyan-300 tracking-wider">SYSTEM CONFIG & MANUAL</h2>
-                </div>
-                
-                <!-- Tab Controls -->
-                <div class="flex items-center space-x-1 font-mono text-xs">
-                    <button onclick="switchSettingsTab('tabSettings')" id="btnTabSettings" class="px-3 py-1 rounded bg-cyan-500/30 border border-cyan-400 text-cyan-300 font-bold">
-                        <i class="fa-solid fa-gear mr-1"></i>SETTINGS
-                    </button>
-                    <button onclick="switchSettingsTab('tabManual')" id="btnTabManual" class="px-3 py-1 rounded bg-black/40 border border-cyan-500/30 text-gray-400 hover:text-cyan-300">
-                        <i class="fa-solid fa-book mr-1"></i>MANUAL (取扱説明書)
-                    </button>
-                    <button onclick="closeSettingsModal()" class="ml-2 px-2.5 py-1 rounded text-gray-400 hover:text-red-400 hover:bg-red-950/40 transition">
-                        <i class="fa-solid fa-xmark text-lg"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Modal Content Body -->
-            <div class="flex-1 overflow-y-auto p-4 font-mono text-xs space-y-4">
-                
-                <!-- TAB 1: SYSTEM SETTINGS -->
-                <div id="tabSettings" class="space-y-4">
-                    
-                    <!-- Gemini API Key Configuration -->
-                    <div class="p-3 rounded bg-black/40 border border-cyan-500/30">
-                        <label class="block font-orbitron text-xs text-cyan-300 font-bold mb-1">
-                            <i class="fa-solid fa-key text-amber-400 mr-1"></i> GEMINI API KEY CONFIGURATION
-                        </label>
-                        <p class="text-[11px] text-gray-400 mb-2">Enter your Gemini API key below to enable live AI responses and optical vision scanning.</p>
-                        <div class="flex gap-2">
-                            <input type="password" id="cfgApiKey" placeholder="AIzaSy... or API Token" class="flex-1 bg-black/60 border border-cyan-500/30 rounded px-3 py-1.5 text-xs text-cyan-200 focus:outline-none focus:border-cyan-400" />
-                            <button onclick="saveApiKeySetting()" class="px-3 py-1.5 rounded bg-cyan-500/30 border border-cyan-400 text-cyan-300 font-orbitron font-bold hover:bg-cyan-400 hover:text-black transition">
-                                SAVE
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Active Persona Engine -->
-                    <div class="p-3 rounded bg-black/40 border border-cyan-500/30">
-                        <label class="block font-orbitron text-xs text-cyan-300 font-bold mb-2">
-                            <i class="fa-solid fa-user-astronaut mr-1"></i> ACTIVE AI PERSONA ENGINE
-                        </label>
-                        <div class="p-2.5 rounded border border-cyan-400 bg-cyan-950/60 flex items-center justify-between">
-                            <div>
-                                <div class="font-orbitron font-bold text-cyan-300 text-sm">J.A.R.V.I.S.</div>
-                                <div class="text-[10px] text-gray-400">Just A Rather Very Intelligent System</div>
-                            </div>
-                            <span class="text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-mono">PRIMARY AI</span>
-                        </div>
-                    </div>
-
-                    <!-- System Language Selection Config -->
-                    <div class="p-3 rounded bg-black/40 border border-cyan-500/30">
-                        <label class="block font-orbitron text-xs text-cyan-300 font-bold mb-2">
-                            <i class="fa-solid fa-language mr-1"></i> SYSTEM LANGUAGE
-                        </label>
-                        <select id="cfgLanguageSelect" onchange="updateLanguage()" class="w-full bg-black/60 border border-cyan-500/30 rounded px-3 py-1.5 text-xs text-cyan-200 focus:outline-none focus:border-cyan-400 font-mono">
-                            <option value="ja-JP">Japanese (日本語)</option>
-                            <option value="en-US">English (English)</option>
-                        </select>
-                    </div>
-
-                    <!-- Color Theme Preset Switcher -->
-                    <div class="p-3 rounded bg-black/40 border border-cyan-500/30">
-                        <label class="block font-orbitron text-xs text-cyan-300 font-bold mb-2">
-                            <i class="fa-solid fa-palette mr-1"></i> HUD COLOR THEME PRESET
-                        </label>
-                        <div class="grid grid-cols-4 gap-2 text-center">
-                            <button onclick="setTheme('theme-cyan')" class="py-1.5 rounded bg-cyan-950 border border-cyan-400 text-cyan-300">CYAN</button>
-                            <button onclick="setTheme('theme-mark85')" class="py-1.5 rounded bg-amber-950 border border-amber-400 text-amber-300">MARK 85</button>
-                            <button onclick="setTheme('theme-friday')" class="py-1.5 rounded bg-red-950 border border-red-500 text-red-300">CRIMSON</button>
-                            <button onclick="setTheme('theme-stealth')" class="py-1.5 rounded bg-emerald-950 border border-emerald-400 text-emerald-300">STEALTH</button>
-                        </div>
-                    </div>
-
-                    <!-- Audio & Voice Speech (TTS) Controls -->
-                    <div class="p-3 rounded bg-black/40 border border-cyan-500/30 space-y-3">
-                        <label class="block font-orbitron text-xs text-cyan-300 font-bold">
-                            <i class="fa-solid fa-volume-high mr-1"></i> AUDIO & SYNTHESIS CONTROL
-                        </label>
-
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <span class="text-gray-400">SPEECH VOICE (TTS):</span>
-                                <select id="cfgVoiceSelect" onchange="updateTtsVoice()" class="w-full mt-1 bg-black/60 border border-cyan-500/30 rounded px-2 py-1 text-cyan-200">
-                                    <option value="">Default Voice</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <span class="text-gray-400">SPEECH RATE: <span id="rateVal">1.0</span></span>
-                                <input type="range" id="cfgRate" min="0.5" max="1.8" step="0.1" value="1.0" oninput="document.getElementById('rateVal').textContent=this.value" class="w-full mt-2 accent-cyan-400" />
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between border-t border-cyan-500/20 pt-2">
-                            <div class="flex items-center space-x-4">
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" id="cfgSoundToggle" checked onchange="toggleSoundFX()" class="accent-cyan-400" />
-                                    <span>Sci-Fi Sound FX</span>
-                                </label>
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" id="cfgTtsToggle" checked onchange="toggleTTS()" class="accent-cyan-400" />
-                                    <span>Speech Output (TTS)</span>
-                                </label>
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" id="cfgScanlineToggle" checked onchange="toggleScanlines()" class="accent-cyan-400" />
-                                    <span>CRT Scanlines Filter</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Camera Optical Controls & System Reset -->
-                    <div class="flex items-center justify-between pt-2">
-                        <button onclick="switchCameraFacing()" class="px-3 py-1.5 rounded hud-panel border-cyan-400 text-cyan-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-camera-rotate"></i> FLIP CAMERA FACING
-                        </button>
-                        <button onclick="resetSystemDefaults()" class="px-3 py-1.5 rounded bg-red-950/60 border border-red-500/60 text-red-400 hover:bg-red-900 transition">
-                            <i class="fa-solid fa-rotate-left mr-1"></i> RESET DEFAULTS
-                        </button>
-                    </div>
-
-                </div>
-
-                <!-- TAB 2: USER MANUAL (取扱説明書) -->
-                <div id="tabManual" class="space-y-4 hidden">
-                    <div class="p-3 rounded bg-cyan-950/30 border border-cyan-500/30 leading-relaxed space-y-3">
-                        <h3 class="font-orbitron font-bold text-sm text-cyan-300 border-b border-cyan-500/30 pb-1">
-                            <i class="fa-solid fa-circle-info mr-1"></i> J.A.R.V.I.S. Visual HUD 取扱説明書 (MANUAL)
-                        </h3>
-                        
-                        <div>
-                            <h4 class="font-bold text-cyan-400 text-xs mb-1">1. 視界確保 (CLEAR FRONT VIEW)</h4>
-                            <p class="text-gray-300 text-[11px]">
-                                画面中央はカメラ映像がそのまま見えるよう透過デザインになっています。重たいゲージやビジュアル表示は取り除かれ、スムーズな視界と戦闘タスクをサポートします。
-                            </p>
-                        </div>
-
-                        <div>
-                            <h4 class="font-bold text-cyan-400 text-xs mb-1">2. 音声認識コマンド (VOICE COMMANDS)</h4>
-                            <p class="text-gray-300 text-[11px] mb-1">マイクをオンにすると常時音声認識が作動します。以下のキーワードを発話してください:</p>
-                            <ul class="list-disc list-inside text-gray-300 text-[11px] space-y-0.5 font-sans">
-                                <li><strong class="text-cyan-300">「写真」「撮影」「キャプチャ」:</strong> 現在のカメラ映像を静止画(PNG)として撮影・保存します。</li>
-                                <li><strong class="text-cyan-300">「録画」「動画」「REC」:</strong> カメラ映像の動画録画(WebM)を開始・停止します。</li>
-                                <li><strong class="text-cyan-300">「スキャン」「分析」「視覚解析」:</strong> カメラの現在フレームをAIが画像解析します。</li>
-                                <li><strong class="text-cyan-300">「ジャービス」:</strong> J.A.R.V.I.S.に応答確認を行います。</li>
-                                <li><strong class="text-cyan-300">「設定」「設定を開く」「マニュアル」:</strong> 設定・取扱説明書ダイアログを開きます。</li>
-                                <li><strong class="text-cyan-300">「マーク85」「サイアン」「ステルス」:</strong> HUDのカラーテーマを変更します。</li>
-                                <li><strong class="text-cyan-300">「自己診断」「ステータス」「戦術分析」:</strong> システムの定型分析レポートを実行します。</li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 class="font-bold text-cyan-400 text-xs mb-1">3. 写真撮影 & 動画録画機能 (PHOTO & RECORDING)</h4>
-                            <p class="text-gray-300 text-[11px]">
-                                右上ヘッダーの「PHOTO」ボタンで静止画を、「REC」ボタンで動画をローカル端末に保存できます。音声コマンドでも直接操作可能です。
-                            </p>
-                        </div>
-
-                        <div>
-                            <h4 class="font-bold text-cyan-400 text-xs mb-1">4. マルチモーダル視覚解析 (OPTICAL SNAPSHOT SCAN)</h4>
-                            <p class="text-gray-300 text-[11px]">
-                                右上の「SCAN」ボタンまたは音声コマンドで、現在のカメラ映像をキャプチャし、Gemini APIを用いてリアルタイムで周囲の物体・脅威・状況を文章化します。
-                            </p>
-                        </div>
-
-                        <div>
-                            <h4 class="font-bold text-cyan-400 text-xs mb-1">5. コンパクトチャット画面</h4>
-                            <p class="text-gray-300 text-[11px]">
-                                画面左下のチャットパネルは透過仕様で視界を妨げません。右上アイコンで最小化・展開が可能です。
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="p-3 border-t border-cyan-500/30 bg-black/50 text-right">
-                <button onclick="closeSettingsModal()" class="px-5 py-1.5 rounded bg-cyan-500/30 border border-cyan-400 text-cyan-300 font-orbitron font-bold text-xs hover:bg-cyan-400 hover:text-black transition hud-text-glow">
-                    CLOSE PANEL
-                </button>
-            </div>
-
-        </div>
-    </div>
-
-    <script>
-        /* ==========================================================================
-           1. SYSTEM CONFIGURATION & GLOBAL STATE
-           ========================================================================== */
-        const DEFAULT_API_KEY = ""; 
-        let userApiKey = localStorage.getItem('jarvis_api_key') || "";
-
-        function getActiveApiKey() {
-            return userApiKey.trim() || DEFAULT_API_KEY;
-        }
-
-        let state = {
-            soundEnabled: true,
-            ttsEnabled: true,
-            scanlinesEnabled: true,
-            isListening: false,
-            currentPersona: 'jarvis',
-            cameraFacing: 'environment',
-            cameraStream: null,
-            recognition: null,
-            synth: window.speechSynthesis,
-            audioCtx: null,
-            fps: 60,
-            lastFrameTime: performance.now(),
-            frameCount: 0,
-            isTerminalCollapsed: false,
-            language: localStorage.getItem('jarvis_lang') || 'ja-JP'
-        };
-
-        const PERSONAS = {
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>J.A.R.V.I.S. Multimodal Vision HUD System v3.6 (Free API Edition)</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
             jarvis: {
-                name: 'J.A.R.V.I.S.',
-                title: 'Just A Rather Very Intelligent System',
-                theme: 'theme-cyan',
-                pitch: 0.9,
-                rate: 1.05,
-                voiceLang: 'ja-JP',
-                promptPrefix: 'You are J.A.R.V.I.S., the suave, ultra-intelligent AI created by Tony Stark. Speak politely, with witty sophistication and crisp tactical insights. Call the user "Boss" or "Sir". Keep responses concise. 必ず日本語で返答してください。'
+              cyan: 'var(--theme-color, #00f0ff)',
+              blue: '#0088ff',
+              gold: '#ffb700',
+              red: '#ff2a55',
+              emerald: '#10b981',
+              purple: '#a855f7',
+              dark: '#020712'
             }
+          },
+          fontFamily: {
+            orbitron: ['Orbitron', 'sans-serif'],
+            mono: ['Share Tech Mono', 'monospace'],
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --theme-color: #00f0ff;
+      --theme-glow: rgba(0, 240, 255, 0.4);
+      --hud-bg: rgba(4, 18, 38, 0.18);
+      --hud-border: rgba(0, 240, 255, 0.3);
+    }
+
+    body.mode-battle {
+      --theme-color: #ff2a55;
+      --theme-glow: rgba(255, 42, 85, 0.6);
+      --hud-border: rgba(255, 42, 85, 0.4);
+    }
+
+    body.mode-thermal {
+      --theme-color: #00ffcc;
+      --theme-glow: rgba(0, 255, 204, 0.6);
+      --hud-border: rgba(0, 255, 204, 0.4);
+    }
+
+    body.mode-translate {
+      --theme-color: #a855f7;
+      --theme-glow: rgba(168, 85, 247, 0.6);
+      --hud-border: rgba(168, 85, 247, 0.4);
+    }
+
+    body.mode-thermal #webcam,
+    body.mode-thermal #vision-preview-img {
+      filter: invert(100%) hue-rotate(180deg) saturate(300%) contrast(150%);
+    }
+
+    body {
+      background-color: #020712;
+      color: var(--theme-color);
+      font-family: 'Share Tech Mono', monospace;
+      overflow: hidden;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+
+    .scanlines {
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 240, 255, 0.02) 50%
+      ), linear-gradient(
+        90deg,
+        rgba(255, 0, 0, 0.01),
+        rgba(0, 255, 0, 0.005),
+        rgba(0, 0, 255, 0.01)
+      );
+      background-size: 100% 4px, 6px 100%;
+      pointer-events: none;
+    }
+
+    .glow-theme { box-shadow: 0 0 15px var(--theme-glow); }
+    .text-glow { text-shadow: 0 0 8px var(--theme-glow); }
+    .border-theme { border-color: var(--hud-border); }
+
+    .hud-panel {
+      position: relative;
+      background: var(--hud-bg);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid var(--hud-border);
+      transition: all 0.3s ease;
+    }
+    .hud-panel::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 6px; height: 6px;
+      border-top: 2px solid var(--theme-color);
+      border-left: 2px solid var(--theme-color);
+    }
+    .hud-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; right: -1px;
+      width: 6px; height: 6px;
+      border-bottom: 2px solid var(--theme-color);
+      border-right: 2px solid var(--theme-color);
+    }
+
+    @keyframes laserScan {
+      0% { top: 0%; opacity: 0.8; }
+      50% { opacity: 1; }
+      100% { top: 100%; opacity: 0.8; }
+    }
+    .laser-beam {
+      position: absolute; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--theme-color), #ffffff, var(--theme-color), transparent);
+      box-shadow: 0 0 15px var(--theme-color);
+      animation: laserScan 1.5s ease-in-out infinite alternate;
+      z-index: 40;
+    }
+
+    @keyframes spinClockwise { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes spinCounterClockwise { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+    @keyframes pulseCore {
+      0%, 100% { transform: scale(1); opacity: 0.85; filter: drop-shadow(0 0 10px var(--theme-color)); }
+      50% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 20px var(--theme-color)); }
+    }
+
+    .animate-spin-fast { animation: spinClockwise 8s linear infinite; }
+    .animate-spin-slow { animation: spinCounterClockwise 16s linear infinite; }
+    .animate-pulse-core { animation: pulseCore 2.5s ease-in-out infinite; }
+
+    .zoom-target {
+      transition: transform 0.2s ease-out;
+      transform-origin: center center;
+    }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: rgba(2, 10, 22, 0.2); }
+    ::-webkit-scrollbar-thumb { background: var(--theme-color); border-radius: 2px; }
+
+    body.smartphone-mode {
+      font-size: 10px;
+      --hud-bg: rgba(2, 10, 22, 0.10);
+    }
+    body.smartphone-mode header { padding: 2px 8px !important; }
+    body.smartphone-mode main { padding: 2px 4px !important; }
+    body.smartphone-mode .main-grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+      gap: 4px !important;
+      margin: 2px 0 !important;
+    }
+    body.smartphone-mode .panel-vision {
+      grid-column: span 4 / span 4 !important;
+      padding: 4px !important;
+      min-height: 90px !important;
+    }
+    body.smartphone-mode .panel-vision .preview-box { height: 60px !important; }
+    body.smartphone-mode .panel-core { grid-column: span 4 / span 4 !important; }
+    body.smartphone-mode .panel-core .arc-container { width: 70px !important; height: 70px !important; }
+    body.smartphone-mode .panel-core .arc-ring-1 { width: 60px !important; height: 60px !important; }
+    body.smartphone-mode .panel-core .arc-ring-2 { width: 48px !important; height: 48px !important; }
+    body.smartphone-mode .panel-core .arc-core-center { width: 34px !important; height: 34px !important; }
+    body.smartphone-mode .panel-core canvas { height: 12px !important; }
+    body.smartphone-mode .panel-controls { grid-column: span 4 / span 4 !important; padding: 4px !important; }
+    body.smartphone-mode .panel-controls .quick-queries { display: none !important; }
+    body.smartphone-mode #response-box-container { padding: 4px !important; margin: 2px 0 !important; }
+    body.smartphone-mode #chat-stream { max-height: 50px !important; font-size: 10px !important; }
+    body.smartphone-mode .console-bar { padding: 2px 6px !important; }
+  </style>
+</head>
+
+<body class="h-screen w-screen flex flex-col justify-between overflow-hidden relative select-none">
+
+  <!-- 背景 -->
+  <div id="bg-backdrop" class="absolute inset-0 bg-[#020712]/60 z-0 transition-all duration-500"></div>
+  <div class="absolute inset-0 overflow-hidden z-0 pointer-events-none">
+    <video id="webcam" class="zoom-target absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500" autoplay playsinline muted></video>
+  </div>
+  
+  <div class="scanlines absolute inset-0 z-10"></div>
+  <div id="scanning-laser" class="hidden laser-beam"></div>
+
+  <!-- ヘッダー -->
+  <header class="relative z-30 w-full px-3 sm:px-6 py-1 bg-[#020712]/20 backdrop-blur-sm border-b border-theme flex justify-between items-center font-orbitron">
+    <div class="flex items-center space-x-2">
+      <div class="relative flex items-center justify-center">
+        <div class="w-2 h-2 rounded-full animate-ping absolute" style="background-color: var(--theme-color);"></div>
+        <div class="w-2 h-2 rounded-full" style="background-color: var(--theme-color);"></div>
+      </div>
+      <h1 class="text-xs sm:text-sm font-black tracking-widest text-glow flex items-center gap-1.5" style="color: var(--theme-color);">
+        J.A.R.V.I.S. <span id="system-mode-tag" class="text-[8px] px-1 rounded border border-theme font-mono font-normal">v3.6 FLASH</span>
+      </h1>
+    </div>
+
+    <div class="flex items-center space-x-1.5 sm:space-x-3 text-[10px] font-mono">
+      <button onclick="openApiKeyModal()" class="px-1.5 py-0.5 rounded border border-jarvis-gold/60 bg-jarvis-gold/10 text-jarvis-gold text-[9px] flex items-center gap-1">
+        🔑 API設定
+      </button>
+
+      <div class="flex items-center gap-1 bg-black/40 px-1 py-0.5 rounded border border-theme/40 text-[8px]">
+        <span>🗣️ Voice:</span>
+        <select id="voice-select" onchange="changeVoice()" class="bg-transparent text-white font-mono focus:outline-none max-w-[80px] sm:max-w-[120px]">
+          <option value="browser">Web標準音声</option>
+        </select>
+      </div>
+
+      <button id="voice-auto-btn" onclick="toggleContinuousListening()" class="px-1.5 py-0.5 rounded border border-theme bg-jarvis-cyan/10 text-[9px]">
+        🎙️ 音声: <span id="auto-voice-state" class="font-bold text-emerald-400">ON</span>
+      </button>
+
+      <button id="mode-toggle-btn" onclick="toggleSmartphoneMode()" class="px-1.5 py-0.5 rounded border border-theme bg-jarvis-cyan/10 text-[9px]">
+        📱 スマホ: <span id="mode-btn-text">OFF</span>
+      </button>
+
+      <div id="sys-clock" class="font-bold text-glow hidden sm:block">00:00:00</div>
+    </div>
+  </header>
+
+  <!-- メインエリア -->
+  <main class="relative z-20 flex-1 flex flex-col justify-between p-2 max-w-7xl mx-auto w-full overflow-hidden">
+
+    <div class="w-full flex justify-between items-center text-[9px] font-mono mb-1">
+      <div class="flex items-center space-x-1">
+        <button onclick="setSystemVisualMode('normal')" id="btn-mode-normal" class="px-1.5 py-0.5 rounded border border-theme bg-jarvis-cyan/20 text-white font-bold">NORMAL</button>
+        <button onclick="setSystemVisualMode('translate')" id="btn-mode-translate" class="px-1.5 py-0.5 rounded border border-jarvis-purple/40 bg-jarvis-purple/10 text-jarvis-purple hover:bg-jarvis-purple/30 font-bold">🌐 翻訳モード</button>
+        <button onclick="setSystemVisualMode('battle')" id="btn-mode-battle" class="px-1.5 py-0.5 rounded border border-jarvis-red/40 bg-jarvis-red/10 text-jarvis-red hover:bg-jarvis-red/30 font-bold">BATTLE</button>
+        <button onclick="setSystemVisualMode('thermal')" id="btn-mode-thermal" class="px-1.5 py-0.5 rounded border border-emerald-400/40 bg-emerald-400/10 text-emerald-400 hover:bg-emerald-400/30 font-bold">THERMAL</button>
+      </div>
+
+      <div class="flex items-center space-x-1 bg-[#020712]/40 px-2 py-0.5 rounded border border-theme">
+        <span class="text-gray-400">ZOOM:</span>
+        <span id="zoom-level-text" class="font-bold text-glow">1.0x</span>
+        <button onclick="adjustZoom(-0.25)" class="px-1.5 bg-white/10 hover:bg-white/20 rounded font-bold ml-1">-</button>
+        <button onclick="adjustZoom(0.25)" class="px-1.5 bg-white/10 hover:bg-white/20 rounded font-bold">+</button>
+      </div>
+    </div>
+
+    <div class="main-grid grid grid-cols-1 lg:grid-cols-12 gap-2 my-auto items-center">
+      
+      <!-- VISION -->
+      <div class="panel-vision lg:col-span-4 hud-panel p-2 rounded-lg flex flex-col justify-between min-h-[140px]">
+        <div class="w-full flex justify-between items-center border-b border-theme pb-0.5 mb-1">
+          <span class="text-[10px] font-orbitron font-bold flex items-center gap-1">📷 VISION & SEARCH HUD</span>
+          <span id="vision-mode-tag" class="text-[8px] px-1 rounded bg-white/10 uppercase">LIVE</span>
+        </div>
+
+        <div class="preview-box relative w-full h-28 bg-black/30 rounded overflow-hidden border border-theme flex items-center justify-center">
+          <img id="vision-preview-img" class="zoom-target hidden w-full h-full object-contain z-10" alt="Target">
+          
+          <div id="vision-placeholder" class="text-center p-1 text-gray-400 text-[9px] font-mono">
+            <p>カメラ / 画像スキャン / WEB画像検索</p>
+          </div>
+
+          <div class="absolute inset-0 pointer-events-none flex items-center justify-center border border-dashed border-theme/30 m-0.5 rounded">
+            <div class="w-2 h-2 border-t-2 border-l-2 absolute top-0.5 left-0.5" style="border-color: var(--theme-color)"></div>
+            <div class="w-2 h-2 border-t-2 border-r-2 absolute top-0.5 right-0.5" style="border-color: var(--theme-color)"></div>
+            <div class="w-2 h-2 border-b-2 border-l-2 absolute bottom-0.5 left-0.5" style="border-color: var(--theme-color)"></div>
+            <div class="w-2 h-2 border-b-2 border-r-2 absolute bottom-0.5 right-0.5" style="border-color: var(--theme-color)"></div>
+          </div>
+
+          <button id="clear-image-btn" onclick="clearSelectedImage()" class="hidden absolute top-1 right-1 z-20 bg-black/80 text-jarvis-red rounded-full px-1.5 py-0.2 text-[9px]">✕</button>
+        </div>
+
+        <div class="w-full flex justify-between items-center text-[8px] text-gray-400 font-mono mt-0.5">
+          <span id="image-dimensions-info">RES: --</span>
+          <span id="image-source-info">SRC: WEBCAM</span>
+        </div>
+      </div>
+
+      <!-- CORE -->
+      <div class="panel-core lg:col-span-4 flex flex-col items-center justify-center">
+        <div class="arc-container relative w-28 h-28 sm:w-36 sm:h-36 flex items-center justify-center">
+          <div class="absolute inset-0 rounded-full border border-dashed border-theme/30 animate-spin-slow"></div>
+          <div class="arc-ring-1 absolute w-24 h-24 sm:w-32 sm:h-32 rounded-full border-2 border-t-transparent border-b-transparent animate-spin-fast glow-theme" style="border-color: var(--theme-color);"></div>
+          <div class="arc-ring-2 absolute w-18 h-18 sm:w-24 sm:h-24 rounded-full border border-jarvis-gold/60 border-r-transparent animate-spin-slow"></div>
+
+          <div id="arc-core" onclick="triggerJarvisGreeting()" class="arc-core-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-radial flex items-center justify-center animate-pulse-core cursor-pointer border border-theme" style="background: radial-gradient(circle, var(--theme-color) 0%, transparent 70%);">
+            <div class="w-8 h-8 sm:w-11 sm:h-11 rounded-full border border-white/80 bg-jarvis-dark/80 flex flex-col items-center justify-center">
+              <span class="text-[6px] sm:text-[8px] font-orbitron font-black text-white">GEMINI</span>
+              <span id="core-state-label" class="text-[5px] sm:text-[6px] font-mono">READY</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-32 sm:w-44 mt-0.5">
+          <canvas id="audioVisualizer" class="w-full h-4 rounded opacity-80"></canvas>
+        </div>
+      </div>
+
+      <!-- CONTROLS -->
+      <div class="panel-controls lg:col-span-4 hud-panel p-2 rounded-lg flex flex-col justify-between space-y-1.5">
+        <div class="border-b border-theme pb-0.5 flex justify-between items-center">
+          <span class="text-[10px] font-orbitron font-bold flex items-center gap-1">⚡ VOICE & SEARCH</span>
+          <span id="gemini-status-badge" class="text-[7px] px-1 rounded bg-emerald-500/20 text-emerald-400">v3.6 HIGH-SPEED</span>
+        </div>
+
+        <div class="grid grid-cols-3 gap-1">
+          <button onclick="captureAndAnalyzeCamera()" class="p-1.5 rounded bg-white/5 hover:bg-white/15 border border-theme font-orbitron font-bold text-[9px] flex flex-col items-center justify-center transition">
+            <span>📷 ANALYZE</span>
+            <span class="text-[6px] font-mono text-gray-300 font-normal">画像解析</span>
+          </button>
+
+          <button onclick="searchScreenContent()" class="p-1.5 rounded bg-white/5 hover:bg-white/15 border border-jarvis-blue/80 text-jarvis-blue font-orbitron font-bold text-[9px] flex flex-col items-center justify-center transition">
+            <span>🔍 SEARCH</span>
+            <span class="text-[6px] font-mono text-gray-300 font-normal">画面検索</span>
+          </button>
+
+          <button onclick="triggerFileUpload()" class="p-1.5 rounded bg-white/5 hover:bg-white/15 border border-jarvis-gold/60 text-jarvis-gold font-orbitron font-bold text-[9px] flex flex-col items-center justify-center transition">
+            <span>📁 UPLOAD</span>
+            <span class="text-[6px] font-mono text-gray-300 font-normal">ファイル</span>
+          </button>
+        </div>
+
+        <input type="file" id="photo-upload-input" accept="image/*" class="hidden" onchange="handleFileUpload(event)">
+
+        <div class="quick-queries pt-1 border-t border-theme/20 text-[8px]">
+          <span class="text-gray-400 block mb-0.5">音声操作・AIコマンド例:</span>
+          <div class="grid grid-cols-3 gap-0.5 text-[7px] sm:text-[8px]">
+            <span class="p-0.5 bg-black/30 border border-white/10 rounded truncate">「カメラ起動」</span>
+            <span class="p-0.5 bg-black/30 border border-jarvis-blue/40 text-jarvis-blue rounded truncate">「これを検索」</span>
+            <span class="p-0.5 bg-black/30 border border-white/10 rounded truncate">「写真を撮影」</span>
+            <span class="p-0.5 bg-black/30 border border-white/10 rounded truncate">「動画を開始」</span>
+            <span class="p-0.5 bg-black/30 border border-white/10 rounded truncate">「録音開始」</span>
+            <span class="p-0.5 bg-black/30 border border-white/10 rounded truncate">「録音停止」</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 対話ログ -->
+    <div id="response-box-container" class="w-full max-w-4xl mx-auto hud-panel p-2 rounded-lg my-1 flex flex-col">
+      <div class="flex items-center justify-between pb-0.5 border-b border-theme/30 mb-1">
+        <div class="flex items-center space-x-1">
+          <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background-color: var(--theme-color);"></span>
+          <span class="text-[9px] font-orbitron font-bold">J.A.R.V.I.S. LOG</span>
+        </div>
+        <button onclick="clearResponseLog()" class="text-[8px] font-mono text-gray-400 hover:text-white">[CLEAR]</button>
+      </div>
+
+      <div id="chat-stream" class="max-h-20 sm:max-h-28 overflow-y-auto space-y-1.5 font-mono text-[10px] pr-1">
+        <div class="p-1.5 rounded bg-white/5 border border-theme/30 text-gray-200">
+          <div class="flex justify-between text-[8px] font-bold mb-0.5 font-orbitron">
+            <span>J.A.R.V.I.S. (GEMINI v3.6)</span>
+            <span>SYSTEM ONLINE</span>
+          </div>
+          <p id="latest-response" class="leading-relaxed">
+            システム正常稼働中です。準備完了いたしました。
+          </p>
+        </div>
+      </div>
+
+      <div id="voice-transcript-box" class="mt-1 p-0.5 rounded bg-jarvis-gold/10 border border-jarvis-gold/40 text-jarvis-gold text-[9px] font-mono flex items-center gap-1 animate-pulse">
+        <span class="w-1.5 h-1.5 rounded-full bg-jarvis-gold animate-ping"></span>
+        <span>音声入力: "<span id="transcript-text" class="italic">待機中... 音声を発してください</span>"</span>
+      </div>
+    </div>
+
+    <!-- コンソールバー -->
+    <div class="console-bar w-full max-w-4xl mx-auto bg-[#020712]/15 backdrop-blur-md border border-theme p-1 rounded-xl flex items-center space-x-1">
+      
+      <button type="button" id="mic-btn" onclick="toggleVoiceRecognition()" title="Voice Control" class="p-1.5 rounded-lg border border-theme bg-jarvis-cyan/20 text-white transition flex-shrink-0 text-xs font-bold">
+        🎤 <span id="mic-status-label">音声 ON</span>
+      </button>
+
+      <button type="button" id="audio-record-btn" onclick="toggleAudioRecording()" title="音声録音" class="p-1.5 rounded-lg border border-jarvis-gold/60 bg-jarvis-gold/10 text-jarvis-gold transition flex-shrink-0 text-xs font-bold">
+        ⏺️ <span id="audio-record-label">録音</span>
+      </button>
+
+      <button type="button" onclick="triggerFileUpload()" title="Attach Image" class="p-1.5 rounded-lg border border-jarvis-gold/50 bg-jarvis-gold/10 text-jarvis-gold hover:bg-jarvis-gold/25 transition flex-shrink-0 text-xs">
+        📁
+      </button>
+
+      <form id="chat-form" onsubmit="handleUserSubmit(event)" class="flex-1 flex items-center space-x-1">
+        <input type="text" id="user-input" placeholder="指示を入力 (例: 「これを検索」「カメラ起動」「写真撮影」)" autocomplete="off" class="w-full bg-[#020712]/40 border border-theme/40 rounded-lg px-2 py-1 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-theme font-mono">
+        
+        <button type="submit" id="send-btn" class="p-1 sm:p-1.5 rounded-lg border border-theme bg-theme/20 hover:bg-theme text-white transition flex-shrink-0 font-bold text-xs">
+          送信
+        </button>
+      </form>
+
+      <button type="button" id="cam-toggle-btn" onclick="toggleCamera()" title="Toggle Camera" class="p-1.5 rounded-lg border border-theme bg-white/5 text-white transition flex-shrink-0 text-xs">
+        📹
+      </button>
+
+    </div>
+
+  </main>
+
+  <!-- モーダル -->
+  <div id="api-key-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="hud-panel w-full max-w-md p-4 rounded-xl space-y-3 border-jarvis-gold/80">
+      <h2 class="text-sm font-orbitron font-bold text-jarvis-gold flex items-center gap-1.5">
+        🔑 GEMINI API KEY CONFIGURATION
+      </h2>
+      <p class="text-[10px] text-gray-300">
+        Google AI Studioで発行できる通常の無料APIキー（AIzaSy...）を入力してください。
+      </p>
+      <input type="password" id="gemini-api-key-input" placeholder="APIキーを入力 (AIzaSy...)" class="w-full bg-black/60 border border-theme/60 rounded px-2 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-jarvis-gold">
+      <div class="flex justify-end space-x-2 text-xs">
+        <button onclick="closeApiKeyModal()" class="px-3 py-1 rounded bg-white/10 hover:bg-white/20">キャンセル</button>
+        <button onclick="saveApiKey()" class="px-3 py-1 rounded bg-jarvis-gold/20 border border-jarvis-gold text-jarvis-gold font-bold hover:bg-jarvis-gold/40">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed bottom-14 left-3 z-50 space-y-1 pointer-events-none"></div>
+
+  <script>
+    const appState = {
+      userName: 'ユーザー',
+      isSmartphoneMode: false,
+      visualMode: 'normal',
+      zoomLevel: 1.0,
+      autoListen: true,
+      cameraActive: false,
+      isListening: false,
+      isSpeaking: false,
+      isRecordingVideo: false,
+      selectedSpeakerId: 'browser', 
+      availableSpeakers: [],
+      voicevoxUrl: 'http://localhost:50021', 
+      apiKey: localStorage.getItem('JARVIS_GEMINI_API_KEY') || '',
+      currentImage: { base64: null, mimeType: null, dataUrl: null, source: null }
+    };
+
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let currentAudio = null;
+
+    let audioRecorder = null;
+    let audioRecordedChunks = [];
+    let audioRecordingStream = null;
+
+    const chatStream = document.getElementById('chat-stream');
+    const userInput = document.getElementById('user-input');
+    const micBtn = document.getElementById('mic-btn');
+    const transcriptBox = document.getElementById('voice-transcript-box');
+    const transcriptText = document.getElementById('transcript-text');
+
+    /* ==========================================================================
+       1. WEB AUDIO & VOICE SYNTHESIS
+       ========================================================================== */
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function initAudio() { if (!audioCtx) audioCtx = new AudioCtx(); }
+
+    function playBeep(freq = 880, duration = 0.08) {
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playJarvisChime() {
+      try {
+        initAudio();
+        const now = audioCtx.currentTime;
+        const freqs = appState.visualMode === 'battle' ? [400, 600, 800] : [523, 659, 783, 1046];
+        freqs.forEach((f, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, now + idx * 0.04);
+          gain.gain.setValueAtTime(0.05, now + idx * 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.04 + 0.12);
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.start(now + idx * 0.04); osc.stop(now + idx * 0.04 + 0.12);
+        });
+      } catch (e) {}
+    }
+
+    async function initVoiceList() {
+      const select = document.getElementById('voice-select');
+      select.innerHTML = '<option value="browser">Web標準音声 (日本語)</option>';
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1000);
+
+        const response = await fetch(`${appState.voicevoxUrl}/speakers`, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          const speakers = await response.json();
+          appState.availableSpeakers = [{ id: 'browser', name: 'Web標準音声' }];
+
+          speakers.forEach(speaker => {
+            speaker.styles.forEach(style => {
+              const speakerObj = {
+                id: style.id,
+                name: `VOICEVOX: ${speaker.name} (${style.name})`
+              };
+              appState.availableSpeakers.push(speakerObj);
+
+              const option = document.createElement('option');
+              option.value = style.id;
+              option.innerText = speakerObj.name;
+              select.appendChild(option);
+            });
+          });
+        }
+      } catch (e) {
+        // VOICEVOX未起動時は静かにフォールバック
+      }
+    }
+
+    function changeVoice(speakerId = null) {
+      const select = document.getElementById('voice-select');
+      if (speakerId !== null) select.value = speakerId;
+      appState.selectedSpeakerId = select.value;
+      const selectedOption = select.options[select.selectedIndex];
+      const speakerName = selectedOption ? selectedOption.innerText : '標準音声';
+      showToast(`音声設定変更: ${speakerName}`);
+      speakText(`音声の設定を変更いたしました。`);
+    }
+
+    function cycleNextVoice() {
+      if (appState.availableSpeakers.length <= 1) return;
+      const currentIdx = appState.availableSpeakers.findIndex(s => String(s.id) === String(appState.selectedSpeakerId));
+      const nextIdx = (currentIdx + 1) % appState.availableSpeakers.length;
+      const nextSpeaker = appState.availableSpeakers[nextIdx];
+      if (nextSpeaker) changeVoice(nextSpeaker.id);
+    }
+
+    async function speakText(text) {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+
+      const cleanText = text.replace(/<[^>]*>?/gm, '').replace(/https?:\/\/\S+/g, '').trim();
+      if (!cleanText) return;
+
+      appState.isSpeaking = true;
+      document.getElementById('core-state-label').innerText = 'SPEAKING';
+
+      if (recognition && appState.isListening) {
+        try { recognition.stop(); } catch(e){}
+      }
+
+      if (appState.selectedSpeakerId !== 'browser' && !isNaN(appState.selectedSpeakerId)) {
+        try {
+          const queryRes = await fetch(`${appState.voicevoxUrl}/audio_query?text=${encodeURIComponent(cleanText)}&speaker=${appState.selectedSpeakerId}`, {
+            method: 'POST'
+          });
+          if (!queryRes.ok) throw new Error('VOICEVOX Query Error');
+          const queryData = await queryRes.json();
+
+          queryData.speedScale = 1.65;
+          if (appState.visualMode === 'battle') {
+            queryData.pitchScale = -0.05;
+            queryData.speedScale = 1.8;
+          }
+
+          const synthRes = await fetch(`${appState.voicevoxUrl}/synthesis?speaker=${appState.selectedSpeakerId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(queryData)
+          });
+          if (!synthRes.ok) throw new Error('VOICEVOX Synthesis Error');
+
+          const audioBlob = await synthRes.blob();
+          const audioUrl = URL.createObjectURL(audioBlob);
+
+          currentAudio = new Audio(audioUrl);
+          currentAudio.onended = finishSpeaking;
+          currentAudio.onerror = () => speakTextWebSpeech(cleanText);
+          await currentAudio.play();
+          return;
+        } catch (err) {
+          speakTextWebSpeech(cleanText);
+        }
+      } else {
+        speakTextWebSpeech(cleanText);
+      }
+    }
+
+    function speakTextWebSpeech(text) {
+      if (!('speechSynthesis' in window)) {
+        finishSpeaking();
+        return;
+      }
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ja-JP';
+      utterance.rate = 1.65;
+      utterance.pitch = 0.95;
+
+      utterance.onend = finishSpeaking;
+      utterance.onerror = finishSpeaking;
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function finishSpeaking() {
+      appState.isSpeaking = false;
+      document.getElementById('core-state-label').innerText = appState.isRecordingVideo ? 'REC' : 'READY';
+      if (appState.autoListen) {
+        setTimeout(() => startVoiceRecognition(), 300);
+      }
+    }
+
+    /* ==========================================================================
+       2. VISUAL MODES & ZOOM CONTROLLER
+       ========================================================================== */
+    function setSystemVisualMode(mode) {
+      appState.visualMode = mode;
+      document.body.classList.remove('mode-battle', 'mode-thermal', 'mode-translate');
+      const tag = document.getElementById('system-mode-tag');
+
+      if (mode === 'battle') {
+        document.body.classList.add('mode-battle');
+        tag.innerText = 'BATTLE MODE';
+        showToast('⚔️ バトルモード起動');
+        speakText('バトルモード起動。全セキュリティ・システム展開。');
+      } else if (mode === 'thermal') {
+        document.body.classList.add('mode-thermal');
+        tag.innerText = 'THERMAL VISION';
+        showToast('🔥 サーマルモード起動');
+        speakText('サーマルビジョンをアクティブに設定。');
+      } else if (mode === 'translate') {
+        document.body.classList.add('mode-translate');
+        tag.innerText = 'TRANSLATION MODE';
+        showToast('🌐 リアルタイム双方向翻訳モード起動');
+        speakText('リアルタイム翻訳モードを起動しました。');
+      } else {
+        tag.innerText = 'v3.6 FLASH';
+        showToast('標準モード復帰');
+        speakText('通常システムに復帰しました。');
+      }
+      playBeep(1200);
+    }
+
+    function adjustZoom(delta) {
+      appState.zoomLevel = Math.max(1.0, Math.min(3.0, appState.zoomLevel + delta));
+      const targets = document.querySelectorAll('.zoom-target');
+      targets.forEach(el => { el.style.transform = `scale(${appState.zoomLevel})`; });
+      document.getElementById('zoom-level-text').innerText = `${appState.zoomLevel.toFixed(2)}x`;
+      showToast(`ズーム: ${appState.zoomLevel.toFixed(2)}x`);
+      playBeep(950);
+    }
+
+    function toggleSmartphoneMode(enable = null) {
+      appState.isSmartphoneMode = enable !== null ? enable : !appState.isSmartphoneMode;
+      const body = document.body;
+      const modeBtnText = document.getElementById('mode-btn-text');
+
+      if (appState.isSmartphoneMode) {
+        body.classList.add('smartphone-mode');
+        modeBtnText.innerText = 'ON';
+        showToast('スマホ専用 超透過HUDモード起動');
+        speakText('スマホ向け透過表示に移行しました。');
+      } else {
+        body.classList.remove('smartphone-mode');
+        modeBtnText.innerText = 'OFF';
+        showToast('通常HUDモード復帰');
+        speakText('通常のレイアウトに復帰しました。');
+      }
+      playBeep(1100);
+    }
+
+    function toggleContinuousListening() {
+      appState.autoListen = !appState.autoListen;
+      document.getElementById('auto-voice-state').innerText = appState.autoListen ? 'ON' : 'OFF';
+      showToast(`音声常時入力: ${appState.autoListen ? '有効' : '無効'}`);
+      if (appState.autoListen && !appState.isListening) startVoiceRecognition();
+    }
+
+    /* ==========================================================================
+       3. GEMINI API ENGINE (v3.6 無料APIキー対応)
+       ========================================================================== */
+    function openApiKeyModal() {
+      document.getElementById('gemini-api-key-input').value = appState.apiKey;
+      document.getElementById('api-key-modal').classList.remove('hidden');
+    }
+    function closeApiKeyModal() {
+      document.getElementById('api-key-modal').classList.add('hidden');
+    }
+    function saveApiKey() {
+      const key = document.getElementById('gemini-api-key-input').value.trim();
+      appState.apiKey = key;
+      localStorage.setItem('JARVIS_GEMINI_API_KEY', key);
+      closeApiKeyModal();
+      showToast('APIキーを保存しました');
+      playJarvisChime();
+    }
+
+    async function callGeminiApi(promptText, base64Image = null, mimeType = null) {
+      if (!appState.apiKey) {
+        openApiKeyModal();
+        return `Gemini APIキーが設定されておりません。画面右上の「API設定」ボタンから無料のAPIキーをご登録ください。`;
+      }
+
+      // 無料APIキー（Google AI Studio）で確実に動作するモデルの優先リスト
+      const models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-flash-latest"];
+
+      let systemInstruction = `あなたはアイアンマンのAI「J.A.R.V.I.S. (ジャービス)」です。正確で結論から述べる簡潔かつスマートなトーンで回答してください。`;
+
+      if (appState.visualMode === "translate") {
+        systemInstruction = "あなたはリアルタイム通訳HUDシステムです。入力された言語を解析し、日本語なら自然な英語へ、英語やその他の外国語なら自然な日本語へ正確かつ迅速に翻訳し、翻訳後の文章のみを出力してください。";
+      }
+
+      const contentsParts = [];
+      if (base64Image) {
+        contentsParts.push({
+          inlineData: {
+            data: base64Image,
+            mimeType: mimeType || "image/jpeg"
+          }
+        });
+      }
+      contentsParts.push({ text: promptText });
+
+      const requestBody = {
+        contents: [{ parts: contentsParts }],
+        systemInstruction: { parts: [{ text: systemInstruction }] },
+        generationConfig: {
+          temperature: 0.5,
+          maxOutputTokens: 1024
+        }
+      };
+
+      let lastErrorMessage = "";
+
+      for (const model of models) {
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-goog-api-key": appState.apiKey
+            },
+            body: JSON.stringify(requestBody)
+          });
+
+          if (!response.ok) {
+            let message = `HTTP ${response.status}`;
+            try {
+              const errData = await response.json();
+              message = errData.error?.message || message;
+            } catch (_) {}
+            lastErrorMessage = `[${model}] ${message}`;
+            continue;
+          }
+
+          const data = await response.json();
+          const textResult =
+            data.candidates?.[0]?.content?.parts
+              ?.map(part => part.text || "")
+              .join("")
+              .trim();
+
+          if (textResult) return textResult;
+        } catch (err) {
+          lastErrorMessage = `[${model}] ${err.message || "通信エラー"}`;
+        }
+      }
+
+      return `応答取得に失敗いたしました。（詳細: ${lastErrorMessage}）`;
+    }
+
+    /* ==========================================================================
+       4. WEBCAM & FILE HANDLERS & RECORDING
+       ========================================================================== */
+    async function toggleCamera(forceState = null) {
+      const videoEl = document.getElementById('webcam');
+      const targetState = forceState !== null ? forceState : !appState.cameraActive;
+
+      if (!targetState) {
+        if (videoEl.srcObject) {
+          videoEl.srcObject.getTracks().forEach(track => track.stop());
+          videoEl.srcObject = null;
+        }
+        appState.cameraActive = false;
+        videoEl.style.opacity = '0';
+        showToast('カメラ停止');
+        return false;
+      } else {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "environment" },
+            audio: false
+          });
+          videoEl.srcObject = stream;
+          appState.cameraActive = true;
+          videoEl.style.opacity = '0.85';
+          showToast('カメラ起動完了');
+          playBeep(900);
+          return true;
+        } catch (err) {
+          showToast('カメラアクセス失敗', 'error');
+          return false;
+        }
+      }
+    }
+
+    async function takePhotoAndSave() {
+      if (!appState.cameraActive) {
+        const ok = await toggleCamera(true);
+        if (!ok) return;
+      }
+
+      const videoEl = document.getElementById('webcam');
+      let retries = 0;
+      while ((!videoEl.videoWidth || videoEl.readyState < 2) && retries < 20) {
+        await new Promise(r => setTimeout(r, 100));
+        retries++;
+      }
+
+      if (!videoEl.videoWidth) {
+        showToast('カメラ映像のロードに失敗しました', 'error');
+        return;
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = videoEl.videoWidth || 1280;
+      canvas.height = videoEl.videoHeight || 720;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+
+      const dataUrl = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = `JARVIS_CAP_${Date.now()}.png`;
+      a.click();
+
+      showToast('写真を保存しました');
+      playJarvisChime();
+      speakText(`写真を撮影し、保存いたしました。`);
+    }
+
+    async function startVideoRecording() {
+      if (!appState.cameraActive) {
+        const ok = await toggleCamera(true);
+        if (!ok) return;
+      }
+
+      const videoEl = document.getElementById('webcam');
+      const stream = videoEl.srcObject;
+      if (!stream) {
+        showToast('カメラが起動していません', 'error');
+        return;
+      }
+
+      recordedChunks = [];
+      try {
+        mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+      } catch (e) {
+        mediaRecorder = new MediaRecorder(stream);
+      }
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) recordedChunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `JARVIS_REC_${Date.now()}.webm`;
+        a.click();
+        showToast('動画ファイルを保存しました');
+        speakText(`動画の録画を終了し、保存いたしました。`);
+      };
+
+      mediaRecorder.start();
+      appState.isRecordingVideo = true;
+      document.getElementById('core-state-label').innerText = 'REC';
+      showToast('動画撮影を開始しました');
+      playBeep(1000);
+      speakText('動画の撮影を開始いたします。');
+    }
+
+    function stopVideoRecording() {
+      if (mediaRecorder && appState.isRecordingVideo) {
+        mediaRecorder.stop();
+        appState.isRecordingVideo = false;
+        document.getElementById('core-state-label').innerText = 'READY';
+      } else {
+        showToast('動画撮影は行われていません', 'error');
+      }
+    }
+
+    async function captureCameraFrame() {
+      if (!appState.cameraActive) {
+        const ok = await toggleCamera(true);
+        if (!ok) return false;
+      }
+
+      const videoEl = document.getElementById('webcam');
+      let retries = 0;
+      while ((!videoEl.videoWidth || videoEl.readyState < 2) && retries < 20) {
+        await new Promise(r => setTimeout(r, 100));
+        retries++;
+      }
+
+      if (!videoEl.videoWidth) {
+        showToast('カメラ準備中...', 'error');
+        return false;
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = videoEl.videoWidth || 640;
+      canvas.height = videoEl.videoHeight || 480;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      const base64Data = dataUrl.split(',')[1];
+
+      setVisionImageState(base64Data, 'image/jpeg', dataUrl, 'camera', `${canvas.width}x${canvas.height}`);
+      return true;
+    }
+
+    function triggerFileUpload() { document.getElementById('photo-upload-input').click(); }
+
+    function handleFileUpload(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        const mimeType = file.type || 'image/jpeg';
+        const base64Data = dataUrl.split(',')[1];
+
+        const img = new Image();
+        img.onload = () => {
+          setVisionImageState(base64Data, mimeType, dataUrl, 'upload', `${img.width}x${img.height}`);
+          showToast('画像をロードしました');
+          playJarvisChime();
+        };
+        img.src = dataUrl;
+      };
+      reader.readAsDataURL(file);
+      event.target.value = '';
+    }
+
+    function setVisionImageState(base64, mimeType, dataUrl, source, dimensionsStr = '') {
+      appState.currentImage = { base64, mimeType, dataUrl, source };
+      const imgEl = document.getElementById('vision-preview-img');
+      const placeholder = document.getElementById('vision-placeholder');
+      const clearBtn = document.getElementById('clear-image-btn');
+      const modeTag = document.getElementById('vision-mode-tag');
+      const dimInfo = document.getElementById('image-dimensions-info');
+      const srcInfo = document.getElementById('image-source-info');
+
+      imgEl.src = dataUrl;
+      imgEl.classList.remove('hidden');
+      placeholder.classList.add('hidden');
+      clearBtn.classList.remove('hidden');
+
+      modeTag.innerText = source.toUpperCase();
+      srcInfo.innerText = `SRC: ${source.toUpperCase()}`;
+      dimInfo.innerText = `RES: ${dimensionsStr}`;
+    }
+
+    function clearSelectedImage() {
+      appState.currentImage = { base64: null, mimeType: null, dataUrl: null, source: null };
+      const imgEl = document.getElementById('vision-preview-img');
+      const placeholder = document.getElementById('vision-placeholder');
+      const clearBtn = document.getElementById('clear-image-btn');
+
+      imgEl.src = '';
+      imgEl.classList.add('hidden');
+      placeholder.classList.remove('hidden');
+      clearBtn.classList.add('hidden');
+      showToast('ターゲット画像クリア');
+    }
+
+    /* ==========================================================================
+       5. AUDIO RECORDING
+       ========================================================================== */
+    function getSupportedAudioMimeType() {
+      const candidates = [
+        'audio/webm;codecs=opus',
+        'audio/webm',
+        'audio/ogg;codecs=opus',
+        'audio/mp4'
+      ];
+      return candidates.find(type => MediaRecorder.isTypeSupported(type)) || '';
+    }
+
+    async function startAudioRecording() {
+      if (audioRecorder && audioRecorder.state === 'recording') return;
+
+      if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+        showToast('このブラウザは音声録音に対応していません', 'error');
+        return;
+      }
+
+      try {
+        audioRecordingStream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+          video: false
+        });
+
+        audioRecordedChunks = [];
+        const mimeType = getSupportedAudioMimeType();
+        audioRecorder = mimeType
+          ? new MediaRecorder(audioRecordingStream, { mimeType })
+          : new MediaRecorder(audioRecordingStream);
+
+        audioRecorder.ondataavailable = (event) => {
+          if (event.data && event.data.size > 0) {
+            audioRecordedChunks.push(event.data);
+          }
         };
 
-        /* ==========================================================================
-           2. WEB AUDIO SYNTHESIZER (FUTURISTIC SOUND EFFECTS)
-           ========================================================================== */
-        function initAudioContext() {
-            if (!state.audioCtx) {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                state.audioCtx = new AudioContext();
-            }
-            if (state.audioCtx.state === 'suspended') {
-                state.audioCtx.resume();
-            }
+        audioRecorder.onstop = () => {
+          const finalType = audioRecorder?.mimeType || mimeType || 'audio/webm';
+          const blob = new Blob(audioRecordedChunks, { type: finalType });
+          const url = URL.createObjectURL(blob);
+          const extension = finalType.includes('mp4') ? 'm4a' : finalType.includes('ogg') ? 'ogg' : 'webm';
+
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `JARVIS_AUDIO_${new Date().toISOString().replace(/[:.]/g, '-')}.${extension}`;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+
+          setTimeout(() => URL.revokeObjectURL(url), 1500);
+
+          if (audioRecordingStream) {
+            audioRecordingStream.getTracks().forEach(track => track.stop());
+            audioRecordingStream = null;
+          }
+
+          audioRecordedChunks = [];
+          showToast('音声録音を保存しました');
+          playJarvisChime();
+          speakText(`音声録音を保存いたしました。`);
+        };
+
+        audioRecorder.start(250);
+        document.getElementById('audio-record-label').innerText = '停止';
+        document.getElementById('audio-record-btn').classList.add('bg-jarvis-red/30', 'text-jarvis-red', 'animate-pulse');
+        document.getElementById('core-state-label').innerText = 'AUDIO REC';
+        showToast('音声録音を開始しました');
+        playBeep(1000);
+      } catch (err) {
+        if (audioRecordingStream) {
+          audioRecordingStream.getTracks().forEach(track => track.stop());
+          audioRecordingStream = null;
         }
+        showToast('マイクへのアクセスを許可してください', 'error');
+      }
+    }
 
-        function playFuturisticSound(type) {
-            if (!state.soundEnabled) return;
-            try {
-                initAudioContext();
-                const ctx = state.audioCtx;
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
+    function stopAudioRecording() {
+      if (!audioRecorder || audioRecorder.state !== 'recording') {
+        showToast('音声録音は行われていません', 'error');
+        return;
+      }
+      audioRecorder.stop();
+      document.getElementById('audio-record-label').innerText = '録音';
+      document.getElementById('audio-record-btn').classList.remove('bg-jarvis-red/30', 'text-jarvis-red', 'animate-pulse');
+      document.getElementById('core-state-label').innerText = appState.isRecordingVideo ? 'REC' : 'READY';
+    }
 
-                const now = ctx.currentTime;
+    function toggleAudioRecording() {
+      if (audioRecorder && audioRecorder.state === 'recording') {
+        stopAudioRecording();
+      } else {
+        startAudioRecording();
+      }
+    }
 
-                if (type === 'beep') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(880, now);
-                    osc.frequency.exponentialRampToValueAtTime(1760, now + 0.08);
-                    gain.gain.setValueAtTime(0.12, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-                    osc.start(now);
-                    osc.stop(now + 0.08);
-                } else if (type === 'scan') {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(400, now);
-                    osc.frequency.linearRampToValueAtTime(1200, now + 0.25);
-                    gain.gain.setValueAtTime(0.08, now);
-                    gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
-                    osc.start(now);
-                    osc.stop(now + 0.25);
-                } else if (type === 'chime') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(523.25, now);
-                    osc.frequency.setValueAtTime(659.25, now + 0.08);
-                    osc.frequency.setValueAtTime(783.99, now + 0.16);
-                    gain.gain.setValueAtTime(0.1, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                    osc.start(now);
-                    osc.stop(now + 0.3);
-                }
-            } catch (err) {
-                console.warn('Audio playback error:', err);
-            }
+    /* ==========================================================================
+       6. SPEECH RECOGNITION
+       ========================================================================== */
+    let recognition = null;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'ja-JP';
+
+      recognition.onstart = () => {
+        appState.isListening = true;
+        micBtn.classList.add('bg-jarvis-gold/20', 'text-jarvis-gold', 'animate-pulse');
+        document.getElementById('mic-status-label').innerText = '認識中...';
+        transcriptBox.classList.remove('hidden');
+        document.getElementById('core-state-label').innerText = appState.isRecordingVideo ? 'REC' : 'LISTEN';
+      };
+
+      recognition.onresult = (e) => {
+        let transcript = '';
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          transcript += e.results[i][0].transcript;
         }
+        transcriptText.innerText = transcript;
 
-        /* ==========================================================================
-           3. FULLSCREEN CAMERA BACKGROUND SYSTEM
-           ========================================================================== */
-        async function initCameraStream() {
-            const videoEl = document.getElementById('cameraBg');
-            const fallbackEl = document.getElementById('cameraFallback');
-            const badgeEl = document.getElementById('cameraStatusBadge');
-
-            try {
-                if (state.cameraStream) {
-                    state.cameraStream.getTracks().forEach(track => track.stop());
-                }
-
-                const constraints = {
-                    video: {
-                        facingMode: state.cameraFacing,
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
-                    },
-                    audio: false
-                };
-
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                state.cameraStream = stream;
-                videoEl.srcObject = stream;
-                await videoEl.play();
-
-                fallbackEl.classList.add('hidden');
-                videoEl.classList.remove('opacity-0');
-                if (badgeEl) badgeEl.textContent = 'OPTICAL LIVE';
-                playFuturisticSound('beep');
-            } catch (err) {
-                console.warn('Camera stream notice:', err);
-                fallbackEl.classList.remove('hidden');
-                if (badgeEl) badgeEl.textContent = 'OPTICAL OFF';
-            }
+        if (e.results[e.results.length - 1].isFinal) {
+          userInput.value = transcript;
+          handleUserSubmit(null);
         }
+      };
 
-        function switchCameraFacing() {
-            state.cameraFacing = state.cameraFacing === 'environment' ? 'user' : 'environment';
-            initCameraStream();
+      recognition.onerror = (err) => { 
+        appState.isListening = false;
+      };
+
+      recognition.onend = () => {
+        appState.isListening = false;
+        micBtn.classList.remove('bg-jarvis-gold/20', 'text-jarvis-gold', 'animate-pulse');
+        document.getElementById('mic-status-label').innerText = '音声 ON';
+        document.getElementById('core-state-label').innerText = appState.isRecordingVideo ? 'REC' : 'READY';
+
+        if (appState.autoListen && !appState.isSpeaking) {
+          setTimeout(() => startVoiceRecognition(), 400);
         }
+      };
+    }
 
-        /* ==========================================================================
-           4. CONTINUOUS VOICE RECOGNITION ENGINE
-           ========================================================================== */
-        function initVoiceRecognition() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            
-            if (!SpeechRecognition) {
-                console.warn('Speech recognition unequipped in browser environment.');
-                return;
-            }
+    function startVoiceRecognition() {
+      if (recognition && !appState.isListening && !appState.isSpeaking) {
+        try { recognition.start(); } catch(e){}
+      }
+    }
 
-            const recognition = new SpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.lang = state.language;
+    function toggleVoiceRecognition() {
+      if (!recognition) {
+        showToast('お使いのブラウザは音声認識非対応です', 'error');
+        return;
+      }
+      if (appState.isListening) {
+        appState.autoListen = false;
+        try { recognition.stop(); } catch(e){}
+      } else {
+        appState.autoListen = true;
+        startVoiceRecognition();
+      }
+    }
 
-            recognition.onstart = () => {
-                state.isListening = true;
-                updateVoiceStatusUI(true);
-            };
+    /* ==========================================================================
+       7. CORE SUBMISSION & INTENT DISPATCHER
+       ========================================================================== */
+    async function searchScreenContent() {
+      userInput.value = "画面を検索";
+      handleUserSubmit(null);
+    }
 
-            recognition.onresult = (event) => {
-                let interimTranscript = '';
-                let finalTranscript = '';
+    async function handleUserSubmit(e) {
+      if (e) e.preventDefault();
+      let query = userInput.value.trim();
+      const hasImg = !!appState.currentImage.base64;
 
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    if (event.results[i].isFinal) {
-                        finalTranscript += event.results[i][0].transcript;
-                    } else {
-                        interimTranscript += event.results[i][0].transcript;
-                    }
-                }
+      if (!query && !hasImg && !appState.cameraActive) return;
 
-                const liveContainer = document.getElementById('liveSpeechContainer');
-                const liveText = document.getElementById('liveSpeechText');
+      userInput.value = '';
+      playBeep(750);
+      triggerLaserScan(true);
 
-                if (interimTranscript || finalTranscript) {
-                    liveContainer.classList.remove('hidden');
-                    liveText.textContent = interimTranscript || finalTranscript;
-                }
+      const originalQuery = query;
+      const qLower = query.toLowerCase();
 
-                if (finalTranscript.trim().length > 0) {
-                    const cleanQuery = finalTranscript.trim();
-                    appendTerminalLog('USER (VOICE)', cleanQuery, 'user');
-                    routeVoiceCommand(cleanQuery);
-                    
-                    setTimeout(() => {
-                        liveContainer.classList.add('hidden');
-                    }, 2500);
-                }
-            };
+      if (qLower.includes('カメラ') && (qLower.includes('起動') || qLower.includes('つけ') || qLower.includes('オン') || qLower.includes('開'))) {
+        await toggleCamera(true);
+        speakText(`カメラを起動いたしました。`);
+        triggerLaserScan(false);
+        return;
+      }
 
-            recognition.onerror = () => {
-                updateVoiceStatusUI(false);
-            };
+      if (qLower.includes('カメラ') && (qLower.includes('停止') || qLower.includes('消') || qLower.includes('オフ') || qLower.includes('閉'))) {
+        await toggleCamera(false);
+        speakText(`カメラを停止いたしました。`);
+        triggerLaserScan(false);
+        return;
+      }
 
-            recognition.onend = () => {
-                if (state.isListening) {
-                    try { recognition.start(); } catch (e) {}
-                } else {
-                    updateVoiceStatusUI(false);
-                }
-            };
-
-            state.recognition = recognition;
-            startVoiceListening();
+      if (qLower.includes('写真') || qLower.includes('パシャ') || qLower.includes('撮影して') || qLower.includes('スナップショット')) {
+        if (!qLower.includes('動画')) {
+          await takePhotoAndSave();
+          triggerLaserScan(false);
+          return;
         }
+      }
 
-        function startVoiceListening() {
-            if (state.recognition) {
-                state.isListening = true;
-                try { state.recognition.start(); } catch (e) {}
-            }
+      const hasAudioRecorderWord = qLower.includes('録音') || qLower.includes('音声録音') || qLower.includes('ボイスレコーダー');
+      const wantsAudioStart = qLower.includes('録音開始') || qLower.includes('録音スタート') || qLower.includes('録音して');
+      const wantsAudioStop = qLower.includes('録音停止') || qLower.includes('録音終了') || qLower.includes('録音ストップ') || qLower.includes('録音やめて');
+      const isVideoCommand = qLower.includes('動画') || qLower.includes('録画');
+
+      if (!isVideoCommand && hasAudioRecorderWord && wantsAudioStart) { await startAudioRecording(); triggerLaserScan(false); return; }
+      if (!isVideoCommand && hasAudioRecorderWord && wantsAudioStop) { stopAudioRecording(); triggerLaserScan(false); return; }
+
+      if (qLower.includes('動画') && (qLower.includes('撮影') || qLower.includes('開始') || qLower.includes('録画'))) { await startVideoRecording(); triggerLaserScan(false); return; }
+      if ((qLower.includes('録画') && (qLower.includes('停止') || qLower.includes('終了') || qLower.includes('ストップ'))) || (qLower.includes('動画') && (qLower.includes('停止') || qLower.includes('終了')))) {
+        stopVideoRecording(); triggerLaserScan(false); return;
+      }
+
+      if (qLower.includes('声を変え') || qLower.includes('声変更') || qLower.includes('ボイス変更')) { cycleNextVoice(); triggerLaserScan(false); return; }
+      if (qLower.includes('翻訳モード') || qLower.includes('通訳モード')) { setSystemVisualMode('translate'); triggerLaserScan(false); return; }
+      if (qLower.includes('バトルモード')) { setSystemVisualMode('battle'); triggerLaserScan(false); return; }
+      if (qLower.includes('サーマルモード')) { setSystemVisualMode('thermal'); triggerLaserScan(false); return; }
+      if (qLower.includes('ノーマルモード') || qLower.includes('通常モード')) { setSystemVisualMode('normal'); triggerLaserScan(false); return; }
+      if (qLower.includes('スマホモード')) { toggleSmartphoneMode(); triggerLaserScan(false); return; }
+      if (qLower.includes('ズームイン') || qLower.includes('拡大')) { adjustZoom(0.35); triggerLaserScan(false); return; }
+      if (qLower.includes('ズームアウト') || qLower.includes('縮小')) { adjustZoom(-0.35); triggerLaserScan(false); return; }
+
+      const wantsScreenSearch =
+        qLower.includes('画面') && (qLower.includes('検索') || qLower.includes('調べ')) ||
+        qLower.includes('映っている') && (qLower.includes('検索') || qLower.includes('調べ')) ||
+        qLower.includes('これを検索') || qLower.includes('これ検索') || qLower.includes('これを調べ') ||
+        qLower.includes('画像検索');
+
+      if (wantsScreenSearch) {
+        if (appState.cameraActive) {
+          await captureCameraFrame();
         }
-
-        function toggleVoiceRecognition() {
-            if (state.isListening) {
-                state.isListening = false;
-                if (state.recognition) state.recognition.stop();
-                updateVoiceStatusUI(false);
-                playFuturisticSound('beep');
-            } else {
-                startVoiceListening();
-                playFuturisticSound('chime');
-            }
+        if (!appState.currentImage.base64) {
+           appendChatMessage('J.A.R.V.I.S.', `対象の画像がありません。カメラを起動するか、画像をアップロードしてください。`);
+           speakText(`対象の画像がありません。カメラを起動するか、画像をアップロードしてください。`);
+           triggerLaserScan(false);
+           return;
         }
+        query = "この画像に映っているものを特定し、正確かつ簡潔に説明してください。";
+      }
 
-        function updateVoiceStatusUI(active) {
-            const icon = document.getElementById('micToggleIcon');
-            const btn = document.getElementById('micToggleBtn');
-            if (active) {
-                btn.className = 'p-2 rounded bg-emerald-500/30 border border-emerald-400 text-emerald-300 hover:bg-emerald-500/40 transition flex items-center justify-center w-9 h-9 flex-shrink-0 hud-text-glow';
-                icon.className = 'fa-solid fa-microphone text-sm text-emerald-300 animate-pulse';
-            } else {
-                btn.className = 'p-2 rounded bg-red-950/40 border border-red-500/40 text-red-400 transition flex items-center justify-center w-9 h-9 flex-shrink-0';
-                icon.className = 'fa-solid fa-microphone-slash text-sm text-red-400';
-            }
+      const displayQuery = originalQuery || (wantsScreenSearch ? '[画面解析を実行]' : '[ビジュアル解析実行]');
+      const willAttachImage = appState.currentImage.base64 ? appState.currentImage.dataUrl : null;
+      appendChatMessage('USER', displayQuery, false, willAttachImage);
+
+      const finalQuery = query || "この画像を解析し、重要なポイントを教えてください。";
+
+      document.getElementById('core-state-label').innerText = 'THINKING';
+      
+      const aiResponse = await callGeminiApi(
+        finalQuery, 
+        appState.currentImage.base64, 
+        appState.currentImage.mimeType
+      );
+
+      triggerLaserScan(false);
+      appendChatMessage('J.A.R.V.I.S. (GEMINI v3.6)', aiResponse);
+      speakText(aiResponse);
+      playJarvisChime();
+    }
+
+    async function captureAndAnalyzeCamera() {
+      const success = await captureCameraFrame();
+      if (!success) return;
+      handleUserSubmit(null);
+    }
+
+    function triggerLaserScan(enable) {
+      const laser = document.getElementById('scanning-laser');
+      if (enable) {
+        laser.classList.remove('hidden');
+        document.getElementById('core-state-label').innerText = 'SCAN';
+      } else {
+        laser.classList.add('hidden');
+        document.getElementById('core-state-label').innerText = appState.isRecordingVideo ? 'REC' : 'READY';
+      }
+    }
+
+    /* ==========================================================================
+       8. AUDIO VISUALIZER & UTILS
+       ========================================================================== */
+    function initVisualizer() {
+      const canvas = document.getElementById('audioVisualizer');
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+
+      let frame = 0;
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const bars = 18;
+        const barWidth = (canvas.width / bars) - 2;
+
+        for (let i = 0; i < bars; i++) {
+          let height;
+          if (appState.isSpeaking || appState.isListening) {
+            height = Math.sin(frame * 0.25 + i * 0.5) * (canvas.height / 2) + (canvas.height / 2.2);
+          } else {
+            height = Math.sin(frame * 0.08 + i * 0.3) * 1.5 + 2;
+          }
+
+          const x = i * (barWidth + 2);
+          const y = (canvas.height - height) / 2;
+
+          ctx.fillStyle = appState.visualMode === 'battle' ? '#ff2a55' : (appState.visualMode === 'thermal' ? '#00ffcc' : (appState.visualMode === 'translate' ? '#a855f7' : '#00f0ff'));
+          ctx.fillRect(x, y, barWidth, height);
         }
+        frame++;
+        requestAnimationFrame(draw);
+      }
+      draw();
+    }
 
-        /* ==========================================================================
-           5. VOICE COMMAND ROUTER & INTENT PARSER
-           ========================================================================== */
-        function routeVoiceCommand(rawText) {
-            const text = rawText.toLowerCase();
+    function appendChatMessage(sender, text, isError = false, thumbnailDataUrl = null) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `p-1.5 rounded border font-mono ${
+        sender === 'USER' ? 'bg-white/10 border-theme/30 text-gray-100 ml-2' : 'bg-black/30 border-theme text-white'
+      }`;
 
-            // Photo Capture Voice Trigger
-            if (text.includes('写真') || text.includes('撮影') || text.includes('キャプチャ') || text.includes('photo')) {
-                takePhoto();
-                return;
-            }
+      let thumbHtml = thumbnailDataUrl ? `<div class="my-0.5"><img src="${thumbnailDataUrl}" class="h-10 rounded"></div>` : '';
 
-            // Video Recording Voice Trigger
-            if (text.includes('録画') || text.includes('動画') || text.includes('record') || text.includes('rec')) {
-                toggleVideoRecording();
-                return;
-            }
+      msgDiv.innerHTML = `
+        <div class="flex items-center justify-between text-[7px] text-gray-400 font-bold font-orbitron">
+          <span>${sender}</span>
+          <span>${new Date().toLocaleTimeString()}</span>
+        </div>
+        ${thumbHtml}
+        <p class="leading-relaxed whitespace-pre-wrap">${text}</p>
+      `;
 
-            // Settings & Manual Modal Open Command
-            if (text.includes('設定') || text.includes('マニュアル') || text.includes('取扱説明書') || text.includes('settings')) {
-                openSettingsModal();
-                speakText('Opening system settings and manual.');
-                return;
-            }
+      chatStream.appendChild(msgDiv);
+      chatStream.scrollTop = chatStream.scrollHeight;
+    }
 
-            // J.A.R.V.I.S. Persona Acknowledgment
-            if (text.includes('ジャービス') || text.includes('jarvis')) {
-                switchPersona('jarvis');
-                speakText('J.A.R.V.I.S. online and at your service, Sir.');
-                return;
-            }
+    function triggerJarvisGreeting() {
+      playJarvisChime();
+      const greeting = `システム正常稼働中です。`;
+      appendChatMessage('J.A.R.V.I.S.', greeting);
+      speakText(greeting);
+    }
 
-            // Vision Scan & Snapshot Analysis
-            if (text.includes('スキャン') || text.includes('分析') || text.includes('視覚解析') || text.includes('scan') || text.includes('analyze')) {
-                triggerVisionAnalysis();
-                return;
-            }
+    function clearResponseLog() {
+      chatStream.innerHTML = '';
+      showToast('ログ削除完了');
+    }
 
-            // Color Theme Commands
-            if (text.includes('サイアン') || text.includes('cyan')) {
-                setTheme('theme-cyan');
-                speakText('Cyan theme applied.');
-                return;
-            }
-            if (text.includes('マーク85') || text.includes('ゴールド')) {
-                setTheme('theme-mark85');
-                speakText('Mark 85 theme active.');
-                return;
-            }
-            if (text.includes('ステルス') || text.includes('stealth')) {
-                setTheme('theme-stealth');
-                speakText('Stealth theme active.');
-                return;
-            }
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `px-2 py-0.5 rounded text-[9px] font-mono border backdrop-blur-md transition-all duration-300 ${
+        type === 'error' ? 'bg-jarvis-red/20 border-jarvis-red text-jarvis-red' : 'bg-black/40 border-theme text-white glow-theme'
+      }`;
+      toast.innerHTML = `<span>[SYS]</span> <span>${msg}</span>`;
+      container.appendChild(toast);
 
-            // Prompt Macros
-            if (text.includes('自己診断') || text.includes('diagnostic')) {
-                queryGeminiLLM("Run a full system diagnostic report. State power, network security status, and readiness.");
-                return;
-            }
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 2000);
+    }
 
-            // General Query via Gemini LLM
-            queryGeminiLLM(rawText);
+    function updateClock() { document.getElementById('sys-clock').innerText = new Date().toLocaleTimeString(); }
+
+    window.onload = () => {
+      initVisualizer();
+      initVoiceList();
+      setInterval(updateClock, 1000);
+      
+      showToast('J.A.R.V.I.S. v3.6 システムオンライン');
+
+      setTimeout(() => startVoiceRecognition(), 800);
+
+      window.addEventListener('beforeunload', () => {
+        if (audioRecordingStream) {
+          audioRecordingStream.getTracks().forEach(track => track.stop());
         }
-
-        /* ==========================================================================
-           6. GEMINI API & VISION ANALYSIS INTEGRATION (HTTP 404 RESILIENT)
-           ========================================================================== */
-        async function queryGeminiLLM(prompt, base64Image = null) {
-            const key = getActiveApiKey();
-            const persona = PERSONAS[state.currentPersona];
-
-            if (!key) {
-                setTerminalStatus('KEY REQUIRED');
-                playFuturisticSound('beep');
-                const warningMsg = "API Key not configured. Please click **SETTINGS** (⚙️) and enter your Gemini API Key to enable live neural AI features.";
-                appendTerminalLog('SYSTEM', warningMsg, 'system');
-                speakText("API key required. Please open settings and save your key.");
-                
-                setTimeout(() => {
-                    let mockReply = `[SIMULATION MODE] ${persona.name} online. Received command: "${prompt}". Please enter a valid Gemini API Key in Settings for live neural AI processing.`;
-                    if (base64Image) {
-                        mockReply = `[SIMULATION MODE] Visual frame captured. Configure a Gemini API Key in Settings to analyze live camera feeds with Gemini Vision.`;
-                    }
-                    appendTerminalLog(persona.name, mockReply, 'ai');
-                    speakText(mockReply);
-                    setTerminalStatus('READY');
-                }, 600);
-                return;
-            }
-
-            setTerminalStatus('PROCESSING...');
-            playFuturisticSound('scan');
-
-            const fullPrompt = `${persona.promptPrefix}\n\nUser Question:${prompt}`;
-
-            let payload;
-            if (base64Image) {
-                payload = {
-                    contents: [{
-                        role: 'user',
-                        parts: [
-                            { text: fullPrompt },
-                            {
-                                inlineData: {
-                                    mimeType: 'image/jpeg',
-                                    data: base64Image
-                                }
-                            }
-                        ]
-                    }]
-                };
-            } else {
-                payload = {
-                    contents: [{
-                        parts: [{ text: fullPrompt }]
-                    }]
-                };
-            }
-
-            try {
-                let responseData = null;
-                let lastError = null;
-                let success = false;
-
-                // 404エラーを防ぐため、複数のモデル名、APIバージョン、および認証方式を自動で試行
-                const modelsToTry = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-exp', 'gemini-1.5-pro'];
-                const apiVersions = ['v1beta', 'v1'];
-
-                for (const modelName of modelsToTry) {
-                    if (success) break;
-                    for (const version of apiVersions) {
-                        if (success) break;
-
-                        const endpoints = [
-                            {
-                                url: `https://generativelanguage.googleapis.com/${version}/models/${modelName}:generateContent?key=${key}`,
-                                headers: { 'Content-Type': 'application/json' }
-                            },
-                            {
-                                url: `https://generativelanguage.googleapis.com/${version}/models/${modelName}:generateContent`,
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Authorization': `Bearer ${key}`
-                                }
-                            },
-                            {
-                                url: `https://generativelanguage.googleapis.com/${version}/models/${modelName}:generateContent`,
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'x-goog-api-key': key
-                                }
-                            }
-                        ];
-
-                        for (const ep of endpoints) {
-                            try {
-                                const res = await fetch(ep.url, {
-                                    method: 'POST',
-                                    headers: ep.headers,
-                                    body: JSON.stringify(payload)
-                                });
-
-                                if (res.ok) {
-                                    responseData = await res.json();
-                                    success = true;
-                                    break;
-                                } else {
-                                    lastError = new Error(`HTTP Error: ${res.status}`);
-                                }
-                            } catch (e) {
-                                lastError = e;
-                            }
-                        }
-                    }
-                }
-
-                if (!success || !responseData) {
-                    throw lastError || new Error("Failed to connect to model endpoint (404/Not Found).");
-                }
-
-                const replyText = responseData.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
-
-                appendTerminalLog(persona.name, replyText, 'ai');
-                speakText(replyText);
-                playFuturisticSound('chime');
-            } catch (err) {
-                console.error('Gemini API query failure:', err);
-                appendTerminalLog('SYSTEM', `Neural Processing Error: ${err.message}`, 'system');
-                speakText("API error encountered. Please check system console.");
-            } finally {
-                setTerminalStatus('READY');
-            }
+        if (document.getElementById('webcam')?.srcObject) {
+          document.getElementById('webcam').srcObject.getTracks().forEach(track => track.stop());
         }
-
-        async function triggerVisionAnalysis() {
-            const videoEl = document.getElementById('cameraBg');
-            
-            if (!videoEl.srcObject || videoEl.videoWidth === 0) {
-                appendTerminalLog('SYSTEM', 'Camera feed unavailable for snapshot scan.', 'system');
-                speakText("Optical camera is offline.");
-                return;
-            }
-
-            playFuturisticSound('scan');
-            appendTerminalLog('OPTICAL SCAN', 'Capturing snapshot frame for computer vision scan...', 'system');
-
-            const canvas = document.createElement('canvas');
-            canvas.width = videoEl.videoWidth || 1280;
-            canvas.height = videoEl.videoHeight || 720;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-
-            const base64Data = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-            
-            const scanPrompt = "Analyze this optical HUD snapshot. Concisely identify detected objects, human targets, and surroundings.";
-            queryGeminiLLM(scanPrompt, base64Data);
-        }
-
-        /* ==========================================================================
-           7. PHOTO CAPTURE & VIDEO RECORDING SYSTEM
-           ========================================================================== */
-        let mediaRecorder = null;
-        let recordedChunks = [];
-        let isRecording = false;
-
-        function takePhoto() {
-            const videoEl = document.getElementById('cameraBg');
-            if (!videoEl.srcObject || videoEl.videoWidth === 0) {
-                appendTerminalLog('SYSTEM', 'Camera feed unavailable for photo capture.', 'system');
-                speakText("Optical camera is offline.");
-                return;
-            }
-
-            playFuturisticSound('scan');
-            const canvas = document.createElement('canvas');
-            canvas.width = videoEl.videoWidth || 1920;
-            canvas.height = videoEl.videoHeight || 1080;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-
-            const link = document.createElement('a');
-            const timeStamp = new Date().toISOString().replace(/[:.]/g, '-');
-            link.download = `JARVIS_PHOTO_${timeStamp}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-
-            appendTerminalLog('OPTICAL', 'Photo captured and saved to device.', 'system');
-            speakText('Photo captured, Boss.');
-        }
-
-        function toggleVideoRecording() {
-            if (isRecording) {
-                stopVideoRecording();
-            } else {
-                startVideoRecording();
-            }
-        }
-
-        function startVideoRecording() {
-            if (!state.cameraStream) {
-                appendTerminalLog('SYSTEM', 'Camera stream is unavailable for video recording.', 'system');
-                speakText("Optical camera is offline.");
-                return;
-            }
-
-            try {
-                recordedChunks = [];
-                let mimeType = 'video/webm;codecs=vp9';
-                if (!MediaRecorder.isTypeSupported(mimeType)) {
-                    mimeType = 'video/webm';
-                }
-
-                mediaRecorder = new MediaRecorder(state.cameraStream, { mimeType });
-
-                mediaRecorder.ondataavailable = (event) => {
-                    if (event.data && event.data.size > 0) {
-                        recordedChunks.push(event.data);
-                    }
-                };
-
-                mediaRecorder.onstop = () => {
-                    const blob = new Blob(recordedChunks, { type: mimeType });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    const timeStamp = new Date().toISOString().replace(/[:.]/g, '-');
-                    a.href = url;
-                    a.download = `JARVIS_REC_${timeStamp}.webm`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                    appendTerminalLog('OPTICAL', 'Video recording saved and downloaded.', 'system');
-                    speakText('Video recording saved, Sir.');
-                };
-
-                mediaRecorder.start();
-                isRecording = true;
-                updateRecUI(true);
-                playFuturisticSound('beep');
-                appendTerminalLog('OPTICAL', 'Video recording started...', 'system');
-                speakText('Recording started.');
-            } catch (err) {
-                console.error('Failed to start MediaRecorder:', err);
-                appendTerminalLog('SYSTEM', 'Video recording failed: ' + err.message, 'system');
-            }
-        }
-
-        function stopVideoRecording() {
-            if (mediaRecorder && isRecording) {
-                mediaRecorder.stop();
-                isRecording = false;
-                updateRecUI(false);
-                playFuturisticSound('beep');
-            }
-        }
-
-        function updateRecUI(recording) {
-            const btn = document.getElementById('recToggleBtn');
-            const icon = document.getElementById('recIcon');
-            const text = document.getElementById('recBtnText');
-            if (recording) {
-                if (btn) btn.className = 'px-2.5 py-1.5 rounded bg-red-950/80 border border-red-500 text-red-400 text-xs font-orbitron flex items-center gap-1.5 transition animate-pulse';
-                if (icon) icon.className = 'fa-solid fa-square text-red-500';
-                if (text) text.textContent = 'STOP';
-            } else {
-                if (btn) btn.className = 'px-2.5 py-1.5 rounded hud-panel hover:hud-border-glow text-cyan-300 text-xs font-orbitron flex items-center gap-1.5 transition';
-                if (icon) icon.className = 'fa-solid fa-circle text-red-500 animate-pulse';
-                if (text) text.textContent = 'REC';
-            }
-        }
-
-        /* ==========================================================================
-           8. ENVIRONMENT & SENSOR WIDGETS (WEATHER & BATTERY)
-           ========================================================================== */
-        async function initWeatherStatus() {
-            try {
-                const lat = 36.40;
-                const lon = 138.25;
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
-                const res = await fetch(url);
-                const data = await res.json();
-                
-                if (data.current_weather) {
-                    const temp = data.current_weather.temperature;
-                    const code = data.current_weather.weathercode;
-                    const tempEl = document.getElementById('hudWeatherTemp');
-                    if (tempEl) tempEl.textContent = `${temp}°C`;
-                    
-                    let icon = 'fa-sun';
-                    if (code >= 1 && code <= 3) icon = 'fa-cloud';
-                    else if (code === 45 || code === 48) icon = 'fa-smog';
-                    else if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) icon = 'fa-cloud-rain';
-                    else if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) icon = 'fa-snowflake';
-                    else if (code >= 95) icon = 'fa-bolt';
-                    
-                    const iconEl = document.getElementById('hudWeatherIcon');
-                    if (iconEl) iconEl.className = `fa-solid ${icon} animate-pulse`;
-                }
-            } catch (err) {
-                console.warn("Weather fetch failed. Widget inactive.", err);
-            }
-        }
-
-        async function initBatteryStatus() {
-            if ('getBattery' in navigator) {
-                try {
-                    const battery = await navigator.getBattery();
-                    
-                    const updateBattery = () => {
-                        const level = Math.round(battery.level * 100);
-                        const textEl = document.getElementById('hudBatteryText');
-                        if (textEl) textEl.textContent = `${level}%`;
-                        
-                        let icon = 'fa-battery-full';
-                        if (battery.charging) {
-                            icon = 'fa-bolt text-emerald-400';
-                        } else {
-                            if (level > 80) icon = 'fa-battery-full text-cyan-300';
-                            else if (level > 60) icon = 'fa-battery-three-quarters text-cyan-300';
-                            else if (level > 40) icon = 'fa-battery-half text-cyan-300';
-                            else if (level > 20) icon = 'fa-battery-quarter text-amber-400';
-                            else icon = 'fa-battery-empty text-red-500 animate-pulse';
-                        }
-
-                        const iconEl = document.getElementById('hudBatteryIcon');
-                        if (iconEl) iconEl.className = `fa-solid ${icon}`;
-                    };
-
-                    updateBattery();
-                    battery.addEventListener('levelchange', updateBattery);
-                    battery.addEventListener('chargingchange', updateBattery);
-                } catch(e) {
-                    console.warn("Battery status API restricted or failed", e);
-                }
-            } else {
-                 const textEl = document.getElementById('hudBatteryText');
-                 if (textEl) textEl.textContent = 'PWR';
-            }
-        }
-
-        /* ==========================================================================
-           9. SPEECH SYNTHESIS (TTS) ENGINE
-           ========================================================================== */
-        function populateVoiceList() {
-            if (!state.synth) return;
-            const voices = state.synth.getVoices();
-            const select = document.getElementById('cfgVoiceSelect');
-            if (!select) return;
-
-            select.innerHTML = '<option value="">Default Voice</option>';
-            voices.forEach((v, idx) => {
-                const opt = document.createElement('option');
-                opt.value = idx;
-                opt.textContent = `${v.name} (${v.lang})`;
-                select.appendChild(opt);
-            });
-        }
-
-        if (speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = populateVoiceList;
-        }
-
-        function speakText(text) {
-            if (!state.ttsEnabled || !state.synth) return;
-
-            const cleanText = text.replace(/[*_#`~]/g, '').slice(0, 250);
-            state.synth.cancel();
-
-            const utterance = new SpeechSynthesisUtterance(cleanText);
-            const persona = PERSONAS[state.currentPersona];
-
-            const customRate = parseFloat(document.getElementById('cfgRate')?.value || persona.rate);
-            utterance.pitch = persona.pitch;
-            utterance.rate = customRate;
-
-            const selectedVoiceIdx = document.getElementById('cfgVoiceSelect')?.value;
-            const voices = state.synth.getVoices();
-            if (selectedVoiceIdx !== "" && voices[selectedVoiceIdx]) {
-                utterance.voice = voices[selectedVoiceIdx];
-            } else {
-                const matching = voices.find(v => v.lang.includes(persona.voiceLang.split('-')[0]));
-                if (matching) utterance.voice = matching;
-            }
-
-            state.synth.speak(utterance);
-        }
-
-        /* ==========================================================================
-           10. MODAL DIALOG & SETTINGS MANAGEMENT
-           ========================================================================== */
-        function openSettingsModal() {
-            document.getElementById('settingsModal').classList.remove('hidden');
-            document.getElementById('cfgApiKey').value = userApiKey;
-            document.getElementById('cfgLanguageSelect').value = state.language;
-            populateVoiceList();
-            playFuturisticSound('beep');
-        }
-
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').classList.add('hidden');
-            playFuturisticSound('beep');
-        }
-
-        function switchSettingsTab(tabId) {
-            const tabSettings = document.getElementById('tabSettings');
-            const tabManual = document.getElementById('tabManual');
-            const btnSettings = document.getElementById('btnTabSettings');
-            const btnManual = document.getElementById('btnTabManual');
-
-            if (tabId === 'tabSettings') {
-                tabSettings.classList.remove('hidden');
-                tabManual.classList.add('hidden');
-                btnSettings.className = 'px-3 py-1 rounded bg-cyan-500/30 border border-cyan-400 text-cyan-300 font-bold';
-                btnManual.className = 'px-3 py-1 rounded bg-black/40 border border-cyan-500/30 text-gray-400 hover:text-cyan-300';
-            } else {
-                tabSettings.classList.add('hidden');
-                tabManual.classList.remove('hidden');
-                btnSettings.className = 'px-3 py-1 rounded bg-black/40 border border-cyan-500/30 text-gray-400 hover:text-cyan-300';
-                btnManual.className = 'px-3 py-1 rounded bg-cyan-500/30 border border-cyan-400 text-cyan-300 font-bold';
-            }
-            playFuturisticSound('beep');
-        }
-
-        function saveApiKeySetting() {
-            const inputVal = document.getElementById('cfgApiKey').value.trim();
-            userApiKey = inputVal;
-            localStorage.setItem('jarvis_api_key', inputVal);
-            appendTerminalLog('SYSTEM', 'Gemini API Key updated successfully.', 'system');
-            playFuturisticSound('chime');
-        }
-
-        function updateLanguage() {
-            const select = document.getElementById('cfgLanguageSelect');
-            if (select) {
-                state.language = select.value;
-                localStorage.setItem('jarvis_lang', state.language);
-                
-                if (state.recognition) {
-                    const wasListening = state.isListening;
-                    if (wasListening) state.recognition.stop();
-                    state.recognition.lang = state.language;
-                    
-                    if (wasListening) {
-                        setTimeout(() => startVoiceListening(), 500); 
-                    }
-                }
-                appendTerminalLog('SYSTEM', `System language protocol updated to: ${state.language === 'ja-JP' ? 'Japanese' : 'English'}`, 'system');
-                playFuturisticSound('chime');
-            }
-        }
-
-        function resetSystemDefaults() {
-            localStorage.removeItem('jarvis_api_key');
-            localStorage.removeItem('jarvis_lang');
-            userApiKey = "";
-            document.getElementById('cfgApiKey').value = "";
-            
-            state.language = 'ja-JP';
-            const langSelect = document.getElementById('cfgLanguageSelect');
-            if (langSelect) langSelect.value = 'ja-JP';
-            if (state.recognition) state.recognition.lang = 'ja-JP';
-
-            switchPersona('jarvis');
-            setTheme('theme-cyan');
-            appendTerminalLog('SYSTEM', 'All HUD settings reset to factory defaults.', 'system');
-            playFuturisticSound('chime');
-        }
-
-        function switchPersona(personaKey) {
-            if (!PERSONAS[personaKey]) return;
-            state.currentPersona = personaKey;
-            const p = PERSONAS[personaKey];
-
-            document.getElementById('systemTitle').textContent = p.name;
-            document.getElementById('currentPersonaLabel').textContent = `${p.name} TERMINAL`;
-
-            setTheme(p.theme);
-            playFuturisticSound('chime');
-        }
-
-        function setTheme(themeClass) {
-            document.body.className = `h-full bg-black text-gray-100 font-rajdhani select-none overflow-hidden ${themeClass}`;
-        }
-
-        function toggleSoundFX() {
-            state.soundEnabled = !state.soundEnabled;
-            const chk = document.getElementById('cfgSoundToggle');
-            if (chk) chk.checked = state.soundEnabled;
-            playFuturisticSound('beep');
-        }
-
-        function toggleTTS() {
-            state.ttsEnabled = !state.ttsEnabled;
-            const chk = document.getElementById('cfgTtsToggle');
-            if (chk) chk.checked = state.ttsEnabled;
-            playFuturisticSound('beep');
-        }
-
-        function toggleScanlines() {
-            state.scanlinesEnabled = !state.scanlinesEnabled;
-            const overlay = document.getElementById('scanlinesOverlay');
-            overlay.style.opacity = state.scanlinesEnabled ? '0.7' : '0';
-            const chk = document.getElementById('cfgScanlineToggle');
-            if (chk) chk.checked = state.scanlinesEnabled;
-            playFuturisticSound('beep');
-        }
-
-        /* ==========================================================================
-           11. TERMINAL DISPLAYS & UI INTERACTIONS
-           ========================================================================== */
-        function toggleTerminalCollapse() {
-            const panel = document.getElementById('chatTerminalPanel');
-            const logContainer = document.getElementById('terminalLog');
-            const icon = document.getElementById('terminalCollapseIcon');
-
-            state.isTerminalCollapsed = !state.isTerminalCollapsed;
-            if (state.isTerminalCollapsed) {
-                logContainer.classList.add('hidden');
-                panel.classList.remove('max-h-56');
-                panel.classList.add('max-h-12');
-                icon.className = 'fa-solid fa-chevron-up text-[11px]';
-            } else {
-                logContainer.classList.remove('hidden');
-                panel.classList.remove('max-h-12');
-                panel.classList.add('max-h-56');
-                icon.className = 'fa-solid fa-chevron-down text-[11px]';
-            }
-            playFuturisticSound('beep');
-        }
-
-        function appendTerminalLog(sender, text, type = 'ai') {
-            const logContainer = document.getElementById('terminalLog');
-            const entry = document.createElement('div');
-            
-            let badgeStyle = 'text-cyan-400 border-cyan-500/30 bg-cyan-950/30';
-            let icon = 'fa-robot';
-
-            if (type === 'user') {
-                badgeStyle = 'text-amber-300 border-amber-500/30 bg-amber-950/30';
-                icon = 'fa-user';
-            } else if (type === 'system') {
-                badgeStyle = 'text-emerald-400 border-emerald-500/30 bg-emerald-950/30';
-                icon = 'fa-microchip';
-            }
-
-            const formattedText = marked.parse ? marked.parse(text) : text;
-
-            entry.className = `p-2 rounded border font-mono text-[11px] leading-snug ${badgeStyle}`;
-            entry.innerHTML = `
-                <div class="flex items-center justify-between text-[10px] font-bold mb-0.5 border-b border-white/10 pb-0.5">
-                    <span><i class="fa-solid ${icon} mr-1"></i> ${sender}</span>
-                    <span class="opacity-70">${new Date().toLocaleTimeString()}</span>
-                </div>
-                <div class="prose prose-invert max-w-none text-[11px] text-gray-100">${formattedText}</div>
-            `;
-
-            logContainer.appendChild(entry);
-            logContainer.scrollTop = logContainer.scrollHeight;
-        }
-
-        function setTerminalStatus(text) {
-            document.getElementById('terminalStatus').textContent = text;
-        }
-
-        function clearTerminal() {
-            document.getElementById('terminalLog').innerHTML = '';
-            playFuturisticSound('beep');
-        }
-
-        function handleInputKeydown(e) {
-            if (e.key === 'Enter') {
-                submitUserCommand();
-            }
-        }
-
-        function submitUserCommand() {
-            const inputEl = document.getElementById('userInputText');
-            const text = inputEl.value.trim();
-            if (!text) return;
-
-            appendTerminalLog('USER', text, 'user');
-            inputEl.value = '';
-            routeVoiceCommand(text);
-        }
-
-        /* ==========================================================================
-           12. CLEAN VIEWPORT CANVAS RENDERER
-           ========================================================================== */
-        function initCanvasRenderers() {
-            const arCanvas = document.getElementById('hudArCanvas');
-            const arCtx = arCanvas.getContext('2d');
-
-            function resize() {
-                arCanvas.width = window.innerWidth;
-                arCanvas.height = window.innerHeight;
-            }
-
-            window.addEventListener('resize', resize);
-            resize();
-
-            function render() {
-                const now = performance.now();
-                state.frameCount++;
-                if (now - state.lastFrameTime >= 1000) {
-                    state.fps = state.frameCount;
-                    state.frameCount = 0;
-                    state.lastFrameTime = now;
-                    const fpsEl = document.getElementById('fpsCounter');
-                    if (fpsEl) fpsEl.textContent = state.fps;
-                }
-
-                arCtx.clearRect(0, 0, arCanvas.width, arCanvas.height);
-                requestAnimationFrame(render);
-            }
-
-            render();
-        }
-
-        /* ==========================================================================
-           13. SYSTEM CLOCK & BOOT ENTRY POINT
-           ========================================================================== */
-        function initSystemClock() {
-            setInterval(() => {
-                const now = new Date();
-                const clockTime = document.getElementById('clockTime');
-                const clockDate = document.getElementById('clockDate');
-                if (clockTime) clockTime.textContent = now.toLocaleTimeString();
-                if (clockDate) clockDate.textContent = now.toISOString().split('T')[0].replace(/-/g, '.');
-            }, 1000);
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            initCameraStream();
-            initVoiceRecognition();
-            initCanvasRenderers();
-            initSystemClock();
-            
-            initWeatherStatus();
-            initBatteryStatus();
-
-            document.body.addEventListener('click', () => {
-                initAudioContext();
-            }, { once: true });
-        });
-    </script>
+      });
+    };
+  </script>
 </body>
 </html>
