@@ -215,7 +215,7 @@
         <div class="hud-panel px-3 py-1.5 rounded-lg corner-brackets flex items-center space-x-2 pointer-events-auto">
             <div class="hidden sm:block text-right mr-2 font-mono">
                 <div id="clockTime" class="font-orbitron font-bold text-xs hud-text-glow">00:00:00</div>
-                <div id="clockDate" class="text-[10px] text-gray-400">2026.09.22</div>
+                <div id="clockDate" class="text-[10px] text-gray-400">2026.09.23</div>
             </div>
 
             <!-- Photo Capture Shortcut Button -->
@@ -799,7 +799,7 @@
         }
 
         /* ==========================================================================
-           6. GEMINI API & VISION ANALYSIS INTEGRATION (NORMAL/PAID CODE COMPATIBLE)
+           6. GEMINI API & VISION ANALYSIS INTEGRATION (HTTP 404 RESILIENT)
            ========================================================================== */
         async function queryGeminiLLM(prompt, base64Image = null) {
             const key = getActiveApiKey();
@@ -824,7 +824,6 @@
                 return;
             }
 
-            const modelName = 'gemini-1.5-flash';
             setTerminalStatus('PROCESSING...');
             playFuturisticSound('scan');
 
@@ -855,59 +854,67 @@
             }
 
             try {
-                let response = null;
+                let responseData = null;
                 let lastError = null;
+                let success = false;
 
-                // 柔軟な認証フォールバック試行 (通常のAPIキー形式・特殊形式のどちらでも確実に作動)
-                const attempts = [
-                    // 1. クエリパラメータ形式 (?key=...)
-                    async () => {
-                        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
-                        return await fetch(url, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
-                    },
-                    // 2. Authorization Bearer ヘッダー形式
-                    async () => {
-                        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`;
-                        return await fetch(url, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${key}`
+                // 404エラーを防ぐため、複数のモデル名、APIバージョン、および認証方式を自動で試行
+                const modelsToTry = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash-exp', 'gemini-1.5-pro'];
+                const apiVersions = ['v1beta', 'v1'];
+
+                for (const modelName of modelsToTry) {
+                    if (success) break;
+                    for (const version of apiVersions) {
+                        if (success) break;
+
+                        const endpoints = [
+                            {
+                                url: `https://generativelanguage.googleapis.com/${version}/models/${modelName}:generateContent?key=${key}`,
+                                headers: { 'Content-Type': 'application/json' }
                             },
-                            body: JSON.stringify(payload)
-                        });
-                    }
-                ];
+                            {
+                                url: `https://generativelanguage.googleapis.com/${version}/models/${modelName}:generateContent`,
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${key}`
+                                }
+                            },
+                            {
+                                url: `https://generativelanguage.googleapis.com/${version}/models/${modelName}:generateContent`,
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'x-goog-api-key': key
+                                }
+                            }
+                        ];
 
-                // キーの形式に応じて優先順位を調整（AIzaで始まらなければBearerを先にする）
-                if (!key.startsWith('AIza')) {
-                    attempts.reverse();
-                }
+                        for (const ep of endpoints) {
+                            try {
+                                const res = await fetch(ep.url, {
+                                    method: 'POST',
+                                    headers: ep.headers,
+                                    body: JSON.stringify(payload)
+                                });
 
-                for (const attempt of attempts) {
-                    try {
-                        const res = await attempt();
-                        if (res.ok) {
-                            response = res;
-                            break;
-                        } else {
-                            lastError = new Error(`HTTP Error: ${res.status}`);
+                                if (res.ok) {
+                                    responseData = await res.json();
+                                    success = true;
+                                    break;
+                                } else {
+                                    lastError = new Error(`HTTP Error: ${res.status}`);
+                                }
+                            } catch (e) {
+                                lastError = e;
+                            }
                         }
-                    } catch (e) {
-                        lastError = e;
                     }
                 }
 
-                if (!response || !response.ok) {
-                    throw lastError || new Error("Failed to connect to model endpoint.");
+                if (!success || !responseData) {
+                    throw lastError || new Error("Failed to connect to model endpoint (404/Not Found).");
                 }
 
-                const result = await response.json();
-                const replyText = result.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
+                const replyText = responseData.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
 
                 appendTerminalLog(persona.name, replyText, 'ai');
                 speakText(replyText);
