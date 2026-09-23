@@ -718,8 +718,8 @@
         return `Gemini APIキーが設定されておりません。画面右上の「API設定」ボタンから無料のAPIキーをご登録ください。`;
       }
 
-      // 無料APIキー（Google AI Studio）で確実に動作するモデルの優先リスト
-      const models = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"];
+      // 指定の最新モデルを使用
+      const models = ["gemini-3.6-flash"];
 
       let systemInstruction = `あなたはアイアンマンのAI「J.A.R.V.I.S. (ジャービス)」です。正確で結論から述べる簡潔かつスマートなトーンで回答してください。`;
 
