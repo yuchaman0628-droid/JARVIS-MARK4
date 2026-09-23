@@ -555,7 +555,7 @@
         window.speechSynthesis.cancel();
       }
 
-      const cleanText = text.replace(/<[^>]*>?/gm, '').replace(/https?:\/\/\S+/g, '').replace(/[*#]/g, '').trim();
+      const cleanText = text.replace(/<[^>]*>?/gm, '').replace(/https?:\/\/\S+/g, '').replace(/[*#]/g, '').replace(/J\.?A\.?R\.?V\.?I\.?S\.?/gi, 'ジャービス').trim();
       if (!cleanText) return;
 
       appState.isSpeaking = true;
@@ -721,7 +721,7 @@
       // 指定の最新モデルを使用
       const models = ["gemini-3.6-flash"];
 
-      let systemInstruction = `あなたはアイアンマンのAI「J.A.R.V.I.S. (ジャービス)」です。正確で結論から述べる簡潔かつスマートなトーンで回答してください。`;
+      let systemInstruction = `あなたはアイアンマンのAI「ジャービス」です。自分の名前を言う際は必ずカタカナで「ジャービス」と表記してください。正確で結論から述べる簡潔かつスマートなトーンで回答してください。`;
 
       if (appState.visualMode === "translate") {
         systemInstruction = "あなたはリアルタイム通訳HUDシステムです。入力された言語を解析し、日本語なら自然な英語へ、英語やその他の外国語なら自然な日本語へ正確かつ迅速に翻訳し、翻訳後の文章のみを出力してください。";
@@ -1274,6 +1274,11 @@
       appendChatMessage('J.A.R.V.I.S. (GEMINI v3.6)', aiResponse);
       speakText(aiResponse);
       playJarvisChime();
+
+      // 画像検索・ビジュアル解析が完了したらターゲット画像をクリアし、次回を通常検索モードにする
+      if (hasImg || wantsScreenSearch) {
+        clearSelectedImage();
+      }
     }
 
     async function captureAndAnalyzeCamera() {
